@@ -10,18 +10,18 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="/assets/index-CFmnF52D.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-C_3lAQWp.css">
+    <script type="module" crossorigin src="./assets/index-IhXVl-VB.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-ZF_pr749.css">
   </head>
   <body
     class="bg-ramadan-cream h-screen flex flex-col items-center justify-start md:justify-center p-2 md:p-4 text-ramadan-secondary font-outfit overflow-hidden relative"
   >
     <!-- Ramadan Decorations -->
-    <img src="/assets/lampu-DKmr3fkV.webp" class="fixed -top-4 left-10 w-32 md:w-48 z-20 animate-sway pointer-events-none opacity-90" alt="Lantern">
-    <img src="/assets/lampu-DKmr3fkV.webp" class="fixed -top-10 right-20 w-24 md:w-40 z-20 animate-sway pointer-events-none opacity-80" style="animation-delay: -1.5s;" alt="Lantern">
+    <img src="./assets/lampu-DKmr3fkV.webp" class="fixed -top-4 left-10 w-32 md:w-48 z-20 animate-sway pointer-events-none opacity-90" alt="Lantern">
+    <img src="./assets/lampu-DKmr3fkV.webp" class="fixed -top-10 right-20 w-24 md:w-40 z-20 animate-sway pointer-events-none opacity-80" style="animation-delay: -1.5s;" alt="Lantern">
     
-    <img src="/assets/ketupat-Bb_wIEB5.webp" class="fixed -bottom-10 -left-10 w-40 md:w-64 z-20 animate-float pointer-events-none opacity-30" alt="Ketupat">
-    <img src="/assets/ketupat-Bb_wIEB5.webp" class="fixed top-1/2 -right-10 w-32 md:w-48 z-20 animate-float pointer-events-none opacity-20" style="animation-delay: -2s;" alt="Ketupat">
+    <img src="./assets/ketupat-Bb_wIEB5.webp" class="fixed -bottom-10 -left-10 w-40 md:w-64 z-20 animate-float pointer-events-none opacity-30" alt="Ketupat">
+    <img src="./assets/ketupat-Bb_wIEB5.webp" class="fixed top-1/2 -right-10 w-32 md:w-48 z-20 animate-float pointer-events-none opacity-20" style="animation-delay: -2s;" alt="Ketupat">
 
     <!-- Background Decor -->
     <div class="fixed inset-0 opacity-20 pointer-events-none">
@@ -42,7 +42,7 @@
         <span>Ganti Tema</span>
     </button>
 
-    <!-- Settings Modal -->
+
     <div id="settings-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md hidden">
         <div class="glass-card p-8 rounded-[40px] shadow-2xl max-w-md w-full relative border-2 border-ramadan-primary/30">
             <button id="close-settings" class="absolute top-4 right-4 text-ramadan-secondary hover:text-ramadan-primary transition-colors">
@@ -90,6 +90,27 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div id="qr-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden">
+        <div class="glass-card p-8 rounded-[40px] shadow-2xl max-w-sm w-full relative border-2 border-ramadan-primary/30 text-center flex flex-col items-center">
+            <button id="close-qr" class="absolute top-4 right-4 text-ramadan-secondary hover:text-ramadan-primary transition-colors">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <h2 class="font-playfair text-3xl text-ramadan-primary mb-2">Pindai Kenanganmu</h2>
+            <p class="text-sm text-ramadan-secondary/80 mb-6">Scan QR Code ini untuk mendownload fotomu ke HP secara privat.</p>
+            
+            <div class="bg-white p-4 rounded-3xl shadow-inner mb-6 flex items-center justify-center">
+                <img id="qr-image" class="w-48 h-48" alt="QR Code" />
+            </div>
+
+            <button id="finish-session-btn" class="w-full py-3 px-4 bg-ramadan-green text-ramadan-cream rounded-2xl font-bold hover:bg-ramadan-green/80 transition-colors shadow-lg">
+                Selesai (Tutup & Bersihkan)
+            </button>
         </div>
     </div>
 
@@ -209,6 +230,25 @@
               Ulangi
             </button>
             <button
+              id="save-btn"
+              class="flex items-center gap-2 bg-ramadan-primary text-ramadan-cream font-bold py-2 md:py-3 px-6 md:px-8 rounded-full shadow-lg hover:scale-105 transition-all"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
+                />
+              </svg>
+              Simpan
+            </button>
+            <button
               id="download-btn"
               class="flex items-center gap-2 bg-ramadan-green text-ramadan-cream font-bold py-2 md:py-3 px-6 md:px-8 rounded-full shadow-lg hover:scale-105 transition-all"
             >
@@ -228,6 +268,20 @@
               Unduh
             </button>
           </div>
+        </div>
+
+        <!-- Persistent Selesai Button (shown after first save) -->
+        <div id="selesai-container" class="mt-4 flex justify-center hidden">
+            <button
+              id="selesai-btn"
+              class="flex items-center gap-2 bg-ramadan-green text-ramadan-cream font-bold py-3 px-8 rounded-full shadow-lg hover:scale-105 transition-all text-lg border-2 border-ramadan-gold/30"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Selesai &amp; Tampilkan QR
+              <span id="save-count-badge" class="bg-ramadan-gold text-ramadan-green text-xs px-2 py-0.5 rounded-full font-bold ml-1">0</span>
+            </button>
         </div>
       </div>
     </main>
