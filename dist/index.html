@@ -10,14 +10,21 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="/assets/index-am2K4x6n.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BpCLuzJ8.css">
+    <script type="module" crossorigin src="/assets/index-CFmnF52D.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-C_3lAQWp.css">
   </head>
   <body
-    class="bg-ramadan-green min-h-screen flex flex-col items-center justify-center p-4 text-ramadan-light font-outfit overflow-hidden"
+    class="bg-ramadan-cream h-screen flex flex-col items-center justify-start md:justify-center p-2 md:p-4 text-ramadan-secondary font-outfit overflow-hidden relative"
   >
+    <!-- Ramadan Decorations -->
+    <img src="/assets/lampu-DKmr3fkV.webp" class="fixed -top-4 left-10 w-32 md:w-48 z-20 animate-sway pointer-events-none opacity-90" alt="Lantern">
+    <img src="/assets/lampu-DKmr3fkV.webp" class="fixed -top-10 right-20 w-24 md:w-40 z-20 animate-sway pointer-events-none opacity-80" style="animation-delay: -1.5s;" alt="Lantern">
+    
+    <img src="/assets/ketupat-Bb_wIEB5.webp" class="fixed -bottom-10 -left-10 w-40 md:w-64 z-20 animate-float pointer-events-none opacity-30" alt="Ketupat">
+    <img src="/assets/ketupat-Bb_wIEB5.webp" class="fixed top-1/2 -right-10 w-32 md:w-48 z-20 animate-float pointer-events-none opacity-20" style="animation-delay: -2s;" alt="Ketupat">
+
     <!-- Background Decor -->
-    <div class="fixed inset-0 opacity-10 pointer-events-none">
+    <div class="fixed inset-0 opacity-20 pointer-events-none">
       <div
         class="absolute top-0 left-0 w-64 h-64 border-r-2 border-b-2 border-ramadan-gold rounded-br-full"
       ></div>
@@ -26,27 +33,87 @@
       ></div>
     </div>
 
-    <!-- Header -->
-    <header class="text-center mb-8 relative z-10">
+    <!-- Settings Button -->
+    <button id="settings-toggle" class="fixed top-6 right-6 z-50 flex items-center gap-2 py-3 px-5 bg-ramadan-primary text-ramadan-cream rounded-full hover:scale-105 active:scale-95 transition-all shadow-xl font-bold border-2 border-ramadan-cream/20">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <span>Ganti Tema</span>
+    </button>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md hidden">
+        <div class="glass-card p-8 rounded-[40px] shadow-2xl max-w-md w-full relative border-2 border-ramadan-primary/30">
+            <button id="close-settings" class="absolute top-4 right-4 text-ramadan-secondary hover:text-ramadan-primary transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            
+            <h2 class="font-playfair text-3xl text-ramadan-primary mb-6">Kustomisasi Tema</h2>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-semibold text-ramadan-secondary mb-2">Tema Luar (Strip Background) <span class="text-ramadan-primary">[920 x 2320 px]</span></label>
+                    <input type="file" id="outer-theme-input" accept="image/*" class="w-full text-sm text-ramadan-secondary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-ramadan-primary file:text-ramadan-cream hover:file:bg-ramadan-primary/80 mb-2" />
+                    <div id="outer-preview" class="h-20 w-full bg-white/50 rounded-xl border border-dashed border-ramadan-primary/30 flex items-center justify-center overflow-hidden">
+                        <span class="text-xs text-ramadan-secondary/50">Belum ada file</span>
+                    </div>
+
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-semibold text-ramadan-secondary mb-2">Tema Dalam (Bingkai Foto) <span class="text-ramadan-primary">[820 x 620 px]</span></label>
+                    <input type="file" id="inner-theme-input" accept="image/*" class="w-full text-sm text-ramadan-secondary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-ramadan-primary file:text-ramadan-cream hover:file:bg-ramadan-primary/80 mb-2" />
+                    <div id="inner-preview" class="h-20 w-full bg-white/50 rounded-xl border border-dashed border-ramadan-primary/30 flex items-center justify-center overflow-hidden">
+                        <span class="text-xs text-ramadan-secondary/50">Belum ada file</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 p-3 bg-ramadan-primary/10 rounded-2xl border border-ramadan-primary/20">
+                    <input type="checkbox" id="overlay-mode-toggle" class="w-5 h-5 accent-ramadan-primary" />
+                    <div>
+                        <label for="overlay-mode-toggle" 
+                        class="text-sm font-bold text-ramadan-secondary">Gunakan Tema Luar sebagai Overlay</label>
+                        <p class="text-[10px] text-ramadan-secondary/70">Centang jika Tema Luar Anda adalah bingkai yang memiliki lubang (transparan).</p>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-blue-50 rounded-2xl border border-blue-100 italic">
+                    <p class="text-[10px] text-blue-600">**Tips:** Gunakan format **PNG transparan** agar foto tidak tertutup oleh background/bingkai!</p>
+                </div>
+
+                <div class="pt-4 border-t border-ramadan-primary/20">
+                    <button id="reset-theme" class="w-full py-3 px-4 bg-red-100 text-red-600 rounded-2xl font-bold hover:bg-red-200 transition-colors">
+                        Reset ke Standar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header class="text-center mb-2 md:mb-6 relative z-40 scale-75 md:scale-100">
       <h1
-        class="font-playfair text-5xl md:text-6xl text-ramadan-gold mb-2 drop-shadow-md"
+        class="font-playfair text-4xl md:text-7xl mb-1 drop-shadow-2xl text-ramadan-primary"
       >
-        Ramadan Photo Booth
+        Buka Puasa
       </h1>
-      <p class="text-ramadan-light/80 text-lg">
-        Indahkan momen sucimu dengan bingkai spesial
+      <p class="text-xl md:text-4xl font-playfair font-bold italic text-ramadan-primary">
+        Mahaghora Bersama
       </p>
     </header>
 
     <!-- Photo Booth Container -->
-    <main class="relative group z-10 max-w-2xl w-full">
-        <div class="bg-white/5 backdrop-blur-xl border border-white/20 p-4 rounded-3xl shadow-2xl relative overflow-hidden">
+    <!-- Photo Booth Container -->
+    <main class="relative group z-30 max-w-6xl w-full flex-1 flex flex-col max-h-[80vh] md:max-h-[85vh]">
+        <div class="glass-card p-3 md:p-6 rounded-[30px] md:rounded-[40px] relative overflow-hidden flex-1 flex flex-col">
             <!-- Photo Counter -->
             <div id="photo-counter" class="absolute top-6 left-6 z-20 bg-ramadan-gold text-ramadan-green px-3 py-1 rounded-full font-bold text-sm hidden">
                 Foto 1 / 3
             </div>
             <!-- Camera View -->
-            <div id="camera-container" class="relative rounded-2xl overflow-hidden aspect-[4/3] bg-black shadow-inner">
+            <div id="camera-container" class="relative rounded-2xl overflow-hidden flex-1 bg-black shadow-inner min-h-0">
           <video
             id="video"
             autoplay
@@ -57,6 +124,17 @@
             id="canvas"
             class="hidden absolute top-0 left-0 w-full h-full"
           ></canvas>
+
+          <!-- Countdown Overlay -->
+          <div id="countdown-overlay" class="hidden absolute inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
+              <span id="countdown-number" class="text-[15rem] md:text-[20rem] font-bold text-ramadan-green drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] animate-pulse">3</span>
+          </div>
+
+          <!-- Processing Overlay -->
+          <div id="processing-overlay" class="hidden absolute inset-0 z-[110] flex flex-col items-center justify-center bg-ramadan-secondary/90 backdrop-blur-md text-ramadan-cream">
+              <div class="w-20 h-20 border-8 border-ramadan-gold border-t-transparent rounded-full animate-spin mb-6"></div>
+              <p class="font-playfair text-4xl animate-pulse font-bold">Mencetak Kenangan...</p>
+          </div>
 
           <!-- Overlay Frame (Hidden by default, shown on capture preview) -->
           <div
@@ -78,7 +156,7 @@
               </svg>
             </div>
             <div
-              class="absolute bottom-4 left-0 right-0 text-center font-playfair text-2xl text-ramadan-gold drop-shadow-lg"
+              class="absolute bottom-4 left-0 right-0 text-center font-playfair text-2xl drop-shadow-lg font-bold text-ramadan-gold"
             >
               Ramadan Kareem
             </div>
@@ -91,16 +169,16 @@
           ></div>
 
                 <!-- Capture Preview Layer -->
-                <div id="photo-preview-container" class="hidden absolute top-0 left-0 w-full h-full overflow-y-auto bg-ramadan-green/20">
+                <div id="photo-preview-container" class="hidden absolute top-0 left-0 w-full h-full overflow-y-auto bg-ramadan-cream/20">
                     <img id="photo-preview" class="w-full h-auto object-contain">
                 </div>
             </div>
 
         <!-- Controls -->
-        <div class="mt-8 flex flex-wrap justify-center gap-4">
+        <div class="mt-4 md:mt-8 flex flex-wrap justify-center gap-4">
           <button
             id="capture-btn"
-            class="flex items-center gap-2 bg-gradient-to-r from-ramadan-gold to-yellow-600 text-ramadan-green font-bold py-3 px-8 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all"
+            class="flex items-center gap-3 btn-premium font-bold py-3 md:py-4 px-8 md:px-10 rounded-full text-lg md:text-xl shadow-2xl"
           >
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
               <path
@@ -113,7 +191,7 @@
           <div id="post-capture-controls" class="hidden flex gap-4">
             <button
               id="retake-btn"
-              class="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold py-3 px-8 rounded-full transition-all"
+              class="flex items-center gap-2 bg-ramadan-secondary/10 hover:bg-ramadan-secondary/20 border border-ramadan-secondary/20 text-ramadan-secondary font-bold py-2 md:py-3 px-6 md:px-8 rounded-full transition-all shadow-lg"
             >
               <svg
                 class="w-5 h-5"
@@ -132,7 +210,7 @@
             </button>
             <button
               id="download-btn"
-              class="flex items-center gap-2 bg-ramadan-light text-ramadan-green font-bold py-3 px-8 rounded-full shadow-lg hover:scale-105 transition-all"
+              class="flex items-center gap-2 bg-ramadan-green text-ramadan-cream font-bold py-2 md:py-3 px-6 md:px-8 rounded-full shadow-lg hover:scale-105 transition-all"
             >
               <svg
                 class="w-5 h-5"
@@ -155,7 +233,7 @@
     </main>
 
     <!-- Footer Decor -->
-    <footer class="mt-12 text-ramadan-gold/60 text-sm">
+    <footer class="mt-4 md:mt-12 text-ramadan-gold/60 text-xs md:text-sm hidden md:block">
       &copy; 2026 Ramadan Kareem Photo Booth Experience
     </footer>
 
