@@ -1,8 +1,12 @@
+// QR Code generated via https://api.qrserver.com/v1/create-qr-code/
+
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
+// ... other existing elements
 const captureBtn = document.getElementById('capture-btn');
 const retakeBtn = document.getElementById('retake-btn');
 const downloadBtn = document.getElementById('download-btn');
+const saveBtn = document.getElementById('save-btn');
 const photoPreview = document.getElementById('photo-preview');
 const photoPreviewContainer = document.getElementById('photo-preview-container');
 const postCaptureControls = document.getElementById('post-capture-controls');
@@ -11,6 +15,12 @@ const photoCounter = document.getElementById('photo-counter');
 const countdownOverlay = document.getElementById('countdown-overlay');
 const countdownNumber = document.getElementById('countdown-number');
 const processingOverlay = document.getElementById('processing-overlay');
+
+// QR Modal Elements
+const qrModal = document.getElementById('qr-modal');
+const closeQrBtn = document.getElementById('close-qr');
+const finishSessionBtn = document.getElementById('finish-session-btn');
+const qrImage = document.getElementById('qr-image');
 
 let stream;
 let capturedPhotos = [];
@@ -137,12 +147,37 @@ captureBtn.addEventListener('click', async () => {
     flash.classList.add('flash-active');
     setTimeout(() => flash.classList.remove('flash-active'), 300);
 
-    // Capture Frame
+    // Target aspect ratio based on imgWidth (800) and imgHeight (500)
+    const targetAspect = 800 / 500;
+    const videoAspect = video.videoWidth / video.videoHeight;
+    
+    let drawWidth = video.videoWidth;
+    let drawHeight = video.videoHeight;
+    let startX = 0;
+    let startY = 0;
+
+    // If video is wider than target aspect ratio, crop sides
+    if (videoAspect > targetAspect) {
+        drawWidth = video.videoHeight * targetAspect;
+        startX = (video.videoWidth - drawWidth) / 2;
+    } 
+    // If video is taller than target aspect, crop top/bottom
+    else if (videoAspect < targetAspect) {
+        drawHeight = video.videoWidth / targetAspect;
+        startY = (video.videoHeight - drawHeight) / 2;
+    }
+
     const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = video.videoWidth;
-    tempCanvas.height = video.videoHeight;
+    tempCanvas.width = 800; // Expected width
+    tempCanvas.height = 500; // Expected height
     const tempCtx = tempCanvas.getContext('2d');
-    tempCtx.drawImage(video, 0, 0);
+    
+    // Draw cropped image
+    tempCtx.drawImage(
+        video, 
+        startX, startY, drawWidth, drawHeight, // Source rectangle
+        0, 0, tempCanvas.width, tempCanvas.height // Destination rectangle
+    );
     
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
     
@@ -164,7 +199,7 @@ async function generateStrip() {
     
     // Standard dimensions for the strip
     const imgWidth = 800;
-    const imgHeight = 600;
+    const imgHeight = 500;
     const padding = 60;
     const headerHeight = 180; 
     const footerHeight = 100;
@@ -352,29 +387,19 @@ retakeBtn.addEventListener('click', () => {
 // Download Photo
 downloadBtn.addEventListener('click', () => {
     try {
-        // Use toDataURL for smaller files or as a primary method for compatibility
         const dataUrl = canvas.toDataURL('image/png', 1.0);
-        
-        // Final check if dataUrl is valid
         if (!dataUrl.startsWith('data:image/png')) {
             throw new Error('Invalid format generated');
         }
-
         const link = document.createElement('a');
         link.style.display = 'none';
         link.href = dataUrl;
         link.download = 'ramadhankarimmmahaghora1.png';
-        
         document.body.appendChild(link);
         link.click();
-        
-        // Clean up
-        setTimeout(() => {
-            document.body.removeChild(link);
-        }, 100);
+        setTimeout(() => document.body.removeChild(link), 100);
     } catch (err) {
         console.error("Download failed:", err);
-        // Fallback to Blob if DataURL fails (rare)
         canvas.toBlob((blob) => {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -384,6 +409,137 @@ downloadBtn.addEventListener('click', () => {
             setTimeout(() => URL.revokeObjectURL(url), 1000);
         }, 'image/png');
     }
+});
+
+// Session state
+let currentSessionId = null;
+let saveCount = 0;
+let currentViewUrl = null;
+
+const selesaiContainer = document.getElementById('selesai-container');
+const selesaiBtn = document.getElementById('selesai-btn');
+const saveCountBadge = document.getElementById('save-count-badge');
+
+function resetCameraForNextRound() {
+    capturedPhotos = [];
+    photoPreviewContainer.classList.add('hidden');
+    video.classList.remove('hidden');
+    captureBtn.classList.remove('hidden');
+    postCaptureControls.classList.add('hidden');
+    photoCounter.classList.add('hidden');
+}
+
+function resetSaveButton() {
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = `
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+        </svg>
+        Simpan
+    `;
+}
+
+// Save Photo to Server (uploads to session, then resets for next round)
+saveBtn.addEventListener('click', async () => {
+    try {
+        const stripDataUrl = canvas.toDataURL('image/png', 1.0);
+        const allImages = [...capturedPhotos, stripDataUrl];
+        
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = `
+            <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Mengupload...
+        `;
+
+        const payload = { images: allImages };
+        // If we already have a session, append to it
+        if (currentSessionId) {
+            payload.session_id = currentSessionId;
+        }
+
+        const response = await fetch('/upload.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Upload failed: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        
+        if (data.success) {
+            // Store session info
+            currentSessionId = data.session_id;
+            currentViewUrl = data.view_url;
+            saveCount++;
+
+            // Update Selesai button badge
+            saveCountBadge.innerText = saveCount;
+            selesaiContainer.classList.remove('hidden');
+
+            // Brief success feedback
+            saveBtn.innerHTML = `
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                Tersimpan! (Sesi ${saveCount})
+            `;
+            saveBtn.classList.remove('bg-ramadan-primary');
+            saveBtn.classList.add('bg-ramadan-gold', 'text-ramadan-green');
+
+            // After 1.5s, reset camera for next round
+            setTimeout(() => {
+                resetSaveButton();
+                saveBtn.classList.add('bg-ramadan-primary');
+                saveBtn.classList.remove('bg-ramadan-gold', 'text-ramadan-green');
+                resetCameraForNextRound();
+            }, 1500);
+
+        } else {
+            throw new Error(data.error || "Server error");
+        }
+
+    } catch (err) {
+        console.error("Gagal mengupload foto:", err);
+        alert("Gagal menyimpan ke server. Pastikan upload.php berfungsi dan PHP server aktif.");
+        saveBtn.disabled = false;
+        saveBtn.innerText = "Coba Lagi";
+    }
+});
+
+// Selesai Button — show QR Code
+selesaiBtn.addEventListener('click', () => {
+    if (!currentViewUrl) return;
+    
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentViewUrl)}`;
+    qrImage.src = qrApiUrl;
+    qrModal.classList.remove('hidden');
+});
+
+// QR Modal Handlers
+closeQrBtn.addEventListener('click', () => {
+    qrModal.classList.add('hidden');
+});
+
+// Finish Session — start fresh for next person
+finishSessionBtn.addEventListener('click', () => {
+    qrModal.classList.add('hidden');
+    
+    // Reset session state for the next person
+    currentSessionId = null;
+    currentViewUrl = null;
+    saveCount = 0;
+    saveCountBadge.innerText = '0';
+    selesaiContainer.classList.add('hidden');
+    
+    // Reset camera
+    resetCameraForNextRound();
+    resetSaveButton();
 });
 
 // Start camera on load
