@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ramadan-cream: #FFFDF5;
+  --ramadan-primary: #D48C12;
+  --ramadan-secondary: #63392E;
+  /* Legacy aliases for existing classes */
+  --ramadan-green: #2D5A27;
+  --ramadan-gold: #D4AF37;
+  --ramadan-gold-text: #C9A227;
+  --ramadan-light: #8B4513;
+}
+
+body {
+  margin: 0;
+  background-color: var(--ramadan-green);
+  background-image:
+    radial-gradient(
+      circle at 10% 20%,
+      rgba(212, 140, 18, 0.1) 0%,
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 90% 80%,
+      rgba(212, 140, 18, 0.1) 0%,
+      transparent 30%
+    );
+}
+
+.font-playfair {
+  font-family: "Playfair Display", serif;
+}
+
+.font-outfit {
+  font-family: "Outfit", sans-serif;
+}
+
+/* Custom Scrollbar for modern look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--ramadan-green);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ramadan-gold);
+  border-radius: 10px;
+}
+
+/* Animations */
+@keyframes flash-anim {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.flash-active {
+  animation: flash-anim 0.3s ease-out;
+}
+
+@keyframes sway {
+  0% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+  100% { transform: rotate(-5deg); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(5deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.animate-sway {
+  animation: sway 4s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.glass-card {
+  background: rgba(255, 253, 245, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 140, 18, 0.2);
+  box-shadow: 0 25px 50px -12px rgba(99, 57, 46, 0.15);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-premium {
+  background: linear-gradient(135deg, #D48C12 0%, #B4730A 100%);
+  color: white;
+  box-shadow: 0 10px 20px -5px rgba(212, 140, 18, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-premium:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 15px 25px -5px rgba(212, 140, 18, 0.5);
+}
+
+#camera-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+#frame-overlay {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect x="2" y="2" width="96" height="96" fill="none" stroke="%23D48C12" stroke-width="0.5" stroke-dasharray="2,2" opacity="0.3"/></svg>');
+}

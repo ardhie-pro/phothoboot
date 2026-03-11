@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ramadan Kareem Photo Booth</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" crossorigin src="/assets/index-am2K4x6n.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BpCLuzJ8.css">
+  </head>
+  <body
+    class="bg-ramadan-green min-h-screen flex flex-col items-center justify-center p-4 text-ramadan-light font-outfit overflow-hidden"
+  >
+    <!-- Background Decor -->
+    <div class="fixed inset-0 opacity-10 pointer-events-none">
+      <div
+        class="absolute top-0 left-0 w-64 h-64 border-r-2 border-b-2 border-ramadan-gold rounded-br-full"
+      ></div>
+      <div
+        class="absolute bottom-0 right-0 w-64 h-64 border-l-2 border-t-2 border-ramadan-gold rounded-tl-full"
+      ></div>
+    </div>
+
+    <!-- Header -->
+    <header class="text-center mb-8 relative z-10">
+      <h1
+        class="font-playfair text-5xl md:text-6xl text-ramadan-gold mb-2 drop-shadow-md"
+      >
+        Ramadan Photo Booth
+      </h1>
+      <p class="text-ramadan-light/80 text-lg">
+        Indahkan momen sucimu dengan bingkai spesial
+      </p>
+    </header>
+
+    <!-- Photo Booth Container -->
+    <main class="relative group z-10 max-w-2xl w-full">
+        <div class="bg-white/5 backdrop-blur-xl border border-white/20 p-4 rounded-3xl shadow-2xl relative overflow-hidden">
+            <!-- Photo Counter -->
+            <div id="photo-counter" class="absolute top-6 left-6 z-20 bg-ramadan-gold text-ramadan-green px-3 py-1 rounded-full font-bold text-sm hidden">
+                Foto 1 / 3
+            </div>
+            <!-- Camera View -->
+            <div id="camera-container" class="relative rounded-2xl overflow-hidden aspect-[4/3] bg-black shadow-inner">
+          <video
+            id="video"
+            autoplay
+            playsinline
+            class="w-full h-full object-cover"
+          ></video>
+          <canvas
+            id="canvas"
+            class="hidden absolute top-0 left-0 w-full h-full"
+          ></canvas>
+
+          <!-- Overlay Frame (Hidden by default, shown on capture preview) -->
+          <div
+            id="frame-overlay"
+            class="absolute inset-0 pointer-events-none border-[16px] border-ramadan-gold/30"
+          >
+            <div
+              class="absolute top-4 left-1/2 -translate-x-1/2 text-ramadan-gold opacity-80"
+            >
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.35-12.79c-.44.44-.01 1.25.54 1.25.75 0 1.41.4 1.75 1.05.32.62.15 1.37-.41 1.83-.54.44-1.24.44-1.78 0-.54-.44-.72-1.12-.41-1.74l-.9-.5c-.47.95-.21 2.11.66 2.81.82.66 1.93.73 2.8.19 1.1-.68 1.4-2.12.63-3.21-.61-1.18-1.95-1.57-2.88-.68z"
+                />
+              </svg>
+            </div>
+            <div
+              class="absolute bottom-4 left-0 right-0 text-center font-playfair text-2xl text-ramadan-gold drop-shadow-lg"
+            >
+              Ramadan Kareem
+            </div>
+          </div>
+
+          <!-- Flash Effect -->
+          <div
+            id="flash"
+            class="absolute inset-0 bg-white opacity-0 pointer-events-none transition-opacity duration-100"
+          ></div>
+
+                <!-- Capture Preview Layer -->
+                <div id="photo-preview-container" class="hidden absolute top-0 left-0 w-full h-full overflow-y-auto bg-ramadan-green/20">
+                    <img id="photo-preview" class="w-full h-auto object-contain">
+                </div>
+            </div>
+
+        <!-- Controls -->
+        <div class="mt-8 flex flex-wrap justify-center gap-4">
+          <button
+            id="capture-btn"
+            class="flex items-center gap-2 bg-gradient-to-r from-ramadan-gold to-yellow-600 text-ramadan-green font-bold py-3 px-8 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all"
+          >
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+              />
+            </svg>
+            Ambil Foto
+          </button>
+
+          <div id="post-capture-controls" class="hidden flex gap-4">
+            <button
+              id="retake-btn"
+              class="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold py-3 px-8 rounded-full transition-all"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              Ulangi
+            </button>
+            <button
+              id="download-btn"
+              class="flex items-center gap-2 bg-ramadan-light text-ramadan-green font-bold py-3 px-8 rounded-full shadow-lg hover:scale-105 transition-all"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                />
+              </svg>
+              Unduh
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer Decor -->
+    <footer class="mt-12 text-ramadan-gold/60 text-sm">
+      &copy; 2026 Ramadan Kareem Photo Booth Experience
+    </footer>
+
+  </body>
+</html>
