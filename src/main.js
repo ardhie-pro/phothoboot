@@ -147,8 +147,8 @@ captureBtn.addEventListener('click', async () => {
     flash.classList.add('flash-active');
     setTimeout(() => flash.classList.remove('flash-active'), 300);
 
-    // Target aspect ratio based on imgWidth (800) and imgHeight (500)
-    const targetAspect = 800 / 500;
+    // Target aspect ratio based on imgWidth (920) and imgHeight (450)
+    const targetAspect = 920 / 450;
     const videoAspect = video.videoWidth / video.videoHeight;
     
     let drawWidth = video.videoWidth;
@@ -168,8 +168,8 @@ captureBtn.addEventListener('click', async () => {
     }
 
     const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = 800; // Expected width
-    tempCanvas.height = 500; // Expected height
+    tempCanvas.width = 920; // Expected width
+    tempCanvas.height = 450; // Expected height
     const tempCtx = tempCanvas.getContext('2d');
     
     // Draw cropped image
@@ -197,11 +197,11 @@ async function generateStrip() {
     const stripCanvas = canvas;
     const ctx = stripCanvas.getContext('2d');
     
-    // Standard dimensions for the strip
-    const imgWidth = 800;
-    const imgHeight = 500;
-    const padding = 60;
-    const headerHeight = 180; 
+    // Standard dimensions for the strip (results in 1080x1920)
+    const imgWidth = 920;
+    const imgHeight = 450;
+    const padding = 80;
+    const headerHeight = 150; 
     const footerHeight = 100;
     
     stripCanvas.width = imgWidth + (padding * 2);
