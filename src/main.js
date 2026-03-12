@@ -147,6 +147,13 @@ loadTemplates();
 
 // Initialize Camera
 async function initCamera() {
+    // Check if HTTPS (requirement for camera on non-localhost)
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (!isLocal && window.location.protocol !== 'https:') {
+        alert("🚨 Akses Kamera Ditolak: Halaman ini tidak menggunakan HTTPS. Browsers hanya mengizinkan kamera pada koneksi aman (HTTPS). Silakan aktifkan SSL di server Anda.");
+        return;
+    }
+
     try {
         stream = await navigator.mediaDevices.getUserMedia({
             video: { 
@@ -158,7 +165,13 @@ async function initCamera() {
         video.srcObject = stream;
     } catch (err) {
         console.error("Error accessing camera:", err);
-        alert("Tidak dapat mengakses kamera. Pastikan Anda memberikan izin.");
+        if (err.name === 'NotAllowedError') {
+            alert("Izin Kamera Ditolak. Harap izinkan akses kamera di pengaturan browser Anda.");
+        } else if (err.name === 'NotFoundError') {
+            alert("Kamera tidak ditemukan. Pastikan kamera sudah terpasang.");
+        } else {
+            alert("Gagal mengakses kamera: " + err.message);
+        }
     }
 }
 
