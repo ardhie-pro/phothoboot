@@ -5,7 +5,6 @@ const canvas = document.getElementById('canvas');
 // ... other existing elements
 const captureBtn = document.getElementById('capture-btn');
 const retakeBtn = document.getElementById('retake-btn');
-const downloadBtn = document.getElementById('download-btn');
 const saveBtn = document.getElementById('save-btn');
 const photoPreview = document.getElementById('photo-preview');
 const photoPreviewContainer = document.getElementById('photo-preview-container');
@@ -457,32 +456,7 @@ retakeBtn.addEventListener('click', () => {
     photoCounter.classList.add('hidden');
 });
 
-// Download Photo
-downloadBtn.addEventListener('click', () => {
-    try {
-        const dataUrl = canvas.toDataURL('image/png', 1.0);
-        if (!dataUrl.startsWith('data:image/png')) {
-            throw new Error('Invalid format generated');
-        }
-        const link = document.createElement('a');
-        link.style.display = 'none';
-        link.href = dataUrl;
-        link.download = 'ramadhankarimmmahaghora1.png';
-        document.body.appendChild(link);
-        link.click();
-        setTimeout(() => document.body.removeChild(link), 100);
-    } catch (err) {
-        console.error("Download failed:", err);
-        canvas.toBlob((blob) => {
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'ramadhankarimmmahaghora1.png';
-            link.click();
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-        }, 'image/png');
-    }
-});
+
 
 // Session state
 let currentSessionId = null;
