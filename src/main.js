@@ -26,90 +26,124 @@ let stream;
 let capturedPhotos = [];
 const TOTAL_PHOTOS = 3;
 
-// Theme Customization State
-let customOuterTheme = localStorage.getItem('customOuterTheme') || null;
-let customInnerTheme = localStorage.getItem('customInnerTheme') || null;
+// Theme State
 let overlayMode = localStorage.getItem('overlayMode') === 'true';
+let selectedTemplateId = localStorage.getItem('selectedTemplateId') || '';
+let availableTemplates = [];
 
 const settingsToggle = document.getElementById('settings-toggle');
 const settingsModal = document.getElementById('settings-modal');
 const closeSettings = document.getElementById('close-settings');
-const outerThemeInput = document.getElementById('outer-theme-input');
-const innerThemeInput = document.getElementById('inner-theme-input');
-const overlayModeToggle = document.getElementById('overlay-mode-toggle');
 const resetThemeBtn = document.getElementById('reset-theme');
-const outerPreview = document.getElementById('outer-preview');
-const innerPreview = document.getElementById('inner-preview');
 
-// Initial Toggle State
-overlayModeToggle.checked = overlayMode;
-
-// Settings Handlers
-overlayModeToggle.onchange = (e) => {
-    overlayMode = e.target.checked;
-    localStorage.setItem('overlayMode', overlayMode);
-};
-
-// Helper to Update Previews
-function updateThemePreviews() {
-    if (customOuterTheme) {
-        outerPreview.innerHTML = `<img src="${customOuterTheme}" class="h-full w-full object-cover">`;
-    } else {
-        outerPreview.innerHTML = `<span class="text-xs text-ramadan-secondary/50">Belum ada file</span>`;
-    }
-    if (customInnerTheme) {
-        innerPreview.innerHTML = `<img src="${customInnerTheme}" class="h-full w-full object-cover">`;
-    } else {
-        innerPreview.innerHTML = `<span class="text-xs text-ramadan-secondary/50">Belum ada file</span>`;
-    }
-}
-
-// Initial Previews
-updateThemePreviews();
-
-// Settings Handlers
+// Initial Setup
 settingsToggle.addEventListener('click', () => settingsModal.classList.remove('hidden'));
 closeSettings.addEventListener('click', () => settingsModal.classList.add('hidden'));
 settingsModal.addEventListener('click', (e) => e.target === settingsModal && settingsModal.classList.add('hidden'));
 
-outerThemeInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (re) => {
-            customOuterTheme = re.target.result;
-            localStorage.setItem('customOuterTheme', customOuterTheme);
-            updateThemePreviews();
-            alert('Tema Luar berhasil diperbarui!');
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-innerThemeInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (re) => {
-            customInnerTheme = re.target.result;
-            localStorage.setItem('customInnerTheme', customInnerTheme);
-            updateThemePreviews();
-            alert('Tema Dalam berhasil diperbarui!');
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
 resetThemeBtn.addEventListener('click', () => {
-    if (confirm('Reset tema ke bawaan?')) {
-        customOuterTheme = null;
-        customInnerTheme = null;
-        localStorage.removeItem('customOuterTheme');
-        localStorage.removeItem('customInnerTheme');
-        updateThemePreviews();
+    if (confirm('Reset tema?')) {
+        if (availableTemplates.length > 0) {
+            window.selectTemplate(availableTemplates[0].id);
+        } else {
+            selectedTemplateId = '';
+            localStorage.setItem('selectedTemplateId', '');
+            overlayMode = false;
+            localStorage.setItem('overlayMode', 'false');
+            renderGallery();
+        }
         alert('Tema telah direset.');
     }
 });
+
+// Fetch and Render Templates
+async function loadTemplates() {
+    try {
+        const res = await fetch('manage_templates.php?action=list');
+        availableTemplates = await res.json();
+        
+        // Auto-select first if none selected or invalid
+        const exists = availableTemplates.find(t => t.id === selectedTemplateId);
+        if (!exists && availableTemplates.length > 0) {
+            window.selectTemplate(availableTemplates[0].id);
+        }
+        
+        renderGallery();
+    } catch (err) {
+        console.error("Failed to load templates:", err);
+    }
+}
+
+function renderGallery() {
+    const gallery = document.getElementById('template-gallery');
+    if (!gallery) return;
+
+    // Clear gallery
+    gallery.innerHTML = '';
+
+    let html = '';
+    // Add dynamics
+    availableTemplates.forEach(t => {
+        const isActive = selectedTemplateId === t.id;
+        html += `
+            <button onclick="window.selectTemplate('${t.id}')" 
+                class="template-item group relative aspect-[9/16] rounded-[2.5rem] overflow-hidden transition-all duration-500 
+                ${isActive ? 'ring-[12px] ring-ramadan-gold/70 border-8 border-white' : 'border-4 border-ramadan-gold/10 hover:border-ramadan-gold/50 shadow-xl'}">
+                
+                <!-- Full Preview Image -->
+                <img src="${t.outer}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                
+                <!-- Improved Label Overlay (Subtler) -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity">
+                    <div class="absolute bottom-6 left-0 right-0 px-4 text-center">
+                        <span class="text-sm font-bold text-white uppercase tracking-[0.2em] drop-shadow-lg">${t.name}</span>
+                    </div>
+                </div>
+
+                <!-- Active State Indicator -->
+                ${isActive ? `
+                    <div class="absolute inset-0 bg-ramadan-green/20 backdrop-blur-[1px] flex items-center justify-center">
+                        <div class="bg-ramadan-gold text-white rounded-full p-4 shadow-[0_0_30px_rgba(212,175,55,0.6)] scale-110">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                    </div>
+                ` : `
+                    <div class="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div class="bg-white/90 p-2 rounded-full shadow-lg">
+                            <svg class="w-5 h-5 text-ramadan-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </div>
+                    </div>
+                `}
+            </button>
+        `;
+    });
+
+    gallery.innerHTML = html;
+}
+
+window.selectTemplate = (id) => {
+    selectedTemplateId = id;
+    localStorage.setItem('selectedTemplateId', id);
+    
+    // Apply template settings
+    const template = availableTemplates.find(t => t.id === id);
+    if (template) {
+        overlayMode = template.overlayMode;
+        localStorage.setItem('overlayMode', overlayMode);
+    } else {
+        // Reset if not found
+        overlayMode = false;
+        localStorage.setItem('overlayMode', 'false');
+    }
+
+    renderGallery();
+};
+
+loadTemplates();
 
 // Initialize Camera
 async function initCamera() {
@@ -210,7 +244,13 @@ async function generateStrip() {
     // 1. Draw Background (only if NOT in overlay mode)
     if (!overlayMode) {
         const bgImg = new Image();
-        bgImg.src = customOuterTheme || './gambar/background.png';
+        
+        // Template Selection Logic
+        let bgSource = './gambar/background.png'; // Hard fallback if no template selected
+        const template = availableTemplates.find(t => t.id === selectedTemplateId);
+        if (template && template.outer) bgSource = template.outer;
+        
+        bgImg.src = bgSource;
         await new Promise((resolve) => {
             bgImg.onload = () => {
                 ctx.drawImage(bgImg, 0, 0, stripCanvas.width, stripCanvas.height);
@@ -248,7 +288,13 @@ async function generateStrip() {
 
                 // 3. Draw individual frame for each camera result
                 const frameImg = new Image();
-                frameImg.src = customInnerTheme || `./gambar/atassebagaibingkai.png`;
+                
+                // Frame Selection Logic
+                let frameSource = './gambar/atassebagaibingkai.png';
+                const template = availableTemplates.find(t => t.id === selectedTemplateId);
+                if (template && template.inner) frameSource = template.inner;
+
+                frameImg.src = frameSource;
                 await new Promise((res) => {
                     frameImg.onload = () => {
                         // Draw exactly over the photo slot
@@ -261,15 +307,18 @@ async function generateStrip() {
                 // Add Ketupat on the FIRST photo (index 0) bottom right
                 if (index === 0) {
                     const ketupatImg = new Image();
-                    ketupatImg.src = './gambar/ketupat.webp';
+                    const template = availableTemplates.find(t => t.id === selectedTemplateId);
+                    
+                    let ketupatSource = './gambar/ketupat.webp';
+                    if (template && template.ketupat) ketupatSource = template.ketupat;
+                    
+                    ketupatImg.src = ketupatSource;
                     await new Promise((res) => {
                         ketupatImg.onload = () => {
-                            const kSize = 350; // Besar kecil ketupat
-                            const geserKanan = 120; // Ubah ini: makin besar (+) makin ke kanan, makin kecil (-) makin ke kiri
-                            const geserBawah = 150; // Ubah ini: makin besar (+) makin ke bawah, makin kecil (-) makin ke atas (naik)
-                            
-                            const x = padding + imgWidth - kSize + geserKanan;
-                            const y = yPos + imgHeight - kSize + geserBawah;
+                            const layout = (template && template.layout && template.layout.ketupat) ? template.layout.ketupat : { size: 350, x: 120, y: 150 };
+                            const kSize = layout.size;
+                            const x = padding + imgWidth - kSize + layout.x;
+                            const y = yPos + imgHeight - kSize + layout.y;
 
                             ctx.drawImage(ketupatImg, x, y, kSize, kSize);
                             res();
@@ -281,15 +330,18 @@ async function generateStrip() {
                 // Add Lampu on the SECOND photo (index 1) bottom left
                 if (index === 1) {
                     const lampuImg = new Image();
-                    lampuImg.src = './gambar/lampu.webp';
+                    const template = availableTemplates.find(t => t.id === selectedTemplateId);
+                    
+                    let lampuSource = './gambar/lampu.webp';
+                    if (template && template.lampu) lampuSource = template.lampu;
+
+                    lampuImg.src = lampuSource;
                     await new Promise((res) => {
                         lampuImg.onload = () => {
-                            const lSize = 300; // Besar kecil lampu
-                            const geserKanan = -100; // Ubah ini: makin besar (+) makin ke kanan, makin kecil (-) makin ke kiri
-                            const geserBawah = 140;  // Ubah ini: makin besar (+) makin ke bawah, makin kecil (-) makin ke atas (naik)
-                            
-                            const x = padding + geserKanan;
-                            const y = yPos + imgHeight - lSize + geserBawah;
+                            const layout = (template && template.layout && template.layout.lampu) ? template.layout.lampu : { size: 300, x: -100, y: 140 };
+                            const lSize = layout.size;
+                            const x = padding + layout.x;
+                            const y = yPos + imgHeight - lSize + layout.y;
 
                             ctx.drawImage(lampuImg, x, y, lSize, lSize);
                             res();
@@ -301,15 +353,18 @@ async function generateStrip() {
                 // Add Rama on the THIRD photo (index 2) bottom right
                 if (index === 2) {
                     const ramaImg = new Image();
-                    ramaImg.src = './gambar/rama.png';
+                    const template = availableTemplates.find(t => t.id === selectedTemplateId);
+                    
+                    let ramaSource = './gambar/rama.png';
+                    if (template && template.rama) ramaSource = template.rama;
+
+                    ramaImg.src = ramaSource;
                     await new Promise((res) => {
                         ramaImg.onload = () => {
-                            const rSize = 550; // Besar kecil rama
-                            const geserKanan = 150; // Ubah ini: makin besar (+) makin ke kanan, makin kecil (-) makin ke kiri
-                            const geserBawah = 300; // Ubah ini: makin besar (+) makin ke bawah, makin kecil (-) makin ke atas (naik)
-                            
-                            const x = padding + imgWidth - rSize + geserKanan;
-                            const y = yPos + imgHeight - rSize + geserBawah;
+                            const layout = (template && template.layout && template.layout.rama) ? template.layout.rama : { size: 550, x: 150, y: 300 };
+                            const rSize = layout.size;
+                            const x = padding + imgWidth - rSize + layout.x;
+                            const y = yPos + imgHeight - rSize + layout.y;
 
                             ctx.drawImage(ramaImg, x, y, rSize, rSize);
                             res();
@@ -329,7 +384,12 @@ async function generateStrip() {
     // 4. Draw Overlay Theme (if in overlay mode)
     if (overlayMode) {
         const bgImg = new Image();
-        bgImg.src = customOuterTheme || './gambar/background.png';
+        
+        let bgSource = './gambar/background.png';
+        const template = availableTemplates.find(t => t.id === selectedTemplateId);
+        if (template && template.outer) bgSource = template.outer;
+
+        bgImg.src = bgSource;
         await new Promise((resolve) => {
             bgImg.onload = () => {
                 ctx.drawImage(bgImg, 0, 0, stripCanvas.width, stripCanvas.height);

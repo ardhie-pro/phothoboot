@@ -42,51 +42,34 @@
     </button>
 
 
-    <div id="settings-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md hidden">
-        <div class="glass-card p-8 rounded-[40px] shadow-2xl max-w-md w-full relative border-2 border-ramadan-primary/30">
-            <button id="close-settings" class="absolute top-4 right-4 text-ramadan-secondary hover:text-ramadan-primary transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    <div id="settings-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-ramadan-green/90 backdrop-blur-md hidden">
+        <div class="glass-card p-8 md:p-12 rounded-[60px] shadow-2xl max-w-2xl w-full relative border-2 border-ramadan-gold/30 overflow-hidden">
+            <!-- Decorative Modal Elements -->
+            <div class="absolute -top-12 -left-12 w-48 h-48 bg-ramadan-gold/15 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-12 -right-12 w-48 h-48 bg-ramadan-primary/15 rounded-full blur-3xl"></div>
+
+            <button id="close-settings" class="absolute top-8 right-8 text-ramadan-secondary/70 hover:text-ramadan-primary transition-all hover:scale-110 z-10">
+                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
             
-            <h2 class="font-playfair text-3xl text-ramadan-primary mb-6">Kustomisasi Tema</h2>
+            <div class="text-center mb-12 relative">
+                <h2 class="font-playfair text-5xl md:text-7xl text-ramadan-secondary mb-4 drop-shadow-sm">Pilih Tema Story</h2>
+                <div class="h-1.5 w-32 bg-ramadan-gold/50 mx-auto rounded-full"></div>
+                <p class="text-ramadan-secondary/70 mt-5 font-semibold italic text-lg tracking-wide">Pilih bingkai terbaik untuk ceritamu</p>
+            </div>
             
-            <div class="space-y-6">
-                <div>
-                    <label class="block text-sm font-semibold text-ramadan-secondary mb-2">Tema Luar (Strip Background) <span class="text-ramadan-primary">[1080 x 1920 px]</span></label>
-                    <input type="file" id="outer-theme-input" accept="image/*" class="w-full text-sm text-ramadan-secondary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-ramadan-primary file:text-ramadan-cream hover:file:bg-ramadan-primary/80 mb-2" />
-                    <div id="outer-preview" class="h-20 w-full bg-white/50 rounded-xl border border-dashed border-ramadan-primary/30 flex items-center justify-center overflow-hidden">
-                        <span class="text-xs text-ramadan-secondary/50">Belum ada file</span>
-                    </div>
-
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-semibold text-ramadan-secondary mb-2">Tema Dalam (Bingkai Foto) <span class="text-ramadan-primary">[920 x 450 px]</span></label>
-                    <input type="file" id="inner-theme-input" accept="image/*" class="w-full text-sm text-ramadan-secondary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-ramadan-primary file:text-ramadan-cream hover:file:bg-ramadan-primary/80 mb-2" />
-                    <div id="inner-preview" class="h-20 w-full bg-white/50 rounded-xl border border-dashed border-ramadan-primary/30 flex items-center justify-center overflow-hidden">
-                        <span class="text-xs text-ramadan-secondary/50">Belum ada file</span>
-                    </div>
+            <div class="relative z-10">
+                <div id="template-gallery" class="grid grid-cols-2 gap-8 max-h-[55vh] overflow-y-auto px-2 pb-6 custom-scrollbar scroll-smooth">
+                    <!-- Dynamic templates will follow -->
                 </div>
 
-                <div class="flex items-center gap-3 p-3 bg-ramadan-primary/10 rounded-2xl border border-ramadan-primary/20">
-                    <input type="checkbox" id="overlay-mode-toggle" class="w-5 h-5 accent-ramadan-primary" />
-                    <div>
-                        <label for="overlay-mode-toggle" 
-                        class="text-sm font-bold text-ramadan-secondary">Gunakan Tema Luar sebagai Overlay</label>
-                        <p class="text-[10px] text-ramadan-secondary/70">Centang jika Tema Luar Anda adalah bingkai yang memiliki lubang (transparan).</p>
-                    </div>
-                </div>
-
-                <div class="p-3 bg-blue-50 rounded-2xl border border-blue-100 italic">
-                    <p class="text-[10px] text-blue-600">**Tips:** Gunakan format **PNG transparan** agar foto tidak tertutup oleh background/bingkai!</p>
-                </div>
-
-                <div class="pt-4 border-t border-ramadan-primary/20">
-                    <button id="reset-theme" class="w-full py-3 px-4 bg-red-100 text-red-600 rounded-2xl font-bold hover:bg-red-200 transition-colors">
-                        Reset ke Standar
+                <div class="pt-8 mt-4 border-t border-ramadan-gold/20 flex flex-col items-center gap-4">
+                    <button id="reset-theme" class="px-8 py-3 bg-red-50 text-red-600 rounded-2xl font-bold hover:bg-red-100 transition-all text-base shadow-sm active:scale-95">
+                        Reset ke Tema Standar
                     </button>
+                    <a href="admin.php" target="_blank" class="text-sm font-medium text-ramadan-secondary/40 hover:text-ramadan-primary transition-colors underline-offset-4 hover:underline">Kelola Template (Admin)</a>
                 </div>
             </div>
         </div>

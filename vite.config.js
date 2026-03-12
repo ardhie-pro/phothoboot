@@ -8,6 +8,14 @@ export default defineConfig({
         target: 'http://localhost:8080',
         changeOrigin: true,
       },
+      '/manage_templates.php': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+      '/admin.php': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
       '/view.php': {
         target: 'http://localhost:8080',
         changeOrigin: true,

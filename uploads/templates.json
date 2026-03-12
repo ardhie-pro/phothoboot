@@ -1,0 +1,43 @@
+[
+    {
+        "id": "69b2fc10e86fd",
+        "name": "baruuu",
+        "outer": "uploads\/templates\/69b2fc10e86fd\/outer.png",
+        "overlayMode": false
+    },
+    {
+        "id": "69b300365cdd9",
+        "name": "baru lagi pak",
+        "outer": "uploads\/templates\/69b300365cdd9\/outer.png",
+        "ketupat": "uploads\/templates\/69b300365cdd9\/ketupat.webp",
+        "lampu": "uploads\/templates\/69b300365cdd9\/lampu.png",
+        "rama": "uploads\/templates\/69b300365cdd9\/rama.png",
+        "overlayMode": false
+    },
+    {
+        "id": "69b30c3b22bf6",
+        "name": "terbaru",
+        "outer": "uploads\/templates\/69b30c3b22bf6\/outer.png",
+        "ketupat": "uploads\/templates\/69b30c3b22bf6\/ketupat.png",
+        "lampu": "uploads\/templates\/69b30c3b22bf6\/lampu.png",
+        "rama": "uploads\/templates\/69b30c3b22bf6\/rama.png",
+        "overlayMode": false,
+        "layout": {
+            "ketupat": {
+                "x": 120,
+                "y": 150,
+                "size": 500
+            },
+            "lampu": {
+                "x": -200,
+                "y": 190,
+                "size": 500
+            },
+            "rama": {
+                "x": 250,
+                "y": 200,
+                "size": 550
+            }
+        }
+    }
+]
