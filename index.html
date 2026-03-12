@@ -4,7 +4,77 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ramadan Kareem Photo Booth</title>
-    <link rel="stylesheet" href="./src/style.css" />
+    <title>Ramadan Kareem Photo Booth</title>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              ramadan: {
+                primary: "#D4AF37",   
+                secondary: "#63392E", 
+                cream: "#FFFDF5",     
+                gold: "#C9A227",      
+                green: "#2D5A27",     
+                light: "#8B4513",     
+              },
+            },
+            fontFamily: {
+              outfit: ["Outfit", "sans-serif"],
+              playfair: ["Playfair Display", "serif"],
+            },
+          },
+        },
+      }
+    </script>
+    <style>
+      :root {
+        --ramadan-cream: #FFFDF5;
+        --ramadan-primary: #D48C12;
+        --ramadan-secondary: #63392E;
+        --ramadan-green: #2D5A27;
+        --ramadan-gold: #D4AF37;
+      }
+      body {
+        background-color: var(--ramadan-green);
+        background-image: radial-gradient(circle at 10% 20%, rgba(212, 140, 18, 0.1) 0%, transparent 30%),
+                          radial-gradient(circle at 90% 80%, rgba(212, 140, 18, 0.1) 0%, transparent 30%);
+      }
+      .glass-card {
+        background: rgba(255, 253, 245, 0.7);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(212, 140, 18, 0.2);
+        box-shadow: 0 25px 50px -12px rgba(99, 57, 46, 0.15);
+      }
+      .btn-premium {
+        background: linear-gradient(135deg, #D48C12 0%, #B4730A 100%);
+        color: white;
+        box-shadow: 0 10px 20px -5px rgba(212, 140, 18, 0.4);
+      }
+      @keyframes sway {
+        0%, 100% { transform: rotate(-5deg); }
+        50% { transform: rotate(5deg); }
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(5deg); }
+      }
+      @keyframes flash-anim {
+        0%, 100% { opacity: 0; }
+        50% { opacity: 1; }
+      }
+      .animate-sway { animation: sway 4s ease-in-out infinite; transform-origin: top center; }
+      .animate-float { animation: float 6s ease-in-out infinite; }
+      .flash-active { animation: flash-anim 0.3s ease-out; }
+      #frame-overlay {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect x="2" y="2" width="96" height="96" fill="none" stroke="%23D48C12" stroke-width="0.5" stroke-dasharray="2,2" opacity="0.3"/></svg>');
+      }
+      .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+      .custom-scrollbar::-webkit-scrollbar-track { background: var(--ramadan-green); }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--ramadan-gold); border-radius: 10px; }
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
