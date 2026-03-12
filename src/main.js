@@ -2,7 +2,6 @@
 
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
-// ... other existing elements
 const captureBtn = document.getElementById('capture-btn');
 const retakeBtn = document.getElementById('retake-btn');
 const saveBtn = document.getElementById('save-btn');
