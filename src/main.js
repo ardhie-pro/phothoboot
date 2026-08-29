@@ -37,7 +37,10 @@ const closeSettings = document.getElementById('close-settings');
 const resetThemeBtn = document.getElementById('reset-theme');
 
 // Initial Setup
-settingsToggle.addEventListener('click', () => settingsModal.classList.remove('hidden'));
+settingsToggle.addEventListener('click', () => {
+    loadTemplates();
+    settingsModal.classList.remove('hidden');
+});
 closeSettings.addEventListener('click', () => settingsModal.classList.add('hidden'));
 settingsModal.addEventListener('click', (e) => e.target === settingsModal && settingsModal.classList.add('hidden'));
 
@@ -66,6 +69,9 @@ async function loadTemplates() {
         const exists = availableTemplates.find(t => t.id === selectedTemplateId);
         if (!exists && availableTemplates.length > 0) {
             window.selectTemplate(availableTemplates[0].id);
+        } else if (availableTemplates.length === 0) {
+            selectedTemplateId = '';
+            localStorage.setItem('selectedTemplateId', '');
         }
         
         renderGallery();
@@ -80,6 +86,16 @@ function renderGallery() {
 
     // Clear gallery
     gallery.innerHTML = '';
+
+    if (availableTemplates.length === 0) {
+        gallery.innerHTML = `
+            <div class="col-span-2 text-center py-8 text-ramadan-secondary/60">
+                <p class="font-semibold">Belum ada template yang diunggah.</p>
+                <p class="text-xs mt-1">Gunakan menu Admin di bawah untuk menambahkan template.</p>
+            </div>
+        `;
+        return;
+    }
 
     let html = '';
     // Add dynamics
@@ -532,7 +548,7 @@ saveBtn.addEventListener('click', async () => {
             payload.session_id = currentSessionId;
         }
 
-        const response = await fetch('/upload.php', {
+        const response = await fetch('upload.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)

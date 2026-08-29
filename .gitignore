@@ -1,0 +1,6 @@
+node_modules/
+.vite/
+uploads/20*
+uploads/photo_*
+.DS_Store
+Thumbs.db

@@ -6,36 +6,27 @@
         "overlayMode": false
     },
     {
-        "id": "69b300365cdd9",
-        "name": "baru lagi pak",
-        "outer": "uploads\/templates\/69b300365cdd9\/outer.png",
-        "ketupat": "uploads\/templates\/69b300365cdd9\/ketupat.webp",
-        "lampu": "uploads\/templates\/69b300365cdd9\/lampu.png",
-        "rama": "uploads\/templates\/69b300365cdd9\/rama.png",
-        "overlayMode": false
-    },
-    {
-        "id": "69b30c3b22bf6",
-        "name": "terbaru",
-        "outer": "uploads\/templates\/69b30c3b22bf6\/outer.png",
-        "ketupat": "uploads\/templates\/69b30c3b22bf6\/ketupat.png",
-        "lampu": "uploads\/templates\/69b30c3b22bf6\/lampu.png",
-        "rama": "uploads\/templates\/69b30c3b22bf6\/rama.png",
+        "id": "6a92d48ba8ada",
+        "name": "Terbaru Kaka",
+        "outer": "uploads\/templates\/6a92d48ba8ada\/outer.png",
+        "ketupat": "",
+        "lampu": "",
+        "rama": "",
         "overlayMode": false,
         "layout": {
             "ketupat": {
                 "x": 120,
                 "y": 150,
-                "size": 500
+                "size": 350
             },
             "lampu": {
-                "x": -200,
-                "y": 190,
-                "size": 500
+                "x": -100,
+                "y": 140,
+                "size": 300
             },
             "rama": {
-                "x": 250,
-                "y": 200,
+                "x": 150,
+                "y": 300,
                 "size": 550
             }
         }

@@ -3,15 +3,85 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ramadan Kareem Photo Booth</title>
+    <title>Ramadan Kareem Photo Booth</title>
+    <title>Ramadan Kareem Photo Booth</title>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              ramadan: {
+                primary: "#D4AF37",   
+                secondary: "#63392E", 
+                cream: "#FFFDF5",     
+                gold: "#C9A227",      
+                green: "#2D5A27",     
+                light: "#8B4513",     
+              },
+            },
+            fontFamily: {
+              outfit: ["Outfit", "sans-serif"],
+              playfair: ["Playfair Display", "serif"],
+            },
+          },
+        },
+      }
+    </script>
+    <style>
+      :root {
+        --ramadan-cream: #FFFDF5;
+        --ramadan-primary: #D48C12;
+        --ramadan-secondary: #63392E;
+        --ramadan-green: #2D5A27;
+        --ramadan-gold: #D4AF37;
+      }
+      body {
+        background-color: var(--ramadan-green);
+        background-image: radial-gradient(circle at 10% 20%, rgba(212, 140, 18, 0.1) 0%, transparent 30%),
+                          radial-gradient(circle at 90% 80%, rgba(212, 140, 18, 0.1) 0%, transparent 30%);
+      }
+      .glass-card {
+        background: rgba(255, 253, 245, 0.7);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(212, 140, 18, 0.2);
+        box-shadow: 0 25px 50px -12px rgba(99, 57, 46, 0.15);
+      }
+      .btn-premium {
+        background: linear-gradient(135deg, #D48C12 0%, #B4730A 100%);
+        color: white;
+        box-shadow: 0 10px 20px -5px rgba(212, 140, 18, 0.4);
+      }
+      @keyframes sway {
+        0%, 100% { transform: rotate(-5deg); }
+        50% { transform: rotate(5deg); }
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(5deg); }
+      }
+      @keyframes flash-anim {
+        0%, 100% { opacity: 0; }
+        50% { opacity: 1; }
+      }
+      .animate-sway { animation: sway 4s ease-in-out infinite; transform-origin: top center; }
+      .animate-float { animation: float 6s ease-in-out infinite; }
+      .flash-active { animation: flash-anim 0.3s ease-out; }
+      #frame-overlay {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect x="2" y="2" width="96" height="96" fill="none" stroke="%23D48C12" stroke-width="0.5" stroke-dasharray="2,2" opacity="0.3"/></svg>');
+      }
+      .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+      .custom-scrollbar::-webkit-scrollbar-track { background: var(--ramadan-green); }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--ramadan-gold); border-radius: 10px; }
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="./assets/index-IhXVl-VB.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-ZF_pr749.css">
+    <script type="module" crossorigin src="./assets/index-EO4PMRkG.js"></script>
   </head>
   <body
     class="bg-ramadan-cream h-screen flex flex-col items-center justify-start md:justify-center p-2 md:p-4 text-ramadan-secondary font-outfit overflow-hidden relative"
@@ -43,51 +113,34 @@
     </button>
 
 
-    <div id="settings-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md hidden">
-        <div class="glass-card p-8 rounded-[40px] shadow-2xl max-w-md w-full relative border-2 border-ramadan-primary/30">
-            <button id="close-settings" class="absolute top-4 right-4 text-ramadan-secondary hover:text-ramadan-primary transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    <div id="settings-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-ramadan-green/90 backdrop-blur-md hidden">
+        <div class="glass-card p-8 md:p-12 rounded-[60px] shadow-2xl max-w-2xl w-full relative border-2 border-ramadan-gold/30 overflow-hidden">
+            <!-- Decorative Modal Elements -->
+            <div class="absolute -top-12 -left-12 w-48 h-48 bg-ramadan-gold/15 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-12 -right-12 w-48 h-48 bg-ramadan-primary/15 rounded-full blur-3xl"></div>
+
+            <button id="close-settings" class="absolute top-8 right-8 text-ramadan-secondary/70 hover:text-ramadan-primary transition-all hover:scale-110 z-10">
+                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
             
-            <h2 class="font-playfair text-3xl text-ramadan-primary mb-6">Kustomisasi Tema</h2>
+            <div class="text-center mb-12 relative">
+                <h2 class="font-playfair text-5xl md:text-7xl text-ramadan-secondary mb-4 drop-shadow-sm">Pilih Tema Story</h2>
+                <div class="h-1.5 w-32 bg-ramadan-gold/50 mx-auto rounded-full"></div>
+                <p class="text-ramadan-secondary/70 mt-5 font-semibold italic text-lg tracking-wide">Pilih bingkai terbaik untuk ceritamu</p>
+            </div>
             
-            <div class="space-y-6">
-                <div>
-                    <label class="block text-sm font-semibold text-ramadan-secondary mb-2">Tema Luar (Strip Background) <span class="text-ramadan-primary">[920 x 2320 px]</span></label>
-                    <input type="file" id="outer-theme-input" accept="image/*" class="w-full text-sm text-ramadan-secondary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-ramadan-primary file:text-ramadan-cream hover:file:bg-ramadan-primary/80 mb-2" />
-                    <div id="outer-preview" class="h-20 w-full bg-white/50 rounded-xl border border-dashed border-ramadan-primary/30 flex items-center justify-center overflow-hidden">
-                        <span class="text-xs text-ramadan-secondary/50">Belum ada file</span>
-                    </div>
-
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-semibold text-ramadan-secondary mb-2">Tema Dalam (Bingkai Foto) <span class="text-ramadan-primary">[820 x 620 px]</span></label>
-                    <input type="file" id="inner-theme-input" accept="image/*" class="w-full text-sm text-ramadan-secondary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-ramadan-primary file:text-ramadan-cream hover:file:bg-ramadan-primary/80 mb-2" />
-                    <div id="inner-preview" class="h-20 w-full bg-white/50 rounded-xl border border-dashed border-ramadan-primary/30 flex items-center justify-center overflow-hidden">
-                        <span class="text-xs text-ramadan-secondary/50">Belum ada file</span>
-                    </div>
+            <div class="relative z-10">
+                <div id="template-gallery" class="grid grid-cols-2 gap-8 max-h-[55vh] overflow-y-auto px-2 pb-6 custom-scrollbar scroll-smooth">
+                    <!-- Dynamic templates will follow -->
                 </div>
 
-                <div class="flex items-center gap-3 p-3 bg-ramadan-primary/10 rounded-2xl border border-ramadan-primary/20">
-                    <input type="checkbox" id="overlay-mode-toggle" class="w-5 h-5 accent-ramadan-primary" />
-                    <div>
-                        <label for="overlay-mode-toggle" 
-                        class="text-sm font-bold text-ramadan-secondary">Gunakan Tema Luar sebagai Overlay</label>
-                        <p class="text-[10px] text-ramadan-secondary/70">Centang jika Tema Luar Anda adalah bingkai yang memiliki lubang (transparan).</p>
-                    </div>
-                </div>
-
-                <div class="p-3 bg-blue-50 rounded-2xl border border-blue-100 italic">
-                    <p class="text-[10px] text-blue-600">**Tips:** Gunakan format **PNG transparan** agar foto tidak tertutup oleh background/bingkai!</p>
-                </div>
-
-                <div class="pt-4 border-t border-ramadan-primary/20">
-                    <button id="reset-theme" class="w-full py-3 px-4 bg-red-100 text-red-600 rounded-2xl font-bold hover:bg-red-200 transition-colors">
-                        Reset ke Standar
+                <div class="pt-8 mt-4 border-t border-ramadan-gold/20 flex flex-col items-center gap-4">
+                    <button id="reset-theme" class="px-8 py-3 bg-red-50 text-red-600 rounded-2xl font-bold hover:bg-red-100 transition-all text-base shadow-sm active:scale-95">
+                        Reset ke Tema Standar
                     </button>
+                    <a href="admin.php" target="_blank" class="text-sm font-medium text-ramadan-secondary/40 hover:text-ramadan-primary transition-colors underline-offset-4 hover:underline">Kelola Template (Admin)</a>
                 </div>
             </div>
         </div>
@@ -118,10 +171,10 @@
       <h1
         class="font-playfair text-4xl md:text-7xl mb-1 drop-shadow-2xl text-ramadan-primary"
       >
-        Buka Puasa
+        Berbuka Bersama
       </h1>
       <p class="text-xl md:text-4xl font-playfair font-bold italic text-ramadan-primary">
-        Mahaghora Bersama
+        Mahaghora Group
       </p>
     </header>
 
@@ -250,6 +303,7 @@
             </button>
             <button
               id="download-btn"
+              style="display: none;"
               class="flex items-center gap-2 bg-ramadan-green text-ramadan-cream font-bold py-2 md:py-3 px-6 md:px-8 rounded-full shadow-lg hover:scale-105 transition-all"
             >
               <svg
