@@ -1,0 +1,16 @@
+{
+    "title": "ITS",
+    "subtitle": "Beasiswa Mahaghora",
+    "titleColor": "#d48c12",
+    "subtitleColor": "#d48c12",
+    "bgColor": "#263059",
+    "bgImage": "",
+    "primaryColor": "#d48c12",
+    "secondaryColor": "#63392e",
+    "goldColor": "#d4af37",
+    "showDeco": true,
+    "decoTopLeft": ".\/gambar\/lampu.webp",
+    "decoTopRight": ".\/gambar\/lampu.webp",
+    "decoBottomLeft": ".\/gambar\/ketupat.webp",
+    "decoBottomRight": ".\/gambar\/ketupat.webp"
+}

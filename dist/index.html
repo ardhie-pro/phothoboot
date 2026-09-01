@@ -2,8 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ramadan Kareem Photo Booth</title>
     <title>Ramadan Kareem Photo Booth</title>
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -81,17 +83,86 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="./assets/index-EO4PMRkG.js"></script>
+    <script>
+      (function() {
+        function applySettings(s) {
+          if (!s) return;
+          const root = document.documentElement;
+          if (s.primaryColor) root.style.setProperty('--ramadan-primary', s.primaryColor);
+          if (s.bgColor) root.style.setProperty('--ramadan-green', s.bgColor);
+          if (s.goldColor) root.style.setProperty('--ramadan-gold', s.goldColor);
+          if (s.secondaryColor) root.style.setProperty('--ramadan-secondary', s.secondaryColor);
+          
+          const applyDom = () => {
+            const titleEl = document.getElementById('booth-title');
+            const subtitleEl = document.getElementById('booth-subtitle');
+            if (titleEl && s.title) {
+              titleEl.textContent = s.title;
+              if (s.titleColor) titleEl.style.setProperty('color', s.titleColor, 'important');
+            }
+            if (subtitleEl && s.subtitle) {
+              subtitleEl.textContent = s.subtitle;
+              if (s.subtitleColor) subtitleEl.style.setProperty('color', s.subtitleColor, 'important');
+            }
+            if (s.bgImage) {
+              document.body.style.setProperty('background-image', 'url("' + s.bgImage + '")', 'important');
+              document.body.style.setProperty('background-size', 'cover', 'important');
+              document.body.style.setProperty('background-position', 'center', 'important');
+              document.body.style.setProperty('background-repeat', 'no-repeat', 'important');
+            } else if (s.bgColor) {
+              document.body.style.setProperty('background-color', s.bgColor, 'important');
+              document.body.style.setProperty('background-image', 'radial-gradient(circle at 10% 20%, rgba(212, 140, 18, 0.1) 0%, transparent 30%), radial-gradient(circle at 90% 80%, rgba(212, 140, 18, 0.1) 0%, transparent 30%)', 'important');
+            }
+            const deco = document.getElementById('side-decorations-container');
+            if (deco) {
+              if (s.showDeco === false || s.showDeco === 'false') {
+                deco.style.setProperty('display', 'none', 'important');
+              } else {
+                deco.style.setProperty('display', 'block', 'important');
+                const tl = document.getElementById('deco-top-left');
+                const tr = document.getElementById('deco-top-right');
+                const bl = document.getElementById('deco-bottom-left');
+                const br = document.getElementById('deco-bottom-right');
+                if (tl && s.decoTopLeft) tl.src = s.decoTopLeft;
+                if (tr && s.decoTopRight) tr.src = s.decoTopRight;
+                if (bl && s.decoBottomLeft) bl.src = s.decoBottomLeft;
+                if (br && s.decoBottomRight) br.src = s.decoBottomRight;
+              }
+            }
+          };
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', applyDom);
+          } else {
+            applyDom();
+          }
+        }
+        try {
+          const cached = localStorage.getItem('cachedBoothSettings');
+          if (cached) applySettings(JSON.parse(cached));
+        } catch(e) {}
+        fetch('manage_settings.php?action=get&_t=' + Date.now(), { cache: 'no-store' })
+          .then(r => r.json())
+          .then(d => {
+            if (d && d.success && d.settings) {
+              localStorage.setItem('cachedBoothSettings', JSON.stringify(d.settings));
+              applySettings(d.settings);
+            }
+          }).catch(console.warn);
+      })();
+    </script>
+    <script type="module" crossorigin src="./assets/index-C4cgHwrj.js"></script>
   </head>
   <body
-    class="bg-ramadan-cream h-screen flex flex-col items-center justify-start md:justify-center p-2 md:p-4 text-ramadan-secondary font-outfit overflow-hidden relative"
+    class="bg-ramadan-cream min-h-screen flex flex-col items-center justify-start p-2 md:p-4 text-ramadan-secondary font-outfit overflow-y-auto custom-scrollbar relative"
   >
     <!-- Ramadan Decorations -->
-    <img src="./assets/lampu-DKmr3fkV.webp" class="fixed -top-4 left-10 w-32 md:w-48 z-20 animate-sway pointer-events-none opacity-90" alt="Lantern">
-    <img src="./assets/lampu-DKmr3fkV.webp" class="fixed -top-10 right-20 w-24 md:w-40 z-20 animate-sway pointer-events-none opacity-80" style="animation-delay: -1.5s;" alt="Lantern">
-    
-    <img src="./assets/ketupat-Bb_wIEB5.webp" class="fixed -bottom-10 -left-10 w-40 md:w-64 z-20 animate-float pointer-events-none opacity-30" alt="Ketupat">
-    <img src="./assets/ketupat-Bb_wIEB5.webp" class="fixed top-1/2 -right-10 w-32 md:w-48 z-20 animate-float pointer-events-none opacity-20" style="animation-delay: -2s;" alt="Ketupat">
+    <div id="side-decorations-container">
+      <img id="deco-top-left" src="./assets/lampu-DKmr3fkV.webp" class="fixed -top-4 left-10 w-32 md:w-48 z-20 animate-sway pointer-events-none opacity-90" alt="Lantern">
+      <img id="deco-top-right" src="./assets/lampu-DKmr3fkV.webp" class="fixed -top-10 right-20 w-24 md:w-40 z-20 animate-sway pointer-events-none opacity-80" style="animation-delay: -1.5s;" alt="Lantern">
+      
+      <img id="deco-bottom-left" src="./assets/ketupat-Bb_wIEB5.webp" class="fixed -bottom-10 -left-10 w-40 md:w-64 z-20 animate-float pointer-events-none opacity-30" alt="Ketupat">
+      <img id="deco-bottom-right" src="./assets/ketupat-Bb_wIEB5.webp" class="fixed top-1/2 -right-10 w-32 md:w-48 z-20 animate-float pointer-events-none opacity-20" style="animation-delay: -2s;" alt="Ketupat">
+    </div>
 
     <!-- Background Decor -->
     <div class="fixed inset-0 opacity-20 pointer-events-none">
@@ -128,19 +199,19 @@
             <div class="text-center mb-12 relative">
                 <h2 class="font-playfair text-5xl md:text-7xl text-ramadan-secondary mb-4 drop-shadow-sm">Pilih Tema Story</h2>
                 <div class="h-1.5 w-32 bg-ramadan-gold/50 mx-auto rounded-full"></div>
-                <p class="text-ramadan-secondary/70 mt-5 font-semibold italic text-lg tracking-wide">Pilih bingkai terbaik untuk ceritamu</p>
             </div>
-            
-            <div class="relative z-10">
+
+            <!-- Template Gallery Carousel/Grid -->
+            <div class="space-y-6">
                 <div id="template-gallery" class="grid grid-cols-2 gap-8 max-h-[55vh] overflow-y-auto px-2 pb-6 custom-scrollbar scroll-smooth">
-                    <!-- Dynamic templates will follow -->
+                    <!-- Templates will be rendered here -->
                 </div>
 
-                <div class="pt-8 mt-4 border-t border-ramadan-gold/20 flex flex-col items-center gap-4">
+                <div class="flex items-center justify-between pt-4 border-t border-ramadan-gold/20">
                     <button id="reset-theme" class="px-8 py-3 bg-red-50 text-red-600 rounded-2xl font-bold hover:bg-red-100 transition-all text-base shadow-sm active:scale-95">
                         Reset ke Tema Standar
                     </button>
-                    <a href="admin.php" target="_blank" class="text-sm font-medium text-ramadan-secondary/40 hover:text-ramadan-primary transition-colors underline-offset-4 hover:underline">Kelola Template (Admin)</a>
+                    <a href="admin.php" target="_blank" class="text-sm font-medium text-ramadan-secondary/40 hover:text-ramadan-primary transition-colors underline-offset-4 hover:underline">Kelola Template &amp; Tampilan (Admin)</a>
                 </div>
             </div>
         </div>
@@ -167,162 +238,374 @@
         </div>
     </div>
 
-    <header class="text-center mb-2 md:mb-6 relative z-40 scale-75 md:scale-100">
+    <!-- Photo Detail Modal (Popup Full Foto & Tombol Ulangi) -->
+    <div
+        id="photo-detail-modal"
+        class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md hidden transition-all duration-200"
+    >
+        <div class="relative glass-card max-w-lg md:max-w-xl w-full p-4 md:p-6 rounded-[32px] border-2 border-ramadan-gold shadow-2xl flex flex-col items-center bg-ramadan-green/95 text-ramadan-cream animate-fadeIn">
+            <!-- Close Button -->
+            <button
+                id="close-photo-modal-btn"
+                class="absolute top-4 right-4 w-9 h-9 flex items-center justify-center text-ramadan-cream/70 hover:text-white rounded-full bg-black/40 hover:bg-black/60 transition-colors z-10 font-bold text-lg"
+            >
+                ✕
+            </button>
+
+            <!-- Modal Header -->
+            <div class="flex items-center gap-2 mb-3 text-center">
+                <span class="text-xl">📸</span>
+                <h3 id="photo-detail-title" class="font-playfair text-xl md:text-2xl font-bold text-ramadan-gold">
+                    Hasil Foto #1
+                </h3>
+            </div>
+
+            <!-- Full Photo Preview Image -->
+            <div class="w-full relative aspect-[920/450] bg-black/60 rounded-2xl overflow-hidden border border-ramadan-gold/40 shadow-inner flex items-center justify-center mb-4">
+                <img id="photo-detail-img" src="" alt="Detail Foto" class="w-full h-full object-cover">
+            </div>
+
+            <!-- Modal Action Buttons -->
+            <div class="flex flex-wrap items-center justify-center gap-3 w-full">
+                <button
+                    id="photo-modal-retake-btn"
+                    class="flex items-center gap-2 btn-premium font-bold py-3 px-6 md:px-8 rounded-full text-sm md:text-base shadow-xl transition-all hover:scale-105 active:scale-95"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    <span>🔄 Ulangi Foto Ini</span>
+                </button>
+                <button
+                    id="photo-modal-close-btn"
+                    class="flex items-center gap-2 bg-slate-200/90 hover:bg-slate-300 text-slate-800 font-bold py-3 px-6 rounded-full text-sm md:text-base transition-all active:scale-95"
+                >
+                    ✕ Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <header class="text-center my-2 md:my-4 relative z-40 scale-75 md:scale-100">
       <h1
+        id="booth-title"
         class="font-playfair text-4xl md:text-7xl mb-1 drop-shadow-2xl text-ramadan-primary"
       >
         Berbuka Bersama
       </h1>
-      <p class="text-xl md:text-4xl font-playfair font-bold italic text-ramadan-primary">
+      <p id="booth-subtitle" class="text-xl md:text-4xl font-playfair font-bold italic text-ramadan-primary">
         Mahaghora Group
       </p>
     </header>
 
     <!-- Photo Booth Container -->
-    <!-- Photo Booth Container -->
-    <main class="relative group z-30 max-w-6xl w-full flex-1 flex flex-col max-h-[80vh] md:max-h-[85vh]">
-        <div class="glass-card p-3 md:p-6 rounded-[30px] md:rounded-[40px] relative overflow-hidden flex-1 flex flex-col">
-            <!-- Photo Counter -->
-            <div id="photo-counter" class="absolute top-6 left-6 z-20 bg-ramadan-gold text-ramadan-green px-3 py-1 rounded-full font-bold text-sm hidden">
-                Foto 1 / 3
-            </div>
-            <!-- Camera View -->
-            <div id="camera-container" class="relative rounded-2xl overflow-hidden flex-1 bg-black shadow-inner min-h-0">
-          <video
-            id="video"
-            autoplay
-            playsinline
-            class="w-full h-full object-cover"
-          ></video>
-          <canvas
-            id="canvas"
-            class="hidden absolute top-0 left-0 w-full h-full"
-          ></canvas>
+    <main class="relative group z-30 max-w-5xl w-full flex flex-col pb-8">
+        <div class="glass-card p-3 md:p-6 rounded-[30px] md:rounded-[40px] relative flex flex-col gap-3 md:gap-4 shadow-2xl">
+            
+            <!-- VIEW 1: Camera & 6 Photo Session -->
+            <div id="camera-session-view" class="w-full flex flex-col gap-3 md:gap-4">
+                <!-- Camera View (Exact Aspect Ratio 920/450 as Result) -->
+                <div id="camera-container" class="relative rounded-2xl overflow-hidden w-full aspect-[920/450] bg-black shadow-2xl flex items-center justify-center border-2 border-ramadan-gold/30">
+                    <!-- Photo Counter Badge -->
+                    <div id="photo-counter" class="absolute top-4 left-4 z-20 bg-ramadan-gold text-ramadan-green px-3.5 py-1.5 rounded-full font-bold text-xs shadow-lg">
+                        Foto 0 / 6
+                    </div>
 
-          <!-- Countdown Overlay -->
-          <div id="countdown-overlay" class="hidden absolute inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
-              <span id="countdown-number" class="text-[15rem] md:text-[20rem] font-bold text-ramadan-green drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] animate-pulse">3</span>
-          </div>
+                    <video
+                        id="video"
+                        autoplay
+                        playsinline
+                        class="w-full h-full object-cover -scale-x-100"
+                        style="transform: scaleX(-1);"
+                    ></video>
+                    <canvas
+                        id="canvas"
+                        class="hidden absolute top-0 left-0 w-full h-full"
+                    ></canvas>
 
-          <!-- Processing Overlay -->
-          <div id="processing-overlay" class="hidden absolute inset-0 z-[110] flex flex-col items-center justify-center bg-ramadan-secondary/90 backdrop-blur-md text-ramadan-cream">
-              <div class="w-20 h-20 border-8 border-ramadan-gold border-t-transparent rounded-full animate-spin mb-6"></div>
-              <p class="font-playfair text-4xl animate-pulse font-bold">Mencetak Kenangan...</p>
-          </div>
+                    <!-- Countdown Overlay -->
+                    <div id="countdown-overlay" class="hidden absolute inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
+                        <span id="countdown-number" class="text-[12rem] md:text-[16rem] font-bold text-ramadan-gold drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)] animate-pulse">3</span>
+                    </div>
 
-          <!-- Overlay Frame (Hidden by default, shown on capture preview) -->
-          <div
-            id="frame-overlay"
-            class="absolute inset-0 pointer-events-none border-[16px] border-ramadan-gold/30"
-          >
-            <div
-              class="absolute top-4 left-1/2 -translate-x-1/2 text-ramadan-gold opacity-80"
-            >
-              <svg
-                width="40"
-                height="40"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path
-                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.35-12.79c-.44.44-.01 1.25.54 1.25.75 0 1.41.4 1.75 1.05.32.62.15 1.37-.41 1.83-.54.44-1.24.44-1.78 0-.54-.44-.72-1.12-.41-1.74l-.9-.5c-.47.95-.21 2.11.66 2.81.82.66 1.93.73 2.8.19 1.1-.68 1.4-2.12.63-3.21-.61-1.18-1.95-1.57-2.88-.68z"
-                />
-              </svg>
-            </div>
-            <div
-              class="absolute bottom-4 left-0 right-0 text-center font-playfair text-2xl drop-shadow-lg font-bold text-ramadan-gold"
-            >
-              Ramadan Kareem
-            </div>
-          </div>
+                    <!-- Processing Overlay -->
+                    <div id="processing-overlay" class="hidden absolute inset-0 z-[110] flex flex-col items-center justify-center bg-ramadan-secondary/90 backdrop-blur-md text-ramadan-cream">
+                        <div class="w-20 h-20 border-8 border-ramadan-gold border-t-transparent rounded-full animate-spin mb-6"></div>
+                        <p class="font-playfair text-3xl md:text-4xl animate-pulse font-bold">Mencetak Kenangan...</p>
+                    </div>
 
-          <!-- Flash Effect -->
-          <div
-            id="flash"
-            class="absolute inset-0 bg-white opacity-0 pointer-events-none transition-opacity duration-100"
-          ></div>
+                    <!-- Flash Effect -->
+                    <div
+                        id="flash"
+                        class="absolute inset-0 bg-white opacity-0 pointer-events-none transition-opacity duration-100"
+                    ></div>
+                </div>
 
-                <!-- Capture Preview Layer -->
-                <div id="photo-preview-container" class="hidden absolute top-0 left-0 w-full h-full overflow-y-auto bg-ramadan-cream/20">
-                    <img id="photo-preview" class="w-full h-auto object-contain">
+                <!-- Camera Controls Area (Tepat di bawah Frame Kamera) -->
+                <div class="flex flex-wrap justify-center items-center gap-3 shrink-0 py-1">
+                    <button
+                        id="capture-btn"
+                        class="flex items-center gap-3 btn-premium font-bold py-3 md:py-3.5 px-8 md:px-10 rounded-full text-base md:text-xl shadow-2xl transition-all active:scale-95"
+                    >
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                        </svg>
+                        <span id="capture-btn-text">Ambil Foto 1</span>
+                    </button>
+
+                    <button
+                        id="cancel-retake-btn"
+                        class="hidden flex items-center gap-2 bg-slate-200/80 hover:bg-slate-300 text-slate-800 font-bold py-2.5 md:py-3 px-5 rounded-full transition-all text-sm shadow-md"
+                    >
+                        Batal Pilih
+                    </button>
+
+                    <button
+                        id="open-studio-btn"
+                        class="hidden flex items-center gap-2 bg-ramadan-green text-ramadan-cream font-bold py-3 md:py-3.5 px-7 rounded-full shadow-xl hover:scale-105 transition-all text-sm md:text-base border-2 border-ramadan-gold/40 active:scale-95"
+                    >
+                        🎨 Lanjut Pilih 3 Foto &rarr;
+                    </button>
+                </div>
+
+                <!-- Bottom Photo Slots Panel (Hasil Jepretan di Bawah Button) -->
+                <div id="side-slots-panel" class="w-full flex flex-col shrink-0 bg-black/25 md:bg-white/30 backdrop-blur-md rounded-2xl p-2.5 md:p-3.5 border border-ramadan-gold/30 shadow-inner">
+                    <div class="flex items-center justify-between px-1 pb-2 mb-2 border-b border-ramadan-gold/20 shrink-0">
+                        <span class="text-xs md:text-sm font-bold text-ramadan-secondary flex items-center gap-1.5">
+                            <span>📸</span> Hasil Jepretan (Maks 6)
+                        </span>
+                        <span class="text-[10px] md:text-xs text-ramadan-secondary/70 bg-ramadan-gold/20 px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
+                            <span class="animate-pulse">↔</span> Geser / Scroll Foto
+                        </span>
+                    </div>
+                    <div class="grid grid-flow-col auto-cols-[150px] sm:auto-cols-[180px] md:auto-cols-[210px] lg:auto-cols-[230px] gap-2.5 md:gap-3 overflow-x-auto custom-scrollbar p-1">
+                        <!-- 6 Slots -->
+                        <div id="slot-0" onclick="window.selectSlotToRetake(0)" class="photo-slot relative aspect-[920/450] min-h-[75px] md:min-h-[95px] rounded-xl overflow-hidden border-2 border-ramadan-gold/40 bg-black/40 backdrop-blur-sm cursor-pointer transition-all hover:scale-[1.03] hover:border-ramadan-gold flex items-center justify-center group shadow-md shrink-0">
+                            <span class="absolute top-1 left-1.5 bg-ramadan-gold text-ramadan-green text-[9px] md:text-[11px] font-black px-1.5 py-0.2 rounded shadow z-10">Foto #1</span>
+                            <img id="slot-img-0" class="hidden w-full h-full object-cover">
+                            <div id="slot-empty-0" class="text-ramadan-cream/50 text-[10px] md:text-xs font-bold flex flex-col items-center gap-0.5">
+                                <span class="text-sm md:text-base opacity-70">📷</span>
+                                <span>#1 Kosong</span>
+                            </div>
+                            <div id="slot-overlay-0" class="absolute inset-0 bg-black/70 text-white text-[10px] md:text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 hidden backdrop-blur-[1px]">
+                                <span>🔍</span> Lihat / Ulangi
+                            </div>
+                        </div>
+                        <div id="slot-1" onclick="window.selectSlotToRetake(1)" class="photo-slot relative aspect-[920/450] min-h-[75px] md:min-h-[95px] rounded-xl overflow-hidden border-2 border-ramadan-gold/40 bg-black/40 backdrop-blur-sm cursor-pointer transition-all hover:scale-[1.03] hover:border-ramadan-gold flex items-center justify-center group shadow-md shrink-0">
+                            <span class="absolute top-1 left-1.5 bg-ramadan-gold text-ramadan-green text-[9px] md:text-[11px] font-black px-1.5 py-0.2 rounded shadow z-10">Foto #2</span>
+                            <img id="slot-img-1" class="hidden w-full h-full object-cover">
+                            <div id="slot-empty-1" class="text-ramadan-cream/50 text-[10px] md:text-xs font-bold flex flex-col items-center gap-0.5">
+                                <span class="text-sm md:text-base opacity-70">📷</span>
+                                <span>#2 Kosong</span>
+                            </div>
+                            <div id="slot-overlay-1" class="absolute inset-0 bg-black/70 text-white text-[10px] md:text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 hidden backdrop-blur-[1px]">
+                                <span>🔍</span> Lihat / Ulangi
+                            </div>
+                        </div>
+                        <div id="slot-2" onclick="window.selectSlotToRetake(2)" class="photo-slot relative aspect-[920/450] min-h-[75px] md:min-h-[95px] rounded-xl overflow-hidden border-2 border-ramadan-gold/40 bg-black/40 backdrop-blur-sm cursor-pointer transition-all hover:scale-[1.03] hover:border-ramadan-gold flex items-center justify-center group shadow-md shrink-0">
+                            <span class="absolute top-1 left-1.5 bg-ramadan-gold text-ramadan-green text-[9px] md:text-[11px] font-black px-1.5 py-0.2 rounded shadow z-10">Foto #3</span>
+                            <img id="slot-img-2" class="hidden w-full h-full object-cover">
+                            <div id="slot-empty-2" class="text-ramadan-cream/50 text-[10px] md:text-xs font-bold flex flex-col items-center gap-0.5">
+                                <span class="text-sm md:text-base opacity-70">📷</span>
+                                <span>#3 Kosong</span>
+                            </div>
+                            <div id="slot-overlay-2" class="absolute inset-0 bg-black/70 text-white text-[10px] md:text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 hidden backdrop-blur-[1px]">
+                                <span>🔍</span> Lihat / Ulangi
+                            </div>
+                        </div>
+                        <div id="slot-3" onclick="window.selectSlotToRetake(3)" class="photo-slot relative aspect-[920/450] min-h-[75px] md:min-h-[95px] rounded-xl overflow-hidden border-2 border-ramadan-gold/40 bg-black/40 backdrop-blur-sm cursor-pointer transition-all hover:scale-[1.03] hover:border-ramadan-gold flex items-center justify-center group shadow-md shrink-0">
+                            <span class="absolute top-1 left-1.5 bg-ramadan-gold text-ramadan-green text-[9px] md:text-[11px] font-black px-1.5 py-0.2 rounded shadow z-10">Foto #4</span>
+                            <img id="slot-img-3" class="hidden w-full h-full object-cover">
+                            <div id="slot-empty-3" class="text-ramadan-cream/50 text-[10px] md:text-xs font-bold flex flex-col items-center gap-0.5">
+                                <span class="text-sm md:text-base opacity-70">📷</span>
+                                <span>#4 Kosong</span>
+                            </div>
+                            <div id="slot-overlay-3" class="absolute inset-0 bg-black/70 text-white text-[10px] md:text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 hidden backdrop-blur-[1px]">
+                                <span>🔍</span> Lihat / Ulangi
+                            </div>
+                        </div>
+                        <div id="slot-4" onclick="window.selectSlotToRetake(4)" class="photo-slot relative aspect-[920/450] min-h-[75px] md:min-h-[95px] rounded-xl overflow-hidden border-2 border-ramadan-gold/40 bg-black/40 backdrop-blur-sm cursor-pointer transition-all hover:scale-[1.03] hover:border-ramadan-gold flex items-center justify-center group shadow-md shrink-0">
+                            <span class="absolute top-1.5 left-1.5 bg-ramadan-gold text-ramadan-green text-[9px] md:text-[11px] font-black px-1.5 py-0.2 rounded shadow z-10">Foto #5</span>
+                            <img id="slot-img-4" class="hidden w-full h-full object-cover">
+                            <div id="slot-empty-4" class="text-ramadan-cream/50 text-[10px] md:text-xs font-bold flex flex-col items-center gap-0.5">
+                                <span class="text-sm md:text-base opacity-70">📷</span>
+                                <span>#5 Kosong</span>
+                            </div>
+                            <div id="slot-overlay-4" class="absolute inset-0 bg-black/70 text-white text-[10px] md:text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 hidden backdrop-blur-[1px]">
+                                <span>🔍</span> Lihat / Ulangi
+                            </div>
+                        </div>
+                        <div id="slot-5" onclick="window.selectSlotToRetake(5)" class="photo-slot relative aspect-[920/450] min-h-[75px] md:min-h-[95px] rounded-xl overflow-hidden border-2 border-ramadan-gold/40 bg-black/40 backdrop-blur-sm cursor-pointer transition-all hover:scale-[1.03] hover:border-ramadan-gold flex items-center justify-center group shadow-md shrink-0">
+                            <span class="absolute top-1.5 left-1.5 bg-ramadan-gold text-ramadan-green text-[9px] md:text-[11px] font-black px-1.5 py-0.2 rounded shadow z-10">Foto #6</span>
+                            <img id="slot-img-5" class="hidden w-full h-full object-cover">
+                            <div id="slot-empty-5" class="text-ramadan-cream/50 text-[10px] md:text-xs font-bold flex flex-col items-center gap-0.5">
+                                <span class="text-sm md:text-base opacity-70">📷</span>
+                                <span>#6 Kosong</span>
+                            </div>
+                            <div id="slot-overlay-5" class="absolute inset-0 bg-black/70 text-white text-[10px] md:text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 hidden backdrop-blur-[1px]">
+                                <span>🔍</span> Lihat / Ulangi
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-        <!-- Controls -->
-        <div class="mt-4 md:mt-8 flex flex-wrap justify-center gap-4">
-          <button
-            id="capture-btn"
-            class="flex items-center gap-3 btn-premium font-bold py-3 md:py-4 px-8 md:px-10 rounded-full text-lg md:text-xl shadow-2xl"
-          >
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
-              />
-            </svg>
-            Ambil Foto
-          </button>
+            <!-- VIEW 2: Drag & Drop Selection Studio -->
+            <div id="studio-view" class="hidden flex-1 flex flex-col min-h-0">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2 pb-2 border-b border-ramadan-gold/20">
+                    <div>
+                        <h2 class="font-playfair text-xl md:text-2xl font-bold text-ramadan-secondary flex items-center gap-2">
+                            <span>🎨</span> Studio Pemilihan Foto &amp; Tema
+                        </h2>
+                        <p id="studio-subtitle-text" class="text-xs text-ramadan-secondary/70">Pilih tema frame di bawah, lalu atur 3 foto favoritmu ke slot template di kanan.</p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span id="studio-theme-name-badge" class="px-3 py-1 bg-ramadan-primary text-ramadan-cream text-xs font-bold rounded-full shadow border border-ramadan-gold/30">
+                            Tema: Standar
+                        </span>
+                        <span id="studio-badge" class="px-3.5 py-1 bg-ramadan-gold text-ramadan-green text-xs font-black rounded-full shadow">
+                            3 / 3 Terpilih
+                        </span>
+                    </div>
+                </div>
 
-          <div id="post-capture-controls" class="hidden flex gap-4">
-            <button
-              id="retake-btn"
-              class="flex items-center gap-2 bg-ramadan-secondary/10 hover:bg-ramadan-secondary/20 border border-ramadan-secondary/20 text-ramadan-secondary font-bold py-2 md:py-3 px-6 md:px-8 rounded-full transition-all shadow-lg"
-            >
-              <svg
-                class="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-              Ulangi
-            </button>
-            <button
-              id="save-btn"
-              class="flex items-center gap-2 bg-ramadan-primary text-ramadan-cream font-bold py-2 md:py-3 px-6 md:px-8 rounded-full shadow-lg hover:scale-105 transition-all"
-            >
-              <svg
-                class="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
-                />
-              </svg>
-              Simpan
-            </button>
-            <button
-              id="download-btn"
-              style="display: none;"
-              class="flex items-center gap-2 bg-ramadan-green text-ramadan-cream font-bold py-2 md:py-3 px-6 md:px-8 rounded-full shadow-lg hover:scale-105 transition-all"
-            >
-              <svg
-                class="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                />
-              </svg>
-              Unduh
-            </button>
-          </div>
-        </div>
+                <!-- Studio Theme & Layout Selector Bar -->
+                <div class="mb-3 bg-black/20 md:bg-white/30 backdrop-blur-md rounded-2xl p-2.5 md:p-3 border border-ramadan-gold/30 shrink-0 flex flex-col gap-2.5">
+                    <!-- Layout Mode Switcher -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-ramadan-gold/20">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-xs font-bold text-ramadan-secondary flex items-center gap-1">
+                                <span>📐</span> Format Cetak / Layout:
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button
+                                id="layout-mode-3-btn"
+                                type="button"
+                                onclick="window.setStudioLayoutMode('3-strip')"
+                                class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-sm bg-ramadan-gold text-ramadan-green border-white ring-2 ring-ramadan-gold/50 cursor-pointer"
+                            >
+                                🎞️ 3 Foto (Strip Vertikal)
+                            </button>
+                            <button
+                                id="layout-mode-6-btn"
+                                type="button"
+                                onclick="window.setStudioLayoutMode('6-grid')"
+                                class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-sm bg-black/30 text-ramadan-cream/80 border-ramadan-gold/30 hover:border-ramadan-gold hover:bg-black/50 cursor-pointer"
+                            >
+                                📸 6 Foto (Grid 2×3 A5 - Semua Foto)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Theme Picker -->
+                    <div>
+                        <div class="flex items-center justify-between px-1 mb-1.5">
+                            <span class="text-xs font-bold text-ramadan-secondary flex items-center gap-1.5">
+                                <span>🖼️</span> Pilih Desain Tema Frame:
+                            </span>
+                            <span class="text-[10px] text-ramadan-secondary/70 italic">Klik untuk ganti tema live</span>
+                        </div>
+                        <div id="studio-theme-gallery" class="flex items-center gap-2.5 overflow-x-auto custom-scrollbar pb-1 pt-0.5">
+                            <!-- Populated dynamically by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Studio Main Content -->
+                <div class="flex-1 flex flex-col md:flex-row gap-4 min-h-0">
+                    <!-- Left: 6 Photos Pool -->
+                    <div class="flex-1 flex flex-col min-h-0 bg-black/10 rounded-2xl p-3 border border-ramadan-gold/30">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-ramadan-secondary uppercase tracking-wider">Foto Tersedia (Drag atau Klik):</span>
+                            <span class="text-[11px] text-ramadan-secondary/60 italic">Sentuh foto lalu sentuh slot</span>
+                        </div>
+                        <div id="studio-pool-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 overflow-y-auto custom-scrollbar flex-1 p-1">
+                            <!-- Populated dynamically by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Right: Template Strip Dropzone with Live Frame -->
+                    <div id="studio-strip-container" class="w-full md:w-80 lg:w-[420px] flex flex-col bg-ramadan-secondary/95 backdrop-blur-md rounded-2xl p-3 md:p-4 border-2 border-ramadan-gold/60 shrink-0 text-ramadan-cream relative overflow-hidden shadow-2xl">
+                        <div class="text-center mb-2 relative z-20">
+                            <h3 id="studio-layout-title" class="font-playfair text-base font-bold text-ramadan-gold">Template Strip Bingkai (3 Foto)</h3>
+                            <p id="studio-current-theme-label" class="text-[10px] text-ramadan-cream/80">Drop foto di slot yang tersedia</p>
+                        </div>
+
+                        <!-- Dropzone Slots Inside Live Frame Container -->
+                        <div id="studio-strip-frame" class="relative flex-1 flex flex-col justify-between gap-2.5 min-h-[380px] p-2.5 rounded-xl border border-dashed border-ramadan-gold/40 bg-black/50 overflow-hidden shadow-inner bg-cover bg-center transition-all duration-300">
+                            <!-- Background Frame Image (Live Template Preview) -->
+                            <img id="studio-frame-bg" class="absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-300 hidden" alt="Frame Background">
+
+                            <!-- Dynamic Dropzone Slots Wrapper -->
+                            <div id="studio-dropzones-wrapper" class="relative z-10 w-full flex-1 flex flex-col justify-between gap-2.5">
+                                <!-- Populated dynamically by JS (3 slots or 6 slots) -->
+                            </div>
+
+                            <!-- Floating Live Ornaments for Studio Preview -->
+                            <img id="studio-deco-item1" class="absolute pointer-events-none z-15 hidden transition-all" alt="Item 1">
+                            <img id="studio-deco-item2" class="absolute pointer-events-none z-15 hidden transition-all" alt="Item 2">
+                            <img id="studio-deco-item3" class="absolute pointer-events-none z-15 hidden transition-all" alt="Item 3">
+
+                            <!-- Overlay Frame Image (If Overlay Mode) -->
+                            <img id="studio-frame-overlay" class="absolute inset-0 w-full h-full object-cover pointer-events-none z-20 transition-opacity duration-300 hidden" alt="Frame Overlay">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Studio Controls -->
+                <div class="mt-3 flex flex-wrap justify-center items-center gap-3">
+                    <button
+                        id="studio-back-btn"
+                        class="flex items-center gap-2 bg-slate-200/90 hover:bg-slate-300 text-slate-800 font-bold py-2.5 md:py-3.5 px-6 rounded-full transition-all text-sm md:text-base shadow"
+                    >
+                        📷 Kembali ke Kamera (Foto Ulang)
+                    </button>
+                    <button
+                        id="studio-confirm-btn"
+                        class="flex items-center gap-2 btn-premium font-bold py-3 md:py-4 px-8 md:px-10 rounded-full text-base md:text-xl shadow-2xl transition-all hover:scale-105 active:scale-95"
+                    >
+                        ✨ Konfirmasi &amp; Buat Strip Foto
+                    </button>
+                </div>
+            </div>
+
+            <!-- VIEW 3: Final Strip Preview Layer -->
+            <div id="preview-view" class="hidden flex-1 flex flex-col min-h-0 items-center justify-center">
+                <div id="photo-preview-container" class="relative rounded-2xl overflow-hidden flex-1 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 w-full shadow-2xl border-2 border-ramadan-gold/40 min-h-0">
+                    <img id="photo-preview" class="max-h-full w-auto object-contain rounded-2xl shadow-2xl">
+                </div>
+
+                <!-- Post Capture Action Buttons -->
+                <div class="mt-3 flex flex-wrap justify-center gap-3">
+                    <button
+                        id="retake-single-btn"
+                        class="flex items-center gap-2 bg-ramadan-gold text-ramadan-green font-bold py-2.5 md:py-3.5 px-6 rounded-full transition-all shadow-lg hover:scale-105 text-sm md:text-base"
+                    >
+                        🎨 Atur / Ganti Pilihan Foto
+                    </button>
+                    <button
+                        id="retake-btn"
+                        class="flex items-center gap-2 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 font-bold py-2.5 md:py-3.5 px-5 rounded-full transition-all shadow-md text-sm md:text-base"
+                    >
+                        Mulai Sesi Baru (6 Foto)
+                    </button>
+                    <button
+                        id="save-btn"
+                        class="flex items-center gap-2 bg-ramadan-primary text-ramadan-cream font-bold py-2.5 md:py-3.5 px-8 rounded-full shadow-xl hover:scale-105 transition-all text-sm md:text-base"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                        Simpan &amp; Lanjut
+                    </button>
+                    <button
+                        id="download-btn"
+                        style="display: none;"
+                        class="flex items-center gap-2 bg-ramadan-green text-ramadan-cream font-bold py-2 md:py-3 px-6 md:px-8 rounded-full shadow-lg hover:scale-105 transition-all"
+                    >
+                        Unduh
+                    </button>
+                </div>
+            </div>
 
         <!-- Persistent Selesai Button (shown after first save) -->
         <div id="selesai-container" class="mt-4 flex justify-center hidden">

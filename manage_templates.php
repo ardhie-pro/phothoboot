@@ -64,6 +64,7 @@ if ($action === 'upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $newTemplate = [
         'id' => $id,
         'name' => $name,
+        'sizeType' => $_POST['sizeType'] ?? 'a5',
         'outer' => $outerPath,
         'ketupat' => $ketupatPath,
         'lampu' => $lampuPath,

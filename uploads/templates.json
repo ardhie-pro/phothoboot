@@ -30,5 +30,59 @@
                 "size": 550
             }
         }
+    },
+    {
+        "id": "6a96a3476af81",
+        "name": "bambang",
+        "sizeType": "a5",
+        "outer": "uploads\/templates\/6a96a3476af81\/outer.png",
+        "ketupat": "",
+        "lampu": "",
+        "rama": "",
+        "overlayMode": false,
+        "layout": {
+            "ketupat": {
+                "x": 120,
+                "y": 150,
+                "size": 350
+            },
+            "lampu": {
+                "x": -100,
+                "y": 140,
+                "size": 300
+            },
+            "rama": {
+                "x": 150,
+                "y": 300,
+                "size": 550
+            }
+        }
+    },
+    {
+        "id": "6a9702dc6728c",
+        "name": "bambang 6",
+        "sizeType": "a5_6grid",
+        "outer": "uploads\/templates\/6a9702dc6728c\/outer.png",
+        "ketupat": "",
+        "lampu": "",
+        "rama": "",
+        "overlayMode": false,
+        "layout": {
+            "ketupat": {
+                "x": 120,
+                "y": 150,
+                "size": 350
+            },
+            "lampu": {
+                "x": -100,
+                "y": 140,
+                "size": 300
+            },
+            "rama": {
+                "x": 150,
+                "y": 300,
+                "size": 550
+            }
+        }
     }
 ]
