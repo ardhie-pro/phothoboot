@@ -150,7 +150,7 @@
           }).catch(console.warn);
       })();
     </script>
-    <script type="module" crossorigin src="./assets/index-C4cgHwrj.js"></script>
+    <script type="module" crossorigin src="./assets/index-CY2BbVYL.js"></script>
   </head>
   <body
     class="bg-ramadan-cream min-h-screen flex flex-col items-center justify-start p-2 md:p-4 text-ramadan-secondary font-outfit overflow-y-auto custom-scrollbar relative"
@@ -299,7 +299,7 @@
     </header>
 
     <!-- Photo Booth Container -->
-    <main class="relative group z-30 max-w-5xl w-full flex flex-col pb-8">
+    <main class="relative group z-30 max-w-5xl xl:max-w-7xl 2xl:max-w-[1440px] w-full flex flex-col pb-8 transition-all duration-300">
         <div class="glass-card p-3 md:p-6 rounded-[30px] md:rounded-[40px] relative flex flex-col gap-3 md:gap-4 shadow-2xl">
             
             <!-- VIEW 1: Camera & 6 Photo Session -->
@@ -512,43 +512,58 @@
                     </div>
                 </div>
 
-                <!-- Studio Main Content -->
-                <div class="flex-1 flex flex-col md:flex-row gap-4 min-h-0">
-                    <!-- Left: 6 Photos Pool -->
-                    <div class="flex-1 flex flex-col min-h-0 bg-black/10 rounded-2xl p-3 border border-ramadan-gold/30">
+                <!-- Studio Main Content: 3 Dedicated Columns Side-by-Side -->
+                <div class="flex-1 flex flex-col lg:flex-row gap-3 md:gap-4 min-h-0">
+                    <!-- Column 1: Foto Tersedia (Pool) -->
+                    <div class="flex-1 flex flex-col min-h-0 min-w-0 bg-black/10 rounded-2xl p-3 border border-ramadan-gold/30">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold text-ramadan-secondary uppercase tracking-wider">Foto Tersedia (Drag atau Klik):</span>
-                            <span class="text-[11px] text-ramadan-secondary/60 italic">Sentuh foto lalu sentuh slot</span>
+                            <span class="text-xs font-bold text-ramadan-secondary uppercase tracking-wider flex items-center gap-1">
+                                <span>📷</span> Foto Tersedia:
+                            </span>
+                            <span class="text-[11px] text-ramadan-secondary/70 italic">Tarik atau sentuh foto</span>
                         </div>
-                        <div id="studio-pool-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 overflow-y-auto custom-scrollbar flex-1 p-1">
+                        <div id="studio-pool-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2 overflow-y-auto custom-scrollbar flex-1 p-1 min-h-[180px]">
                             <!-- Populated dynamically by JS -->
                         </div>
                     </div>
 
-                    <!-- Right: Template Strip Dropzone with Live Frame -->
-                    <div id="studio-strip-container" class="w-full md:w-80 lg:w-[420px] flex flex-col bg-ramadan-secondary/95 backdrop-blur-md rounded-2xl p-3 md:p-4 border-2 border-ramadan-gold/60 shrink-0 text-ramadan-cream relative overflow-hidden shadow-2xl">
-                        <div class="text-center mb-2 relative z-20">
-                            <h3 id="studio-layout-title" class="font-playfair text-base font-bold text-ramadan-gold">Template Strip Bingkai (3 Foto)</h3>
-                            <p id="studio-current-theme-label" class="text-[10px] text-ramadan-cream/80">Drop foto di slot yang tersedia</p>
+                    <!-- Column 2: Tempat Drop-Drop Slot Foto -->
+                    <div id="studio-dropzones-container" class="w-full lg:w-[320px] xl:w-[350px] flex flex-col bg-ramadan-secondary/90 backdrop-blur-md rounded-2xl p-3 border border-ramadan-gold/40 shrink-0 text-ramadan-cream shadow-xl">
+                        <div class="text-center mb-2 pb-1.5 border-b border-ramadan-gold/20">
+                            <div class="flex items-center justify-center gap-1 mb-0.5">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-ramadan-gold text-ramadan-green shadow-sm">
+                                    📥 Tempat Drop Foto
+                                </span>
+                            </div>
+                            <h3 id="studio-layout-title" class="font-playfair text-sm md:text-base font-bold text-ramadan-gold">Template Strip Bingkai (3 Foto)</h3>
+                            <p class="text-[10px] text-ramadan-cream/70 italic">Tarik foto ke slot atau klik slot untuk pasang</p>
                         </div>
 
-                        <!-- Dropzone Slots Inside Live Frame Container -->
-                        <div id="studio-strip-frame" class="relative flex-1 flex flex-col justify-between gap-2.5 min-h-[380px] p-2.5 rounded-xl border border-dashed border-ramadan-gold/40 bg-black/50 overflow-hidden shadow-inner bg-cover bg-center transition-all duration-300">
-                            <!-- Background Frame Image (Live Template Preview) -->
-                            <img id="studio-frame-bg" class="absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-300 hidden" alt="Frame Background">
+                        <!-- Dropzone Slots Container -->
+                        <div id="studio-dropzones-wrapper" class="flex-1 flex flex-col justify-between gap-2 overflow-y-auto custom-scrollbar p-1 min-h-[350px]">
+                            <!-- Populated dynamically by JS (3 slots or 6 slots) -->
+                        </div>
+                    </div>
 
-                            <!-- Dynamic Dropzone Slots Wrapper -->
-                            <div id="studio-dropzones-wrapper" class="relative z-10 w-full flex-1 flex flex-col justify-between gap-2.5">
-                                <!-- Populated dynamically by JS (3 slots or 6 slots) -->
+                    <!-- Column 3: Tempat Lihat Hasil (Live Preview Strip Asli Saat Diunduh) -->
+                    <div id="studio-strip-preview-container" class="w-full lg:w-[320px] xl:w-[350px] flex flex-col bg-ramadan-secondary/95 backdrop-blur-md rounded-2xl p-3 border-2 border-ramadan-gold/60 shrink-0 text-ramadan-cream shadow-2xl">
+                        <div class="text-center mb-2 pb-1.5 border-b border-ramadan-gold/20">
+                            <div class="flex items-center justify-center gap-1.5 mb-0.5">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm animate-pulse">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Live Hasil Unduh
+                                </span>
                             </div>
+                            <h3 class="font-playfair text-sm md:text-base font-bold text-ramadan-gold">Hasil Jadi (Saat Diunduh)</h3>
+                            <p id="studio-current-theme-label" class="text-[10px] text-ramadan-cream/80 font-medium">Tema Aktif: Standar</p>
+                        </div>
 
-                            <!-- Floating Live Ornaments for Studio Preview -->
-                            <img id="studio-deco-item1" class="absolute pointer-events-none z-15 hidden transition-all" alt="Item 1">
-                            <img id="studio-deco-item2" class="absolute pointer-events-none z-15 hidden transition-all" alt="Item 2">
-                            <img id="studio-deco-item3" class="absolute pointer-events-none z-15 hidden transition-all" alt="Item 3">
-
-                            <!-- Overlay Frame Image (If Overlay Mode) -->
-                            <img id="studio-frame-overlay" class="absolute inset-0 w-full h-full object-cover pointer-events-none z-20 transition-opacity duration-300 hidden" alt="Frame Overlay">
+                        <!-- Viewport for Live Rendered Final Strip -->
+                        <div id="studio-preview-viewport" class="relative flex-1 flex items-center justify-center min-h-[350px] p-2 bg-black/70 rounded-xl border border-ramadan-gold/40 shadow-inner overflow-hidden">
+                            <div id="studio-preview-spinner" class="absolute inset-0 z-30 bg-black/50 backdrop-blur-[1px] flex flex-col items-center justify-center gap-2 hidden">
+                                <div class="animate-spin rounded-full h-8 w-8 border-2 border-ramadan-gold border-t-transparent"></div>
+                                <span class="text-xs text-ramadan-cream font-medium">Memperbarui hasil...</span>
+                            </div>
+                            <img id="studio-live-preview-img" class="max-h-[440px] md:max-h-[480px] w-auto max-w-full object-contain rounded-xl shadow-2xl border border-ramadan-gold/40 transition-all duration-200" alt="Hasil Jadi Live Strip">
                         </div>
                     </div>
                 </div>

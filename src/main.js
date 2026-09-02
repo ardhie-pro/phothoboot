@@ -197,71 +197,67 @@ function renderStudioThemeGallery() {
     });
 }
 
-function updateStudioFramePreview() {
+// Image asset cache to make studio live preview and final generation instantaneous
+const imageAssetCache = new Map();
+function loadCachedImage(src) {
+    if (!src) return Promise.resolve(null);
+    if (imageAssetCache.has(src)) {
+        const cached = imageAssetCache.get(src);
+        if (cached && (cached.complete || cached.naturalWidth > 0)) return Promise.resolve(cached);
+    }
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+            imageAssetCache.set(src, img);
+            resolve(img);
+        };
+        img.onerror = () => resolve(null);
+        img.src = src;
+    });
+}
+
+function updateStudioLayoutUI() {
     const currentTemplate = availableTemplates.find(t => t.id === selectedTemplateId);
+    const templateName = currentTemplate ? currentTemplate.name : 'Standar Ramadan';
+    
     const themeBadge = document.getElementById('studio-theme-name-badge');
     const themeLabel = document.getElementById('studio-current-theme-label');
-    const frameBg = document.getElementById('studio-frame-bg');
-    const frameOverlay = document.getElementById('studio-frame-overlay');
-    const frameContainer = document.getElementById('studio-strip-frame');
-    const deco1 = document.getElementById('studio-deco-item1');
-    const deco2 = document.getElementById('studio-deco-item2');
-    const deco3 = document.getElementById('studio-deco-item3');
-
-    const templateName = currentTemplate ? currentTemplate.name : 'Standar Ramadan';
     if (themeBadge) themeBadge.innerText = `Tema: ${templateName}`;
     if (themeLabel) themeLabel.innerText = `Tema Aktif: ${templateName}`;
 
-    const is6Grid = studioLayoutMode === '6-grid';
+    const btn3 = document.getElementById('layout-mode-3-btn');
+    const btn6 = document.getElementById('layout-mode-6-btn');
+    const studioBadge = document.getElementById('studio-badge');
+    const layoutTitle = document.getElementById('studio-layout-title');
+    const studioSubtitle = document.getElementById('studio-subtitle-text');
 
-    if (currentTemplate && currentTemplate.outer) {
-        if (currentTemplate.overlayMode) {
-            if (frameBg) frameBg.classList.add('hidden');
-            if (frameOverlay) {
-                frameOverlay.src = currentTemplate.outer;
-                frameOverlay.classList.remove('hidden');
-            }
-            if (frameContainer) {
-                frameContainer.style.backgroundImage = 'none';
-                frameContainer.style.backgroundColor = 'rgba(15, 23, 42, 0.85)';
-            }
-        } else {
-            if (frameOverlay) frameOverlay.classList.add('hidden');
-            if (frameBg) {
-                frameBg.src = currentTemplate.outer;
-                frameBg.classList.remove('hidden');
-            }
-            if (frameContainer) {
-                frameContainer.style.backgroundImage = `url('${currentTemplate.outer}')`;
-                frameContainer.style.backgroundSize = 'cover';
-                frameContainer.style.backgroundPosition = 'center';
-            }
+    if (studioLayoutMode === '3-strip') {
+        if (btn3) {
+            btn3.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-sm bg-ramadan-gold text-ramadan-green border-white ring-2 ring-ramadan-gold/50 cursor-pointer';
         }
+        if (btn6) {
+            btn6.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-sm bg-black/30 text-ramadan-cream/80 border-ramadan-gold/30 hover:border-ramadan-gold hover:bg-black/50 cursor-pointer';
+        }
+        if (studioBadge) studioBadge.innerText = '3 / 3 Foto Terpilih';
+        if (layoutTitle) layoutTitle.innerText = 'Template Strip Bingkai (3 Foto)';
+        if (studioSubtitle) studioSubtitle.innerText = 'Pilih tema frame di bawah, lalu atur 3 foto favoritmu ke slot template di kanan.';
     } else {
-        if (frameBg) frameBg.classList.add('hidden');
-        if (frameOverlay) frameOverlay.classList.add('hidden');
-        if (frameContainer) {
-            frameContainer.style.backgroundImage = 'none';
-            frameContainer.style.backgroundColor = 'rgba(15, 23, 42, 0.7)';
+        if (btn6) {
+            btn6.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-sm bg-ramadan-gold text-ramadan-green border-white ring-2 ring-ramadan-gold/50 cursor-pointer';
         }
+        if (btn3) {
+            btn3.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-sm bg-black/30 text-ramadan-cream/80 border-ramadan-gold/30 hover:border-ramadan-gold hover:bg-black/50 cursor-pointer';
+        }
+        if (studioBadge) studioBadge.innerText = '6 / 6 Foto Terpilih';
+        if (layoutTitle) layoutTitle.innerText = 'Template Grid 2×3 A5 (6 Foto)';
+        if (studioSubtitle) studioSubtitle.innerText = 'Pilih tema frame di bawah, lalu atur 6 fotomu ke slot template grid 2×3 di kanan.';
     }
+}
 
-    // Live Floating Ornaments on Studio Frame Preview
-    if (deco1) {
-        let src1 = (currentTemplate && currentTemplate.ketupat) ? currentTemplate.ketupat : './gambar/ketupat.webp';
-        deco1.src = src1;
-        deco1.className = `absolute pointer-events-none z-20 ${is6Grid ? 'top-1 right-2 w-12 h-12' : 'top-2 right-2 w-16 h-16'} object-contain drop-shadow-lg`;
-    }
-    if (deco2) {
-        let src2 = (currentTemplate && currentTemplate.lampu) ? currentTemplate.lampu : './gambar/lampu.webp';
-        deco2.src = src2;
-        deco2.className = `absolute pointer-events-none z-20 ${is6Grid ? 'top-1/3 left-1 w-10 h-10' : 'top-1/3 left-2 w-14 h-14'} object-contain drop-shadow-lg`;
-    }
-    if (deco3) {
-        let src3 = (currentTemplate && currentTemplate.rama) ? currentTemplate.rama : './gambar/rama.png';
-        deco3.src = src3;
-        deco3.className = `absolute pointer-events-none z-20 ${is6Grid ? 'bottom-1 right-1 w-14 h-14' : 'bottom-2 right-2 w-20 h-20'} object-contain drop-shadow-lg`;
-    }
+function updateStudioFramePreview() {
+    updateStudioLayoutUI();
+    updateStudioLivePreview();
 }
 
 window.selectTemplate = (id) => {
@@ -273,15 +269,23 @@ window.selectTemplate = (id) => {
     if (template) {
         overlayMode = template.overlayMode;
         localStorage.setItem('overlayMode', overlayMode);
+
+        // Auto match layout mode to template sizeType
+        if (template.sizeType === 'a5_6grid') {
+            studioLayoutMode = '6-grid';
+        } else {
+            studioLayoutMode = '3-strip';
+        }
     } else {
-        // Reset if not found
         overlayMode = false;
         localStorage.setItem('overlayMode', 'false');
     }
 
     renderGallery();
     renderStudioThemeGallery();
-    updateStudioFramePreview();
+    updateStudioLayoutUI();
+    renderStudio();
+    updateStudioLivePreview();
 };
 
 // Load and Apply Custom Booth Appearance Settings
@@ -424,8 +428,19 @@ async function showStudioView() {
     if (availableTemplates.length === 0) {
         await loadTemplates();
     }
-    window.setStudioLayoutMode(studioLayoutMode);
+    
+    // Auto sync layout mode with template sizeType
+    const currentTemplate = availableTemplates.find(t => t.id === selectedTemplateId);
+    if (currentTemplate && currentTemplate.sizeType === 'a5_6grid') {
+        studioLayoutMode = '6-grid';
+    } else {
+        studioLayoutMode = '3-strip';
+    }
+
+    updateStudioLayoutUI();
     renderStudioThemeGallery();
+    renderStudio();
+    updateStudioLivePreview();
 }
 
 function showPreviewView() {
@@ -684,45 +699,16 @@ const SLOT_LABELS_3 = [
 
 window.setStudioLayoutMode = (mode) => {
     studioLayoutMode = mode;
-    const btn3 = document.getElementById('layout-mode-3-btn');
-    const btn6 = document.getElementById('layout-mode-6-btn');
-    const studioBadge = document.getElementById('studio-badge');
-    const layoutTitle = document.getElementById('studio-layout-title');
-    const studioSubtitle = document.getElementById('studio-subtitle-text');
-
-    if (mode === '3-strip') {
-        if (btn3) {
-            btn3.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-sm bg-ramadan-gold text-ramadan-green border-white ring-2 ring-ramadan-gold/50 cursor-pointer';
-        }
-        if (btn6) {
-            btn6.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-sm bg-black/30 text-ramadan-cream/80 border-ramadan-gold/30 hover:border-ramadan-gold hover:bg-black/50 cursor-pointer';
-        }
-        if (studioBadge) studioBadge.innerText = '3 / 3 Foto Terpilih';
-        if (layoutTitle) layoutTitle.innerText = 'Template Strip Bingkai (3 Foto)';
-        if (studioSubtitle) studioSubtitle.innerText = 'Pilih tema frame di bawah, lalu atur 3 foto favoritmu ke slot template di kanan.';
-    } else {
-        if (btn6) {
-            btn6.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-sm bg-ramadan-gold text-ramadan-green border-white ring-2 ring-ramadan-gold/50 cursor-pointer';
-        }
-        if (btn3) {
-            btn3.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-sm bg-black/30 text-ramadan-cream/80 border-ramadan-gold/30 hover:border-ramadan-gold hover:bg-black/50 cursor-pointer';
-        }
-        if (studioBadge) studioBadge.innerText = '6 / 6 Foto Terpilih';
-        if (layoutTitle) layoutTitle.innerText = 'Template Grid 2×3 A5 (6 Foto)';
-        if (studioSubtitle) studioSubtitle.innerText = 'Pilih tema frame di bawah, lalu atur 6 fotomu ke slot template grid 2×3 di kanan.';
-    }
-
+    updateStudioLayoutUI();
     renderStudio();
-    updateStudioFramePreview();
+    updateStudioLivePreview();
 };
 
 function renderStudio() {
     const poolGrid = document.getElementById('studio-pool-grid');
-    const dropzonesWrapper = document.getElementById('studio-dropzones-wrapper');
-    if (!poolGrid || !dropzonesWrapper) return;
+    if (!poolGrid) return;
 
     poolGrid.innerHTML = '';
-    dropzonesWrapper.innerHTML = '';
 
     const is6Grid = studioLayoutMode === '6-grid';
     const activeSlotList = is6Grid ? selected6Photos : selectedStripPhotos;
@@ -760,17 +746,17 @@ function renderStudio() {
         const card = document.createElement('div');
         card.className = `relative aspect-[920/450] rounded-xl overflow-hidden border-2 ${
             isSelectedActive 
-                ? 'ring-4 ring-emerald-400 border-white scale-105' 
-                : (slotInActive !== -1 ? 'border-ramadan-gold/80' : 'border-white/30')
-        } bg-black/40 cursor-grab active:cursor-grabbing transition-all hover:scale-[1.02] shadow-md group`;
+                ? 'ring-4 ring-emerald-400 border-white scale-105 shadow-xl' 
+                : (slotInActive !== -1 ? 'border-ramadan-gold/80 shadow-md' : 'border-white/30')
+        } bg-black/40 cursor-grab active:cursor-grabbing transition-all hover:scale-[1.02] group`;
         card.draggable = true;
 
         card.innerHTML = `
             <span class="absolute top-1.5 left-2 bg-black/70 text-ramadan-cream text-[10px] font-black px-2 py-0.5 rounded shadow z-10">#${idx + 1}</span>
             <div class="absolute top-1.5 right-2 z-10">${badgeHtml}</div>
             <img src="${photoUrl}" class="w-full h-full object-cover pointer-events-none">
-            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-bold">
-                ${isSelectedActive ? '✓ Terpilih (Pencet Slot di Kanan)' : '👆 Klik atau Drag ke Slot'}
+            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[11px] font-bold p-1 text-center">
+                ${isSelectedActive ? '✓ Terpilih (Pencet Slot di Kanan)' : '👆 Klik atau Drag ke Slot di Kanan'}
             </div>
         `;
 
@@ -795,53 +781,65 @@ function renderStudio() {
         poolGrid.appendChild(card);
     });
 
-    // 2. Render Right Dropzones (3 Vertical Slots or 6 Grid Slots)
-    if (is6Grid) {
-        dropzonesWrapper.className = 'grid grid-cols-2 gap-2 flex-1 w-full relative z-10';
-    } else {
-        dropzonesWrapper.className = 'flex flex-col justify-between gap-2.5 flex-1 w-full relative z-10';
+    // 2. Render Column 2: Dedicated Dropzone Slots (Tempat Drop-Drop Foto)
+    const dropzonesWrapper = document.getElementById('studio-dropzones-wrapper');
+    if (dropzonesWrapper) {
+        dropzonesWrapper.innerHTML = '';
+        if (is6Grid) {
+            dropzonesWrapper.className = 'grid grid-cols-2 gap-2 flex-1 w-full min-h-[350px] p-1';
+        } else {
+            dropzonesWrapper.className = 'flex flex-col justify-between gap-2.5 flex-1 w-full min-h-[350px] p-1';
+        }
+
+        for (let s = 0; s < numSlots; s++) {
+            const photoIdx = activeSlotList[s];
+            const photoSrc = (photoIdx !== null && photoIdx !== undefined && capturedPhotos[photoIdx]) ? capturedPhotos[photoIdx] : '';
+
+            const dropzone = document.createElement('div');
+            dropzone.id = 'dropzone-' + s;
+            dropzone.className = `dropzone-slot relative flex-1 aspect-[920/450] ${is6Grid ? 'min-h-[85px]' : 'min-h-[105px]'} rounded-xl overflow-hidden border-2 border-ramadan-gold/70 bg-black/60 cursor-pointer transition-all flex items-center justify-center group shadow-md hover:border-ramadan-gold hover:scale-[1.01]`;
+
+            dropzone.innerHTML = `
+                <span class="absolute top-1.5 left-2 bg-ramadan-gold text-ramadan-green text-[9px] md:text-[10px] font-black px-2 py-0.5 rounded shadow z-10">${slotLabels[s]}</span>
+                ${photoSrc ? `<img id="dropzone-img-${s}" src="${photoSrc}" class="w-full h-full object-cover">` : `<span class="text-ramadan-cream/40 text-xs font-bold flex flex-col items-center gap-1">📷 Slot Kosong</span>`}
+                <div class="absolute inset-0 bg-black/70 text-white text-[10px] md:text-[11px] font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 backdrop-blur-[1px] text-center p-1">
+                    ${activePoolSelectIndex !== null ? `✓ Pasang Foto #${activePoolSelectIndex + 1} ke ${slotLabels[s]}` : `📥 Drop / Klik Ganti Foto`}
+                </div>
+            `;
+
+            dropzone.addEventListener('dragover', (e) => window.handleDragOver(e, s));
+            dropzone.addEventListener('dragleave', (e) => window.handleDragLeave(e, s));
+            dropzone.addEventListener('drop', (e) => window.handleDrop(e, s));
+            dropzone.addEventListener('click', () => window.handleSlotClick(s));
+
+            dropzonesWrapper.appendChild(dropzone);
+        }
     }
 
-    for (let s = 0; s < numSlots; s++) {
-        const photoIdx = activeSlotList[s];
-        const photoSrc = (photoIdx !== null && photoIdx !== undefined && capturedPhotos[photoIdx]) ? capturedPhotos[photoIdx] : '';
-
-        const dropzone = document.createElement('div');
-        dropzone.id = 'dropzone-' + s;
-        dropzone.className = `dropzone-slot relative flex-1 aspect-[920/450] ${is6Grid ? 'min-h-[85px]' : 'min-h-[105px]'} rounded-xl overflow-hidden border-2 border-ramadan-gold/80 bg-black/70 cursor-pointer transition-all flex items-center justify-center group shadow-lg`;
-
-        dropzone.innerHTML = `
-            <span class="absolute top-1 left-1.5 bg-ramadan-gold text-ramadan-green text-[9px] md:text-[10px] font-black px-1.5 py-0.5 rounded shadow z-10">${slotLabels[s]}</span>
-            <img id="dropzone-img-${s}" src="${photoSrc}" class="w-full h-full object-cover ${photoSrc ? '' : 'hidden'}">
-            <div class="absolute inset-0 bg-black/60 text-white text-[10px] md:text-[11px] font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 backdrop-blur-[1px]">
-                📥 Drop / Klik Ganti
-            </div>
-        `;
-
-        dropzone.addEventListener('dragover', (e) => window.handleDragOver(e, s));
-        dropzone.addEventListener('dragleave', (e) => window.handleDragLeave(e, s));
-        dropzone.addEventListener('drop', (e) => window.handleDrop(e, s));
-        dropzone.addEventListener('click', () => window.handleSlotClick(s));
-
-        dropzonesWrapper.appendChild(dropzone);
-    }
+    updateStudioLivePreview();
 }
 
 window.handleDragOver = (e, slotIndex) => {
     e.preventDefault();
     const dropzone = document.getElementById('dropzone-' + slotIndex);
-    if (dropzone) dropzone.classList.add('ring-4', 'ring-emerald-400', 'border-white', 'scale-102');
+    if (dropzone) {
+        dropzone.classList.add('ring-4', 'ring-emerald-400', 'border-white', 'scale-102', 'bg-emerald-500/20');
+    }
 };
 
 window.handleDragLeave = (e, slotIndex) => {
     const dropzone = document.getElementById('dropzone-' + slotIndex);
-    if (dropzone) dropzone.classList.remove('ring-4', 'ring-emerald-400', 'border-white', 'scale-102');
+    if (dropzone) {
+        dropzone.classList.remove('ring-4', 'ring-emerald-400', 'border-white', 'scale-102', 'bg-emerald-500/20');
+    }
 };
 
 window.handleDrop = (e, slotIndex) => {
     e.preventDefault();
     const dropzone = document.getElementById('dropzone-' + slotIndex);
-    if (dropzone) dropzone.classList.remove('ring-4', 'ring-emerald-400', 'border-white', 'scale-102');
+    if (dropzone) {
+        dropzone.classList.remove('ring-4', 'ring-emerald-400', 'border-white', 'scale-102', 'bg-emerald-500/20');
+    }
 
     const photoIdxStr = e.dataTransfer.getData('text/plain');
     if (photoIdxStr !== '') {
@@ -878,12 +876,9 @@ window.handleSlotClick = (slotIndex) => {
     }
 };
 
-// --- GENERATE FINAL PHOTO STRIP ---
-async function generateStrip() {
-    processingOverlay.classList.remove('hidden');
-    const stripCanvas = canvas;
+// --- UNIFIED CANVAS DRAWING ENGINE (LIVE PREVIEW & FINAL STRIP) ---
+async function renderStripCanvas(stripCanvas) {
     const ctx = stripCanvas.getContext('2d');
-    
     const template = availableTemplates.find(t => t.id === selectedTemplateId);
     
     // Check if 6 Photos Grid Mode on A5
@@ -894,22 +889,15 @@ async function generateStrip() {
 
         // 1. Draw Background
         if (!overlayMode) {
-            const bgImg = new Image();
             let bgSource = './gambar/background.png';
             if (template && template.outer) bgSource = template.outer;
-            
-            bgImg.src = bgSource;
-            await new Promise((resolve) => {
-                bgImg.onload = () => {
-                    ctx.drawImage(bgImg, 0, 0, stripCanvas.width, stripCanvas.height);
-                    resolve();
-                };
-                bgImg.onerror = () => {
-                    ctx.fillStyle = '#FFFDF5';
-                    ctx.fillRect(0, 0, stripCanvas.width, stripCanvas.height);
-                    resolve();
-                };
-            });
+            const bgImg = await loadCachedImage(bgSource);
+            if (bgImg) {
+                ctx.drawImage(bgImg, 0, 0, stripCanvas.width, stripCanvas.height);
+            } else {
+                ctx.fillStyle = '#FFFDF5';
+                ctx.fillRect(0, 0, stripCanvas.width, stripCanvas.height);
+            }
         } else {
             ctx.fillStyle = '#FFFDF5';
             ctx.fillRect(0, 0, stripCanvas.width, stripCanvas.height);
@@ -926,130 +914,88 @@ async function generateStrip() {
         const cornerRadius = 24;
 
         const final6Photos = selected6Photos.map((idx, s) => capturedPhotos[idx] || capturedPhotos[s] || capturedPhotos[0]);
+        const innerImg = (template && template.inner) ? await loadCachedImage(template.inner) : null;
 
-        const imagePromises = final6Photos.map((dataUrl, index) => {
-            return new Promise(async (resolve) => {
-                const col = index % 2;
-                const row = Math.floor(index / 2);
-                const posX = paddingX + col * (imgWidth + gapX);
-                const posY = topY + row * (imgHeight + gapY);
+        for (let index = 0; index < final6Photos.length; index++) {
+            const dataUrl = final6Photos[index];
+            if (!dataUrl) continue;
+            const col = index % 2;
+            const row = Math.floor(index / 2);
+            const posX = paddingX + col * (imgWidth + gapX);
+            const posY = topY + row * (imgHeight + gapY);
 
-                const img = new Image();
-                img.onload = async () => {
-                    // Draw photo with rounded corners
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.roundRect(posX, posY, imgWidth, imgHeight, cornerRadius);
-                    ctx.clip();
-                    ctx.drawImage(img, posX, posY, imgWidth, imgHeight);
-                    ctx.restore();
+            const img = await loadCachedImage(dataUrl);
+            if (img) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.roundRect(posX, posY, imgWidth, imgHeight, cornerRadius);
+                ctx.clip();
+                ctx.drawImage(img, posX, posY, imgWidth, imgHeight);
+                ctx.restore();
 
-                    // Draw golden frame border
-                    ctx.strokeStyle = '#D4AF37';
-                    ctx.lineWidth = 6;
-                    ctx.beginPath();
-                    ctx.roundRect(posX, posY, imgWidth, imgHeight, cornerRadius);
-                    ctx.stroke();
+                // Draw golden frame border
+                ctx.strokeStyle = '#D4AF37';
+                ctx.lineWidth = 6;
+                ctx.beginPath();
+                ctx.roundRect(posX, posY, imgWidth, imgHeight, cornerRadius);
+                ctx.stroke();
 
-                    // Inner frame texture if available
-                    if (template && template.inner) {
-                        const frameImg = new Image();
-                        frameImg.src = template.inner;
-                        await new Promise((res) => {
-                            frameImg.onload = () => {
-                                ctx.drawImage(frameImg, posX - 6, posY - 6, imgWidth + 12, imgHeight + 12);
-                                res();
-                            };
-                            frameImg.onerror = res;
-                        });
-                    }
-                    resolve();
-                };
-                img.onerror = resolve;
-                img.src = dataUrl;
-            });
-        });
+                if (innerImg) {
+                    ctx.drawImage(innerImg, posX - 6, posY - 6, imgWidth + 12, imgHeight + 12);
+                }
+            }
+        }
 
-        await Promise.all(imagePromises);
-
-        // Ornaments for 6-Grid (Ketupat, Lampu, Rama)
+        // Ornaments for 6-Grid
         // 1. Ketupat (Slot #2 Kanan Atas)
-        const ketupatImg = new Image();
-        let ketupatSource = './gambar/ketupat.webp';
-        if (template && template.ketupat) ketupatSource = template.ketupat;
-        ketupatImg.src = ketupatSource;
-        await new Promise((res) => {
-            ketupatImg.onload = () => {
-                const layout = (template && template.layout && template.layout.ketupat) ? template.layout.ketupat : { size: 350, x: 120, y: 150 };
-                const kSize = layout.size;
-                const slotX = paddingX + imgWidth + gapX;
-                const slotY = topY;
-                const x = slotX + imgWidth - kSize + layout.x;
-                const y = slotY + imgHeight - kSize + layout.y;
-                ctx.drawImage(ketupatImg, x, y, kSize, kSize);
-                res();
-            };
-            ketupatImg.onerror = res;
-        });
+        let ketupatSource = (template && template.ketupat) ? template.ketupat : './gambar/ketupat.webp';
+        const ketupatImg = await loadCachedImage(ketupatSource);
+        if (ketupatImg) {
+            const layout = (template && template.layout && template.layout.ketupat) ? template.layout.ketupat : { size: 350, x: 120, y: 150 };
+            const kSize = layout.size;
+            const slotX = paddingX + imgWidth + gapX;
+            const slotY = topY;
+            const x = slotX + imgWidth - kSize + layout.x;
+            const y = slotY + imgHeight - kSize + layout.y;
+            ctx.drawImage(ketupatImg, x, y, kSize, kSize);
+        }
 
         // 2. Lampu (Slot #3 Kiri Tengah)
-        const lampuImg = new Image();
-        let lampuSource = './gambar/lampu.webp';
-        if (template && template.lampu) lampuSource = template.lampu;
-        lampuImg.src = lampuSource;
-        await new Promise((res) => {
-            lampuImg.onload = () => {
-                const layout = (template && template.layout && template.layout.lampu) ? template.layout.lampu : { size: 300, x: -100, y: 140 };
-                const lSize = layout.size;
-                const slotX = paddingX;
-                const slotY = topY + imgHeight + gapY;
-                const x = slotX + layout.x;
-                const y = slotY + imgHeight - lSize + layout.y;
-                ctx.drawImage(lampuImg, x, y, lSize, lSize);
-                res();
-            };
-            lampuImg.onerror = res;
-        });
+        let lampuSource = (template && template.lampu) ? template.lampu : './gambar/lampu.webp';
+        const lampuImg = await loadCachedImage(lampuSource);
+        if (lampuImg) {
+            const layout = (template && template.layout && template.layout.lampu) ? template.layout.lampu : { size: 300, x: -100, y: 140 };
+            const lSize = layout.size;
+            const slotX = paddingX;
+            const slotY = topY + imgHeight + gapY;
+            const x = slotX + layout.x;
+            const y = slotY + imgHeight - lSize + layout.y;
+            ctx.drawImage(lampuImg, x, y, lSize, lSize);
+        }
 
         // 3. Rama (Slot #6 Kanan Bawah)
-        const ramaImg = new Image();
-        let ramaSource = './gambar/rama.png';
-        if (template && template.rama) ramaSource = template.rama;
-        ramaImg.src = ramaSource;
-        await new Promise((res) => {
-            ramaImg.onload = () => {
-                const layout = (template && template.layout && template.layout.rama) ? template.layout.rama : { size: 550, x: 150, y: 300 };
-                const rSize = layout.size;
-                const slotX = paddingX + imgWidth + gapX;
-                const slotY = topY + (2 * (imgHeight + gapY));
-                const x = slotX + imgWidth - rSize + layout.x;
-                const y = slotY + imgHeight - rSize + layout.y;
-                ctx.drawImage(ramaImg, x, y, rSize, rSize);
-                res();
-            };
-            ramaImg.onerror = res;
-        });
+        let ramaSource = (template && template.rama) ? template.rama : './gambar/rama.png';
+        const ramaImg = await loadCachedImage(ramaSource);
+        if (ramaImg) {
+            const layout = (template && template.layout && template.layout.rama) ? template.layout.rama : { size: 550, x: 150, y: 300 };
+            const rSize = layout.size;
+            const slotX = paddingX + imgWidth + gapX;
+            const slotY = topY + (2 * (imgHeight + gapY));
+            const x = slotX + imgWidth - rSize + layout.x;
+            const y = slotY + imgHeight - rSize + layout.y;
+            ctx.drawImage(ramaImg, x, y, rSize, rSize);
+        }
 
         // Overlay Theme (if overlayMode)
         if (overlayMode && template && template.outer) {
-            const overlayImg = new Image();
-            overlayImg.src = template.outer;
-            await new Promise((resolve) => {
-                overlayImg.onload = () => {
-                    ctx.drawImage(overlayImg, 0, 0, stripCanvas.width, stripCanvas.height);
-                    resolve();
-                };
-                overlayImg.onerror = resolve;
-            });
+            const overlayImg = await loadCachedImage(template.outer);
+            if (overlayImg) {
+                ctx.drawImage(overlayImg, 0, 0, stripCanvas.width, stripCanvas.height);
+            }
         }
 
         // Corner Decoration
         await drawDecorations(ctx, stripCanvas.width, stripCanvas.height);
-
-        processingOverlay.classList.add('hidden');
-        showPreviewView();
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
-        photoPreview.src = dataUrl;
         return;
     }
 
@@ -1079,22 +1025,15 @@ async function generateStrip() {
     
     // 1. Draw Background (only if NOT in overlay mode)
     if (!overlayMode) {
-        const bgImg = new Image();
         let bgSource = './gambar/background.png';
         if (template && template.outer) bgSource = template.outer;
-        
-        bgImg.src = bgSource;
-        await new Promise((resolve) => {
-            bgImg.onload = () => {
-                ctx.drawImage(bgImg, 0, 0, stripCanvas.width, stripCanvas.height);
-                resolve();
-            };
-            bgImg.onerror = () => {
-                ctx.fillStyle = '#FFFDF5';
-                ctx.fillRect(0, 0, stripCanvas.width, stripCanvas.height);
-                resolve();
-            };
-        });
+        const bgImg = await loadCachedImage(bgSource);
+        if (bgImg) {
+            ctx.drawImage(bgImg, 0, 0, stripCanvas.width, stripCanvas.height);
+        } else {
+            ctx.fillStyle = '#FFFDF5';
+            ctx.fillRect(0, 0, stripCanvas.width, stripCanvas.height);
+        }
     } else {
         ctx.fillStyle = '#FFFDF5';
         ctx.fillRect(0, 0, stripCanvas.width, stripCanvas.height);
@@ -1107,144 +1046,146 @@ async function generateStrip() {
         capturedPhotos[selectedStripPhotos[2]] || capturedPhotos[2] || capturedPhotos[0]
     ];
 
-    const imagePromises = final3Photos.map((dataUrl, index) => {
-        return new Promise(async (resolve) => {
-            const img = new Image();
-            img.onload = async () => {
-                const yPos = padding + headerHeight + (index * (imgHeight + gap));
-                const cornerRadius = 30;
-                
-                // Draw the photo with rounded corners
-                ctx.save();
-                ctx.beginPath();
-                ctx.roundRect(padding, yPos, imgWidth, imgHeight, cornerRadius - 5);
-                ctx.clip();
-                ctx.drawImage(img, padding, yPos, imgWidth, imgHeight);
-                ctx.restore();
+    let frameSource = './gambar/atassebagaibingkai.png';
+    if (template && template.inner) frameSource = template.inner;
+    const innerFrameImg = await loadCachedImage(frameSource);
 
-                // Draw frame
-                const frameImg = new Image();
-                let frameSource = './gambar/atassebagaibingkai.png';
-                if (template && template.inner) frameSource = template.inner;
+    for (let index = 0; index < final3Photos.length; index++) {
+        const dataUrl = final3Photos[index];
+        if (!dataUrl) continue;
+        const img = await loadCachedImage(dataUrl);
+        if (img) {
+            const yPos = padding + headerHeight + (index * (imgHeight + gap));
+            const cornerRadius = 30;
+            
+            // Draw the photo with rounded corners
+            ctx.save();
+            ctx.beginPath();
+            ctx.roundRect(padding, yPos, imgWidth, imgHeight, cornerRadius - 5);
+            ctx.clip();
+            ctx.drawImage(img, padding, yPos, imgWidth, imgHeight);
+            ctx.restore();
 
-                frameImg.src = frameSource;
-                await new Promise((res) => {
-                    frameImg.onload = () => {
-                        ctx.drawImage(frameImg, padding - 10, yPos - 10, imgWidth + 20, imgHeight + 20);
-                        res();
-                    };
-                    frameImg.onerror = res;
-                });
+            // Draw frame
+            if (innerFrameImg) {
+                ctx.drawImage(innerFrameImg, padding - 10, yPos - 10, imgWidth + 20, imgHeight + 20);
+            }
 
-                // Ketupat on index 0
-                if (index === 0) {
-                    const ketupatImg = new Image();
-                    const template = availableTemplates.find(t => t.id === selectedTemplateId);
-                    let ketupatSource = './gambar/ketupat.webp';
-                    if (template && template.ketupat) ketupatSource = template.ketupat;
-                    
-                    ketupatImg.src = ketupatSource;
-                    await new Promise((res) => {
-                        ketupatImg.onload = () => {
-                            const layout = (template && template.layout && template.layout.ketupat) ? template.layout.ketupat : { size: 350, x: 120, y: 150 };
-                            const kSize = layout.size;
-                            const x = padding + imgWidth - kSize + layout.x;
-                            const y = yPos + imgHeight - kSize + layout.y;
-                            ctx.drawImage(ketupatImg, x, y, kSize, kSize);
-                            res();
-                        };
-                        ketupatImg.onerror = res;
-                    });
+            // Ketupat on index 0
+            if (index === 0) {
+                let ketupatSource = (template && template.ketupat) ? template.ketupat : './gambar/ketupat.webp';
+                const ketupatImg = await loadCachedImage(ketupatSource);
+                if (ketupatImg) {
+                    const layout = (template && template.layout && template.layout.ketupat) ? template.layout.ketupat : { size: 350, x: 120, y: 150 };
+                    const kSize = layout.size;
+                    const x = padding + imgWidth - kSize + layout.x;
+                    const y = yPos + imgHeight - kSize + layout.y;
+                    ctx.drawImage(ketupatImg, x, y, kSize, kSize);
                 }
+            }
 
-                // Lampu on index 1
-                if (index === 1) {
-                    const lampuImg = new Image();
-                    const template = availableTemplates.find(t => t.id === selectedTemplateId);
-                    let lampuSource = './gambar/lampu.webp';
-                    if (template && template.lampu) lampuSource = template.lampu;
-
-                    lampuImg.src = lampuSource;
-                    await new Promise((res) => {
-                        lampuImg.onload = () => {
-                            const layout = (template && template.layout && template.layout.lampu) ? template.layout.lampu : { size: 300, x: -100, y: 140 };
-                            const lSize = layout.size;
-                            const x = padding + layout.x;
-                            const y = yPos + imgHeight - lSize + layout.y;
-                            ctx.drawImage(lampuImg, x, y, lSize, lSize);
-                            res();
-                        };
-                        lampuImg.onerror = res;
-                    });
+            // Lampu on index 1
+            if (index === 1) {
+                let lampuSource = (template && template.lampu) ? template.lampu : './gambar/lampu.webp';
+                const lampuImg = await loadCachedImage(lampuSource);
+                if (lampuImg) {
+                    const layout = (template && template.layout && template.layout.lampu) ? template.layout.lampu : { size: 300, x: -100, y: 140 };
+                    const lSize = layout.size;
+                    const x = padding + layout.x;
+                    const y = yPos + imgHeight - lSize + layout.y;
+                    ctx.drawImage(lampuImg, x, y, lSize, lSize);
                 }
+            }
 
-                // Rama on index 2
-                if (index === 2) {
-                    const ramaImg = new Image();
-                    const template = availableTemplates.find(t => t.id === selectedTemplateId);
-                    let ramaSource = './gambar/rama.png';
-                    if (template && template.rama) ramaSource = template.rama;
-
-                    ramaImg.src = ramaSource;
-                    await new Promise((res) => {
-                        ramaImg.onload = () => {
-                            const layout = (template && template.layout && template.layout.rama) ? template.layout.rama : { size: 550, x: 150, y: 300 };
-                            const rSize = layout.size;
-                            const x = padding + imgWidth - rSize + layout.x;
-                            const y = yPos + imgHeight - rSize + layout.y;
-                            ctx.drawImage(ramaImg, x, y, rSize, rSize);
-                            res();
-                        };
-                        ramaImg.onerror = res;
-                    });
+            // Rama on index 2
+            if (index === 2) {
+                let ramaSource = (template && template.rama) ? template.rama : './gambar/rama.png';
+                const ramaImg = await loadCachedImage(ramaSource);
+                if (ramaImg) {
+                    const layout = (template && template.layout && template.layout.rama) ? template.layout.rama : { size: 550, x: 150, y: 300 };
+                    const rSize = layout.size;
+                    const x = padding + imgWidth - rSize + layout.x;
+                    const y = yPos + imgHeight - rSize + layout.y;
+                    ctx.drawImage(ramaImg, x, y, rSize, rSize);
                 }
-                
-                resolve();
-            };
-            img.src = dataUrl;
-        });
-    });
-
-    await Promise.all(imagePromises);
+            }
+        }
+    }
 
     // Overlay Theme (if overlayMode)
-    if (overlayMode) {
-        const bgImg = new Image();
-        let bgSource = './gambar/background.png';
-        const template = availableTemplates.find(t => t.id === selectedTemplateId);
-        if (template && template.outer) bgSource = template.outer;
-
-        bgImg.src = bgSource;
-        await new Promise((resolve) => {
-            bgImg.onload = () => {
-                ctx.drawImage(bgImg, 0, 0, stripCanvas.width, stripCanvas.height);
-                resolve();
-            };
-            bgImg.onerror = resolve;
-        });
+    if (overlayMode && template && template.outer) {
+        const overlayImg = await loadCachedImage(template.outer);
+        if (overlayImg) {
+            ctx.drawImage(overlayImg, 0, 0, stripCanvas.width, stripCanvas.height);
+        }
     }
 
     // Corner Decoration
     await drawDecorations(ctx, stripCanvas.width, stripCanvas.height);
-    
-    processingOverlay.classList.add('hidden');
-    showPreviewView();
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.90);
-    photoPreview.src = dataUrl;
+}
+
+// Live preview renderer for Studio View
+let isLivePreviewRendering = false;
+let pendingLivePreview = false;
+
+async function updateStudioLivePreview() {
+    if (isLivePreviewRendering) {
+        pendingLivePreview = true;
+        return;
+    }
+    isLivePreviewRendering = true;
+
+    const liveImg = document.getElementById('studio-live-preview-img');
+    const spinner = document.getElementById('studio-preview-spinner');
+
+    const spinnerTimer = setTimeout(() => {
+        if (spinner) spinner.classList.remove('hidden');
+    }, 60);
+
+    try {
+        await renderStripCanvas(canvas);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.90);
+        if (liveImg) {
+            liveImg.src = dataUrl;
+        }
+        if (photoPreview) {
+            photoPreview.src = dataUrl;
+        }
+    } catch (err) {
+        console.error('Error updating live preview:', err);
+    } finally {
+        clearTimeout(spinnerTimer);
+        if (spinner) spinner.classList.add('hidden');
+        isLivePreviewRendering = false;
+        if (pendingLivePreview) {
+            pendingLivePreview = false;
+            updateStudioLivePreview();
+        }
+    }
+}
+
+// --- GENERATE FINAL PHOTO STRIP & TRANSITION TO VIEW 3 ---
+async function generateStrip() {
+    processingOverlay.classList.remove('hidden');
+    try {
+        await renderStripCanvas(canvas);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+        photoPreview.src = dataUrl;
+        showPreviewView();
+    } catch (err) {
+        console.error('Error generating strip:', err);
+    } finally {
+        processingOverlay.classList.add('hidden');
+    }
 }
 
 async function drawDecorations(ctx, width, height) {
-    const cornerImg = new Image();
-    cornerImg.src = './gambar/pojokkiribawah.webp';
-    await new Promise((resolve) => {
-        cornerImg.onload = () => {
-            const cornerWidth = 200;
-            const cornerHeight = (cornerImg.height / cornerImg.width) * cornerWidth;
-            ctx.drawImage(cornerImg, 20, height - cornerHeight - 20, cornerWidth, cornerHeight);
-            resolve();
-        };
-        cornerImg.onerror = resolve;
-    });
+    const cornerImg = await loadCachedImage('./gambar/pojokkiribawah.webp');
+    if (cornerImg) {
+        const cornerWidth = 200;
+        const cornerHeight = (cornerImg.height / cornerImg.width) * cornerWidth;
+        ctx.drawImage(cornerImg, 20, height - cornerHeight - 20, cornerWidth, cornerHeight);
+    }
 }
 
 // Retake / Reset All Photos (Start new 6-shot session)
