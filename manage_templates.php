@@ -15,61 +15,125 @@ if ($action === 'list') {
         echo json_encode([]);
         exit();
     }
-    echo file_get_contents($jsonFile);
+    $raw = file_get_contents($jsonFile);
+    $data = json_decode($raw, true) ?: [];
+    
+    // If only_active is requested, filter
+    if (isset($_GET['only_active']) && $_GET['only_active'] == '1') {
+        $data = array_values(array_filter($data, function($t) {
+            return !isset($t['active']) || $t['active'] === true || $t['active'] === 1 || $t['active'] === 'true';
+        }));
+    }
+    
+    echo json_encode($data);
     exit();
 }
 
-if ($action === 'upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = $_POST['name'] ?? 'Unnamed Template';
-    $overlayMode = isset($_POST['overlayMode']) && $_POST['overlayMode'] === 'true';
+if ($action === 'toggle_active' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $input = json_decode(file_get_contents('php://input'), true);
+    $id = $input['id'] ?? '';
+    $active = isset($input['active']) ? (bool)$input['active'] : true;
     
-    $id = uniqid();
-    $templateDir = $targetDir . $id . '/';
-    mkdir($templateDir, 0755, true);
-    
-    $outerPath = '';
-    $ketupatPath = '';
-    $lampuPath = '';
-    $ramaPath = '';
-    
-    if (isset($_FILES['outerImage']) && $_FILES['outerImage']['error'] === 0) {
-        $ext = pathinfo($_FILES['outerImage']['name'], PATHINFO_EXTENSION);
-        $outerPath = 'uploads/templates/' . $id . '/outer.' . $ext;
-        move_uploaded_file($_FILES['outerImage']['tmp_name'], __DIR__ . '/' . $outerPath);
-    }
-
-    if (isset($_FILES['ketupat']) && $_FILES['ketupat']['error'] === 0) {
-        $ext = pathinfo($_FILES['ketupat']['name'], PATHINFO_EXTENSION);
-        $ketupatPath = 'uploads/templates/' . $id . '/ketupat.' . $ext;
-        move_uploaded_file($_FILES['ketupat']['tmp_name'], __DIR__ . '/' . $ketupatPath);
-    }
-
-    if (isset($_FILES['lampu']) && $_FILES['lampu']['error'] === 0) {
-        $ext = pathinfo($_FILES['lampu']['name'], PATHINFO_EXTENSION);
-        $lampuPath = 'uploads/templates/' . $id . '/lampu.' . $ext;
-        move_uploaded_file($_FILES['lampu']['tmp_name'], __DIR__ . '/' . $lampuPath);
-    }
-
-    if (isset($_FILES['rama']) && $_FILES['rama']['error'] === 0) {
-        $ext = pathinfo($_FILES['rama']['name'], PATHINFO_EXTENSION);
-        $ramaPath = 'uploads/templates/' . $id . '/rama.' . $ext;
-        move_uploaded_file($_FILES['rama']['tmp_name'], __DIR__ . '/' . $ramaPath);
+    if (empty($id)) {
+        echo json_encode(['success' => false, 'error' => 'Missing template ID']);
+        exit();
     }
     
     $templates = [];
     if (file_exists($jsonFile)) {
-        $templates = json_decode(file_get_contents($jsonFile), true);
+        $templates = json_decode(file_get_contents($jsonFile), true) ?: [];
+    }
+    
+    $found = false;
+    foreach ($templates as &$t) {
+        if ($t['id'] === $id) {
+            $t['active'] = $active;
+            $found = true;
+            break;
+        }
+    }
+    unset($t);
+    
+    if ($found) {
+        file_put_contents($jsonFile, json_encode($templates, JSON_PRETTY_PRINT));
+        echo json_encode(['success' => true, 'id' => $id, 'active' => $active]);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Template not found']);
+    }
+    exit();
+}
+
+if ($action === 'upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = trim($_POST['name'] ?? 'Unnamed Template');
+    $overlayMode = isset($_POST['overlayMode']) && ($_POST['overlayMode'] === 'true' || $_POST['overlayMode'] === '1' || $_POST['overlayMode'] === 'on');
+    $active = !isset($_POST['active']) || $_POST['active'] === 'true' || $_POST['active'] === '1' || $_POST['active'] === 'on';
+    
+    $editId = trim($_POST['id'] ?? '');
+    $isEdit = false;
+    $existingIndex = -1;
+    $existingTemplate = null;
+
+    $templates = [];
+    if (file_exists($jsonFile)) {
+        $templates = json_decode(file_get_contents($jsonFile), true) ?: [];
+    }
+
+    if (!empty($editId)) {
+        foreach ($templates as $idx => $t) {
+            if ($t['id'] === $editId) {
+                $isEdit = true;
+                $existingIndex = $idx;
+                $existingTemplate = $t;
+                break;
+            }
+        }
+    }
+
+    $id = $isEdit ? $editId : uniqid();
+    $templateDir = $targetDir . $id . '/';
+    if (!is_dir($templateDir)) {
+        mkdir($templateDir, 0755, true);
+    }
+    
+    $outerPath = $existingTemplate['outer'] ?? '';
+    $ketupatPath = $existingTemplate['ketupat'] ?? '';
+    $lampuPath = $existingTemplate['lampu'] ?? '';
+    $ramaPath = $existingTemplate['rama'] ?? '';
+    
+    if (isset($_FILES['outerImage']) && $_FILES['outerImage']['error'] === UPLOAD_ERR_OK) {
+        $ext = pathinfo($_FILES['outerImage']['name'], PATHINFO_EXTENSION) ?: 'png';
+        $outerPath = 'uploads/templates/' . $id . '/outer.' . $ext;
+        move_uploaded_file($_FILES['outerImage']['tmp_name'], __DIR__ . '/' . $outerPath);
+    }
+
+    if (isset($_FILES['ketupat']) && $_FILES['ketupat']['error'] === UPLOAD_ERR_OK) {
+        $ext = pathinfo($_FILES['ketupat']['name'], PATHINFO_EXTENSION) ?: 'png';
+        $ketupatPath = 'uploads/templates/' . $id . '/ketupat.' . $ext;
+        move_uploaded_file($_FILES['ketupat']['tmp_name'], __DIR__ . '/' . $ketupatPath);
+    }
+
+    if (isset($_FILES['lampu']) && $_FILES['lampu']['error'] === UPLOAD_ERR_OK) {
+        $ext = pathinfo($_FILES['lampu']['name'], PATHINFO_EXTENSION) ?: 'png';
+        $lampuPath = 'uploads/templates/' . $id . '/lampu.' . $ext;
+        move_uploaded_file($_FILES['lampu']['tmp_name'], __DIR__ . '/' . $lampuPath);
+    }
+
+    if (isset($_FILES['rama']) && $_FILES['rama']['error'] === UPLOAD_ERR_OK) {
+        $ext = pathinfo($_FILES['rama']['name'], PATHINFO_EXTENSION) ?: 'png';
+        $ramaPath = 'uploads/templates/' . $id . '/rama.' . $ext;
+        move_uploaded_file($_FILES['rama']['tmp_name'], __DIR__ . '/' . $ramaPath);
     }
     
     $newTemplate = [
         'id' => $id,
         'name' => $name,
-        'sizeType' => $_POST['sizeType'] ?? 'a5',
+        'sizeType' => $_POST['sizeType'] ?? 'a5_6grid',
         'outer' => $outerPath,
         'ketupat' => $ketupatPath,
         'lampu' => $lampuPath,
         'rama' => $ramaPath,
         'overlayMode' => $overlayMode,
+        'active' => $isEdit && isset($existingTemplate['active']) ? (bool)$existingTemplate['active'] : $active,
         'layout' => [
             'ketupat' => [
                 'x' => (int)($_POST['ketupat_x'] ?? 120),
@@ -89,10 +153,15 @@ if ($action === 'upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         ]
     ];
     
-    $templates[] = $newTemplate;
+    if ($isEdit && $existingIndex >= 0) {
+        $templates[$existingIndex] = $newTemplate;
+    } else {
+        $templates[] = $newTemplate;
+    }
+    
     file_put_contents($jsonFile, json_encode($templates, JSON_PRETTY_PRINT));
     
-    echo json_encode(['success' => true, 'template' => $newTemplate]);
+    echo json_encode(['success' => true, 'is_edit' => $isEdit, 'template' => $newTemplate]);
     exit();
 }
 
@@ -107,21 +176,21 @@ if ($action === 'delete' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $templates = [];
     if (file_exists($jsonFile)) {
-        $templates = json_decode(file_get_contents($jsonFile), true);
+        $templates = json_decode(file_get_contents($jsonFile), true) ?: [];
     }
     
     $newTemplates = [];
     foreach ($templates as $t) {
         if ($t['id'] === $id) {
             // Delete files and folder
-            if (!empty($t['outer']) && file_exists(__DIR__ . '/' . $t['outer'])) unlink(__DIR__ . '/' . $t['outer']);
-            if (!empty($t['ketupat']) && file_exists(__DIR__ . '/' . $t['ketupat'])) unlink(__DIR__ . '/' . $t['ketupat']);
-            if (!empty($t['lampu']) && file_exists(__DIR__ . '/' . $t['lampu'])) unlink(__DIR__ . '/' . $t['lampu']);
-            if (!empty($t['rama']) && file_exists(__DIR__ . '/' . $t['rama'])) unlink(__DIR__ . '/' . $t['rama']);
+            if (!empty($t['outer']) && file_exists(__DIR__ . '/' . $t['outer'])) @unlink(__DIR__ . '/' . $t['outer']);
+            if (!empty($t['ketupat']) && file_exists(__DIR__ . '/' . $t['ketupat'])) @unlink(__DIR__ . '/' . $t['ketupat']);
+            if (!empty($t['lampu']) && file_exists(__DIR__ . '/' . $t['lampu'])) @unlink(__DIR__ . '/' . $t['lampu']);
+            if (!empty($t['rama']) && file_exists(__DIR__ . '/' . $t['rama'])) @unlink(__DIR__ . '/' . $t['rama']);
             $dir = $targetDir . $id;
             if (is_dir($dir)) {
                 array_map('unlink', glob("$dir/*.*"));
-                rmdir($dir);
+                @rmdir($dir);
             }
         } else {
             $newTemplates[] = $t;

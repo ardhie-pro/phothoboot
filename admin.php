@@ -74,6 +74,9 @@
             </div>
 
             <div class="flex items-center gap-3">
+                <a href="history.php" class="flex items-center gap-2 text-sm bg-amber-100 hover:bg-amber-200 text-amber-900 px-5 py-2.5 rounded-full font-bold transition-all shadow-sm">
+                    <span>🎞️</span> Riwayat Sesi Foto
+                </a>
                 <a href="index.html" class="flex items-center gap-2 text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-full font-semibold transition-all">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -1144,46 +1147,84 @@
         handleFileInput('lampu', 'lampu');
         handleFileInput('rama', 'rama');
 
+        let loadedTemplatesList = [];
+
         async function fetchTemplates() {
             try {
-                const res = await fetch('manage_templates.php?action=list');
+                const res = await fetch('manage_templates.php?action=list&_t=' + Date.now());
                 const data = await res.json();
-                renderTemplates(data);
+                loadedTemplatesList = data || [];
+                renderTemplates(loadedTemplatesList);
             } catch (e) {
                 console.error(e);
             }
         }
 
         function renderTemplates(templates) {
-            if (templates.length === 0) {
+            if (!templates || templates.length === 0) {
                 list.innerHTML = '<p class="text-gray-500 italic col-span-2">Belum ada template.</p>';
                 return;
             }
 
             list.innerHTML = templates.map(t => {
-                const isA5 = (t.sizeType || 'a5') === 'a5';
+                const is6 = t.sizeType === 'a5_6grid' || t.sizeType === '4r_6grid';
+                const isA5 = t.sizeType === 'a5' || is6 || t.sizeType === '4r';
+                const isActive = t.active !== false;
+                const thumbSrc = t.outer || t.ketupat || t.lampu || t.rama || '';
+
                 return `
-                <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 p-4">
-                    <div class="aspect-[16/9] bg-gray-50 rounded-xl mb-4 relative overflow-hidden flex items-center justify-center border">
-                        <img src="${t.outer}" class="absolute inset-0 w-full h-full object-cover opacity-50">
-                        <div class="relative z-10 text-center">
-                            <span class="text-xs font-bold text-[#2D6A4F] uppercase">${t.name}</span>
-                            <div class="mt-2 flex flex-wrap items-center justify-center gap-1">
-                                <span class="px-2 py-0.5 ${isA5 ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'} rounded-full text-[9px] font-black">
-                                    ${isA5 ? '📄 A5 (1748x2480)' : '📱 Strip (1080x1920)'}
-                                </span>
-                                <span class="px-2 py-0.5 ${t.overlayMode ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'} rounded-full text-[9px] font-bold">
-                                    ${t.overlayMode ? '✓ OVERLAY' : 'BACKGROUND'}
-                                </span>
+                <div class="bg-white rounded-3xl overflow-hidden shadow-sm border ${isActive ? 'border-emerald-200 ring-1 ring-emerald-400/30' : 'border-gray-200 opacity-75'} p-4 transition-all hover:shadow-md flex flex-col justify-between">
+                    <div>
+                        <div class="aspect-[16/9] bg-slate-900 rounded-xl mb-3 relative overflow-hidden flex items-center justify-center border border-slate-700">
+                            ${thumbSrc ? `<img src="${thumbSrc}" class="absolute inset-0 w-full h-full object-cover opacity-60">` : `<span class="text-2xl">🖼️</span>`}
+                            <div class="relative z-10 text-center px-2">
+                                <span class="text-xs font-black text-amber-300 uppercase drop-shadow-md">${t.name}</span>
+                                <div class="mt-1.5 flex flex-wrap items-center justify-center gap-1">
+                                    <span class="px-2 py-0.5 ${is6 ? 'bg-amber-400 text-slate-900' : (isA5 ? 'bg-emerald-400 text-slate-900' : 'bg-blue-400 text-slate-900')} rounded-full text-[9px] font-black shadow-sm">
+                                        ${is6 ? '📸 A5 (6-Grid)' : (isA5 ? '📄 A5 (3-Strip)' : '📱 Strip (9:16)')}
+                                    </span>
+                                    <span class="px-2 py-0.5 ${t.overlayMode ? 'bg-emerald-500/80 text-white' : 'bg-slate-700/80 text-slate-200'} rounded-full text-[9px] font-bold">
+                                        ${t.overlayMode ? '✓ OVERLAY' : 'BACKGROUND'}
+                                    </span>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- Active Toggle Checkbox -->
+                        <label class="flex items-center justify-between p-2.5 rounded-xl ${isActive ? 'bg-emerald-50 border border-emerald-200 text-emerald-900' : 'bg-slate-100 border border-slate-200 text-slate-600'} cursor-pointer hover:scale-[1.01] transition-all">
+                            <span class="text-[11px] font-bold flex items-center gap-1.5">
+                                <span>${isActive ? '✅' : '⚪'}</span> ${isActive ? 'Aktif untuk Pengunjung' : 'Nonaktif (Disembunyikan)'}
+                            </span>
+                            <input type="checkbox" ${isActive ? 'checked' : ''} onchange="toggleTemplateActive('${t.id}', this.checked)" class="w-4 h-4 accent-emerald-600 cursor-pointer">
+                        </label>
                     </div>
-                    <button onclick="deleteTemplate('${t.id}')" class="w-full py-2 bg-red-50 text-red-600 rounded-xl font-bold text-xs hover:bg-red-100 transition-all">
-                        Hapus Template
+
+                    <button onclick="deleteTemplate('${t.id}')" class="mt-3 w-full py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer">
+                        <span>🗑️</span> Hapus Template
                     </button>
                 </div>
             `}).join('');
         }
+
+        window.toggleTemplateActive = async function(id, active) {
+            try {
+                const res = await fetch('manage_templates.php?action=toggle_active', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, active })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const t = loadedTemplatesList.find(item => item.id === id);
+                    if (t) t.active = active;
+                    renderTemplates(loadedTemplatesList);
+                } else {
+                    alert('Gagal mengubah status: ' + (data.error || 'Server error'));
+                }
+            } catch (err) {
+                alert('Gagal menghubungi server');
+            }
+        };
 
         form.onsubmit = async (e) => {
             e.preventDefault();

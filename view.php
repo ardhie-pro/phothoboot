@@ -132,9 +132,17 @@ $totalRounds = count($rounds);
                 ✨ Ramadan Kareem Photo Booth ✨
             </div>
             <h1 class="font-playfair text-3xl sm:text-4xl font-bold gold-gradient-text mb-2">Kenangan Fotomu</h1>
-            <p class="text-slate-400 text-sm max-w-md mx-auto">
+            <p class="text-slate-400 text-sm max-w-md mx-auto mb-4">
                 Pilih foto atau Photo Strip untuk didownload atau dikirim ke operator booth untuk dicetak fisik!
             </p>
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <a href="history.php" class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-slate-800/90 hover:bg-slate-700 border border-amber-500/30 text-amber-300 text-xs font-bold transition-all shadow-md">
+                    <span>🎞️</span> Riwayat Semua Sesi Foto
+                </a>
+                <a href="index.html" class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-emerald-800/80 hover:bg-emerald-700 border border-emerald-500/30 text-emerald-200 text-xs font-bold transition-all shadow-md">
+                    <span>📸</span> Ke Booth Foto
+                </a>
+            </div>
         </header>
 
         <!-- Notification Toast -->
