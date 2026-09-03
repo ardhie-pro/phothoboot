@@ -75,10 +75,10 @@ resetThemeBtn.addEventListener('click', () => {
     }
 });
 
-// Fetch and Render Templates
+// Fetch and Render Active Templates (Checked by Admin)
 async function loadTemplates() {
     try {
-        const res = await fetch('manage_templates.php?action=list');
+        const res = await fetch('manage_templates.php?action=list&only_active=1&_t=' + Date.now());
         availableTemplates = await res.json();
         
         // Auto-select first if none selected or invalid
@@ -122,13 +122,14 @@ function renderGallery() {
     // Add dynamics
     availableTemplates.forEach(t => {
         const isActive = selectedTemplateId === t.id;
+        const thumb = t.outer || t.ketupat || t.lampu || t.rama || '';
         html += `
             <button onclick="window.selectTemplate('${t.id}')" 
                 class="template-item group relative aspect-[9/16] rounded-[2.5rem] overflow-hidden transition-all duration-500 
                 ${isActive ? 'ring-[12px] ring-ramadan-gold/70 border-8 border-white' : 'border-4 border-ramadan-gold/10 hover:border-ramadan-gold/50 shadow-xl'}">
                 
                 <!-- Full Preview Image -->
-                <img src="${t.outer}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                ${thumb ? `<img src="${thumb}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">` : `<div class="w-full h-full bg-slate-900 flex items-center justify-center text-4xl">🖼️</div>`}
                 
                 <!-- Improved Label Overlay (Subtler) -->
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity">
@@ -174,6 +175,7 @@ function renderStudioThemeGallery() {
 
     availableTemplates.forEach(t => {
         const isActive = selectedTemplateId === t.id;
+        const thumb = t.outer || t.ketupat || t.lampu || t.rama || '';
         const item = document.createElement('button');
         item.type = 'button';
         item.onclick = () => window.selectTemplate(t.id);
@@ -185,7 +187,7 @@ function renderStudioThemeGallery() {
         
         item.innerHTML = `
             <div class="w-8 h-12 rounded-lg overflow-hidden bg-black/60 border border-white/20 shrink-0 relative flex items-center justify-center">
-                ${t.outer ? `<img src="${t.outer}" class="w-full h-full object-cover" alt="${t.name}">` : `<span class="text-xs">🖼️</span>`}
+                ${thumb ? `<img src="${thumb}" class="w-full h-full object-cover" alt="${t.name}">` : `<span class="text-xs">🖼️</span>`}
                 ${isActive ? `<div class="absolute inset-0 bg-ramadan-green/40 flex items-center justify-center text-white text-xs font-black">✓</div>` : ''}
             </div>
             <div class="text-left flex flex-col">
@@ -588,7 +590,7 @@ if (studioBackBtn) {
 
 if (studioConfirmBtn) {
     studioConfirmBtn.addEventListener('click', () => {
-        generateStrip();
+        saveAndRequestPrint(studioConfirmBtn);
     });
 }
 
@@ -1248,109 +1250,129 @@ function resetSaveButton() {
     `;
 }
 
-// Save Photo to Server (uploads to session, then resets for next round)
-saveBtn.addEventListener('click', async () => {
+// Save Photo to Server & Request Print to Operator Booth
+async function saveAndRequestPrint(buttonTrigger = null) {
+    let btnTextEl = null;
+    let originalText = '';
+    
+    if (buttonTrigger) {
+        buttonTrigger.disabled = true;
+        btnTextEl = buttonTrigger.querySelector('span:last-child') || buttonTrigger;
+        originalText = btnTextEl.innerText;
+        btnTextEl.innerText = 'Mengirim ke Antrean Cetak...';
+    }
+
+    if (processingOverlay) processingOverlay.classList.remove('hidden');
+
     try {
-        const stripDataUrl = canvas.toDataURL('image/jpeg', 0.90);
+        // 1. Render final strip on canvas
+        await renderStripCanvas(canvas);
+        const stripDataUrl = canvas.toDataURL('image/jpeg', 0.92);
         const validPhotos = capturedPhotos.filter(Boolean);
         const allImages = [...validPhotos, stripDataUrl];
-        
-        saveBtn.disabled = true;
-        saveBtn.innerHTML = `
-            <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Menyimpan...
-        `;
 
+        // 2. Upload to upload.php
         const payload = { images: allImages };
-        // If we already have a session, append to it
         if (currentSessionId) {
             payload.session_id = currentSessionId;
         }
 
-        const response = await fetch('upload.php', {
+        const res = await fetch('upload.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
-        if (!response.ok) {
-            throw new Error(`Upload failed: ${response.statusText}`);
+        if (!res.ok) throw new Error(`Upload failed: ${res.statusText}`);
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || "Server upload error");
+
+        currentSessionId = data.session_id;
+        currentViewUrl = data.view_url;
+        saveCount++;
+        if (saveCountBadge) saveCountBadge.innerText = saveCount;
+        if (selesaiContainer) selesaiContainer.classList.remove('hidden');
+
+        // Determine strip filename from saved_files
+        const savedFiles = data.saved_files || [];
+        const stripFile = savedFiles.find(f => f.includes('strip')) || savedFiles[savedFiles.length - 1] || 'round_1_strip.jpeg';
+        const photoUrl = `uploads/${data.session_id}/${stripFile}`;
+
+        // 3. Send Print Request to print_action.php
+        const template = availableTemplates.find(t => t.id === selectedTemplateId);
+        const templateLabel = template ? template.name : 'Tema Standar';
+        const formatLabel = (studioLayoutMode === '6-grid' || (template && (template.sizeType === 'a5_6grid' || template.sizeType === '4r_6grid'))) ? 'A5 6-Grid' : 'A5 3-Strip';
+
+        try {
+            await fetch('print_action.php?action=request_print', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    session_id: data.session_id,
+                    photo_url: photoUrl,
+                    label: `${templateLabel} (${formatLabel})`,
+                    copies: 1
+                })
+            });
+        } catch (printErr) {
+            console.warn("Print request network warning:", printErr);
         }
 
-        const data = await response.json();
-        
-        if (data.success) {
-            // Store session info
-            currentSessionId = data.session_id;
-            currentViewUrl = data.view_url;
-            saveCount++;
-
-            // Update Selesai button badge
-            saveCountBadge.innerText = saveCount;
-            selesaiContainer.classList.remove('hidden');
-
-            // Success feedback
-            saveBtn.innerHTML = `
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                Tersimpan! (${saveCount})
-            `;
-            saveBtn.classList.remove('bg-ramadan-primary');
-            saveBtn.classList.add('bg-ramadan-gold', 'text-ramadan-green');
-
-            // Quick reset after 600ms
-            setTimeout(() => {
-                resetSaveButton();
-                saveBtn.classList.add('bg-ramadan-primary');
-                saveBtn.classList.remove('bg-ramadan-gold', 'text-ramadan-green');
-                resetCameraForNextRound();
-            }, 600);
-
-        } else {
-            throw new Error(data.error || "Server error");
-        }
+        // 4. Open QR Code Modal with QR image
+        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(data.view_url)}`;
+        qrImage.src = qrApiUrl;
+        qrModal.classList.remove('hidden');
 
     } catch (err) {
-        console.error("Gagal mengupload foto:", err);
-        alert("Gagal menyimpan ke server. Pastikan upload.php berfungsi dan PHP server aktif.");
-        saveBtn.disabled = false;
-        saveBtn.innerText = "Coba Lagi";
+        console.error("Gagal cetak / simpan:", err);
+        alert("Gagal memproses cetak: " + (err.message || "Pastikan server aktif"));
+    } finally {
+        if (processingOverlay) processingOverlay.classList.add('hidden');
+        if (buttonTrigger && btnTextEl) {
+            buttonTrigger.disabled = false;
+            btnTextEl.innerText = originalText;
+        }
     }
-});
+}
+
+// Wire up Save / Print Buttons
+if (saveBtn) {
+    saveBtn.addEventListener('click', () => saveAndRequestPrint(saveBtn));
+}
 
 // Selesai Button — show QR Code
-selesaiBtn.addEventListener('click', () => {
-    if (!currentViewUrl) return;
-    
-    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentViewUrl)}`;
-    qrImage.src = qrApiUrl;
-    qrModal.classList.remove('hidden');
-});
+if (selesaiBtn) {
+    selesaiBtn.addEventListener('click', () => {
+        if (!currentViewUrl) return;
+        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(currentViewUrl)}`;
+        qrImage.src = qrApiUrl;
+        qrModal.classList.remove('hidden');
+    });
+}
 
 // QR Modal Handlers
-closeQrBtn.addEventListener('click', () => {
-    qrModal.classList.add('hidden');
-});
+if (closeQrBtn) {
+    closeQrBtn.addEventListener('click', () => {
+        qrModal.classList.add('hidden');
+    });
+}
 
 // Finish Session — start fresh for next person
-finishSessionBtn.addEventListener('click', () => {
-    qrModal.classList.add('hidden');
-    
-    // Reset session state for the next person
-    currentSessionId = null;
-    currentViewUrl = null;
-    saveCount = 0;
-    saveCountBadge.innerText = '0';
-    selesaiContainer.classList.add('hidden');
-    
-    // Reset camera
-    resetCameraForNextRound();
-    resetSaveButton();
-});
+if (finishSessionBtn) {
+    finishSessionBtn.addEventListener('click', () => {
+        qrModal.classList.add('hidden');
+        
+        // Reset session state for the next person
+        currentSessionId = null;
+        currentViewUrl = null;
+        saveCount = 0;
+        if (saveCountBadge) saveCountBadge.innerText = '0';
+        if (selesaiContainer) selesaiContainer.classList.add('hidden');
+        
+        // Reset camera
+        resetCameraForNextRound();
+    });
+}
 
 // Start camera and load templates on load
 window.addEventListener('load', () => {

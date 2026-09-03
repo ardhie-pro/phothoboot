@@ -8,32 +8,41 @@ $uploadsDir = __DIR__ . '/uploads/';
 $sessions = [];
 
 if (is_dir($uploadsDir)) {
-    $dirs = glob($uploadsDir . '*', GLOB_ONLYDIR);
-    foreach ($dirs as $dir) {
-        $basename = basename($dir);
-        if ($basename === 'templates' || $basename === 'branding') continue;
+    $dirItems = @scandir($uploadsDir) ?: [];
+    foreach ($dirItems as $item) {
+        if ($item === '.' || $item === '..' || $item === 'templates' || $item === 'branding') continue;
+        $dir = $uploadsDir . $item;
+        if (!is_dir($dir)) continue;
 
-        // Check if session directory contains photo files
-        $photoFiles = glob($dir . '/*.{png,jpg,jpeg,webp}', GLOB_BRACE);
-        if (empty($photoFiles)) continue;
-
+        $files = @scandir($dir) ?: [];
         $strips = [];
         $rawPhotos = [];
 
-        foreach ($photoFiles as $file) {
-            $fname = basename($file);
-            $relUrl = 'uploads/' . $basename . '/' . $fname;
-            if (strpos($fname, 'strip') !== false) {
+        foreach ($files as $f) {
+            if ($f === '.' || $f === '..') continue;
+            $ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
+            if (!in_array($ext, ['png', 'jpg', 'jpeg', 'webp', 'gif'])) continue;
+
+            $relUrl = 'uploads/' . $item . '/' . $f;
+            if (stripos($f, 'strip') !== false) {
                 $strips[] = $relUrl;
             } else {
                 $rawPhotos[] = $relUrl;
             }
         }
 
-        // Parse timestamp from directory name if format is YYYYMMDD_HHMMSS_xxx
-        $timestamp = filemtime($dir);
+        if (empty($strips) && empty($rawPhotos)) continue;
+
+        // Natural sort photos
+        natsort($rawPhotos);
+        $rawPhotos = array_values($rawPhotos);
+        natsort($strips);
+        $strips = array_values($strips);
+
+        // Parse timestamp from directory name or file modification time
+        $timestamp = @filemtime($dir) ?: time();
         $formattedDate = date('d M Y, H:i', $timestamp);
-        if (preg_match('/^(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})/', $basename, $m)) {
+        if (preg_match('/^(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})/', $item, $m)) {
             $dt = DateTime::createFromFormat('Ymd_His', "{$m[1]}{$m[2]}{$m[3]}_{$m[4]}{$m[5]}{$m[6]}");
             if ($dt) {
                 $formattedDate = $dt->format('d M Y, H:i') . ' WIB';
@@ -42,7 +51,7 @@ if (is_dir($uploadsDir)) {
         }
 
         $sessions[] = [
-            'id' => $basename,
+            'id' => $item,
             'timestamp' => $timestamp,
             'date_str' => $formattedDate,
             'photos' => $rawPhotos,

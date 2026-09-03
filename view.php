@@ -17,16 +17,19 @@ if (!is_dir($sessionDir)) {
 }
 
 // Get all image files and organize by round
-$files = glob($sessionDir . '*.{png,jpg,jpeg,gif}', GLOB_BRACE);
+$rawList = @scandir($sessionDir) ?: [];
 $rounds = [];
 
-foreach ($files as $file) {
-    $basename = basename($file);
-    $url = 'uploads/' . $sessionId . '/' . $basename;
+foreach ($rawList as $fname) {
+    if ($fname === '.' || $fname === '..') continue;
+    $ext = strtolower(pathinfo($fname, PATHINFO_EXTENSION));
+    if (!in_array($ext, ['png', 'jpg', 'jpeg', 'webp', 'gif'])) continue;
 
-    if (preg_match('/round_(\d+)_(strip|photo_\d+)/', $basename, $m)) {
+    $url = 'uploads/' . $sessionId . '/' . $fname;
+
+    if (preg_match('/round_(\d+)_(strip|photo_\d+)/i', $fname, $m)) {
         $roundNum = (int)$m[1];
-        $type = $m[2];
+        $type = strtolower($m[2]);
         if (!isset($rounds[$roundNum])) {
             $rounds[$roundNum] = ['photos' => [], 'strip' => null];
         }
@@ -35,6 +38,18 @@ foreach ($files as $file) {
         } else {
             $rounds[$roundNum]['photos'][] = $url;
         }
+    } else if (stripos($fname, 'strip') !== false) {
+        // Default strip for round 1
+        if (!isset($rounds[1])) {
+            $rounds[1] = ['photos' => [], 'strip' => null];
+        }
+        $rounds[1]['strip'] = $url;
+    } else {
+        // Individual photo (photo_1.png, etc)
+        if (!isset($rounds[1])) {
+            $rounds[1] = ['photos' => [], 'strip' => null];
+        }
+        $rounds[1]['photos'][] = $url;
     }
 }
 
@@ -43,7 +58,8 @@ ksort($rounds);
 
 // Sort photos within each round
 foreach ($rounds as &$round) {
-    sort($round['photos']);
+    natsort($round['photos']);
+    $round['photos'] = array_values($round['photos']);
 }
 unset($round);
 
