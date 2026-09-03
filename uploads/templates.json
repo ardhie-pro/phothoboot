@@ -1,68 +1,144 @@
 [
     {
-        "id": "69b2fc10e86fd",
-        "name": "baruuu",
-        "outer": "uploads\/templates\/69b2fc10e86fd\/outer.png",
-        "overlayMode": false
-    },
-    {
-        "id": "6a92d48ba8ada",
-        "name": "Terbaru Kaka",
-        "outer": "uploads\/templates\/6a92d48ba8ada\/outer.png",
-        "ketupat": "",
-        "lampu": "",
-        "rama": "",
-        "overlayMode": false,
-        "layout": {
-            "ketupat": {
-                "x": 120,
-                "y": 150,
-                "size": 350
-            },
-            "lampu": {
-                "x": -100,
-                "y": 140,
-                "size": 300
-            },
-            "rama": {
-                "x": 150,
-                "y": 300,
-                "size": 550
-            }
-        }
-    },
-    {
-        "id": "6a96a3476af81",
-        "name": "bambang",
-        "sizeType": "a5",
-        "outer": "uploads\/templates\/6a96a3476af81\/outer.png",
-        "ketupat": "",
-        "lampu": "",
-        "rama": "",
-        "overlayMode": false,
-        "layout": {
-            "ketupat": {
-                "x": 120,
-                "y": 150,
-                "size": 350
-            },
-            "lampu": {
-                "x": -100,
-                "y": 140,
-                "size": 300
-            },
-            "rama": {
-                "x": 150,
-                "y": 300,
-                "size": 550
-            }
-        }
-    },
-    {
-        "id": "6a9702dc6728c",
-        "name": "bambang 6",
+        "id": "6a97cf800a032",
+        "name": "test",
         "sizeType": "a5_6grid",
-        "outer": "uploads\/templates\/6a9702dc6728c\/outer.png",
+        "outer": "uploads\/templates\/6a97cf800a032\/outer.png",
+        "ketupat": "uploads\/templates\/6a97cf800a032\/ketupat.png",
+        "lampu": "uploads\/templates\/6a97cf800a032\/lampu.png",
+        "rama": "uploads\/templates\/6a97cf800a032\/rama.png",
+        "overlayMode": false,
+        "layout": {
+            "ketupat": {
+                "x": 200,
+                "y": 150,
+                "size": 450
+            },
+            "lampu": {
+                "x": -100,
+                "y": 140,
+                "size": 400
+            },
+            "rama": {
+                "x": 150,
+                "y": 300,
+                "size": 550
+            }
+        }
+    },
+    {
+        "id": "6a97ff7e1bef1",
+        "name": "test 3 ",
+        "sizeType": "a5_6grid",
+        "outer": "uploads\/templates\/6a97ff7e1bef1\/outer.png",
+        "ketupat": "uploads\/templates\/6a97ff7e1bef1\/ketupat.png",
+        "lampu": "uploads\/templates\/6a97ff7e1bef1\/lampu.png",
+        "rama": "uploads\/templates\/6a97ff7e1bef1\/rama.png",
+        "overlayMode": false,
+        "layout": {
+            "ketupat": {
+                "x": 350,
+                "y": 1400,
+                "size": 2300
+            },
+            "lampu": {
+                "x": -2000,
+                "y": 900,
+                "size": 2225
+            },
+            "rama": {
+                "x": 200,
+                "y": 525,
+                "size": 2225
+            }
+        }
+    },
+    {
+        "id": "6a9821c5abc33",
+        "name": "Template Basket 1",
+        "sizeType": "a5_6grid",
+        "outer": "uploads\/templates\/6a9821c5abc33\/outer.png",
+        "ketupat": "uploads\/templates\/6a9821c5abc33\/ketupat.png",
+        "lampu": "uploads\/templates\/6a9821c5abc33\/lampu.png",
+        "rama": "uploads\/templates\/6a9821c5abc33\/rama.png",
+        "overlayMode": false,
+        "layout": {
+            "ketupat": {
+                "x": 120,
+                "y": 150,
+                "size": 0
+            },
+            "lampu": {
+                "x": -550,
+                "y": -100,
+                "size": 1250
+            },
+            "rama": {
+                "x": 500,
+                "y": 650,
+                "size": 1275
+            }
+        }
+    },
+    {
+        "id": "6a982908de97b",
+        "name": "Template basket 2 ",
+        "sizeType": "a5_6grid",
+        "outer": "",
+        "ketupat": "",
+        "lampu": "uploads\/templates\/6a982908de97b\/lampu.png",
+        "rama": "uploads\/templates\/6a982908de97b\/rama.png",
+        "overlayMode": false,
+        "layout": {
+            "ketupat": {
+                "x": 120,
+                "y": 150,
+                "size": 0
+            },
+            "lampu": {
+                "x": -330,
+                "y": 970,
+                "size": 2200
+            },
+            "rama": {
+                "x": 125,
+                "y": 550,
+                "size": 2175
+            }
+        }
+    },
+    {
+        "id": "6a982afbca9ec",
+        "name": "Template basket 2 test",
+        "sizeType": "a5_6grid",
+        "outer": "",
+        "ketupat": "",
+        "lampu": "uploads\/templates\/6a982afbca9ec\/lampu.png",
+        "rama": "uploads\/templates\/6a982afbca9ec\/rama.png",
+        "overlayMode": false,
+        "layout": {
+            "ketupat": {
+                "x": 120,
+                "y": 150,
+                "size": 0
+            },
+            "lampu": {
+                "x": -330,
+                "y": 1000,
+                "size": 2200
+            },
+            "rama": {
+                "x": 130,
+                "y": 575,
+                "size": 2200
+            }
+        }
+    },
+    {
+        "id": "6a98ff3f88617",
+        "name": "Unnamed Template",
+        "sizeType": "a5",
+        "outer": "",
         "ketupat": "",
         "lampu": "",
         "rama": "",
@@ -82,6 +158,87 @@
                 "x": 150,
                 "y": 300,
                 "size": 550
+            }
+        }
+    },
+    {
+        "id": "6a9919b49daf0",
+        "name": "Unnamed Template",
+        "sizeType": "a5",
+        "outer": "",
+        "ketupat": "",
+        "lampu": "",
+        "rama": "",
+        "overlayMode": false,
+        "layout": {
+            "ketupat": {
+                "x": 120,
+                "y": 150,
+                "size": 350
+            },
+            "lampu": {
+                "x": -100,
+                "y": 140,
+                "size": 300
+            },
+            "rama": {
+                "x": 150,
+                "y": 300,
+                "size": 550
+            }
+        }
+    },
+    {
+        "id": "6a99424bc0770",
+        "name": "ITS boys",
+        "sizeType": "a5_6grid",
+        "outer": "uploads\/templates\/6a99424bc0770\/outer.jpeg",
+        "ketupat": "uploads\/templates\/6a99424bc0770\/ketupat.png",
+        "lampu": "uploads\/templates\/6a99424bc0770\/lampu.png",
+        "rama": "",
+        "overlayMode": false,
+        "layout": {
+            "ketupat": {
+                "x": 140,
+                "y": 970,
+                "size": 1800
+            },
+            "lampu": {
+                "x": -125,
+                "y": 800,
+                "size": 1800
+            },
+            "rama": {
+                "x": 150,
+                "y": 300,
+                "size": 0
+            }
+        }
+    },
+    {
+        "id": "6a994bc0da8af",
+        "name": "welpar UKM basket",
+        "sizeType": "a5_6grid",
+        "outer": "",
+        "ketupat": "uploads\/templates\/6a994bc0da8af\/ketupat.png",
+        "lampu": "uploads\/templates\/6a994bc0da8af\/lampu.png",
+        "rama": "",
+        "overlayMode": false,
+        "layout": {
+            "ketupat": {
+                "x": 140,
+                "y": 1000,
+                "size": 1800
+            },
+            "lampu": {
+                "x": -120,
+                "y": 840,
+                "size": 1800
+            },
+            "rama": {
+                "x": 150,
+                "y": 290,
+                "size": 0
             }
         }
     }

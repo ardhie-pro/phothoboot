@@ -1,5 +1,245 @@
 [
     {
+        "id": "pr_6a98b1370c26f",
+        "session_id": "20260902_232437_08044ca6",
+        "photo_url": "uploads\/20260902_232437_08044ca6\/round_2_strip.jpeg",
+        "label": "Sesi 2 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-09-02 23:28:55",
+        "updated_at": "2026-09-03 11:28:02"
+    },
+    {
+        "id": "pr_6a98266d19538",
+        "session_id": "20260902_133631_e4d2b81c",
+        "photo_url": "uploads\/20260902_133631_e4d2b81c\/round_1_strip.jpeg",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-09-02 13:36:45",
+        "updated_at": "2026-09-03 11:23:26"
+    },
+    {
+        "id": "pr_6a98221b7cc28",
+        "session_id": "20260902_131803_eede1e5e",
+        "photo_url": "uploads\/20260902_131803_eede1e5e\/round_1_strip.jpeg",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-09-02 13:18:19",
+        "updated_at": "2026-09-03 11:26:49"
+    },
+    {
+        "id": "pr_6a98053d2f075",
+        "session_id": "20260902_105809_3ae7e07f",
+        "photo_url": "uploads\/20260902_105809_3ae7e07f\/round_2_strip.jpeg",
+        "label": "Sesi 2 - Photo Strip",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-02 11:15:09",
+        "updated_at": "2026-09-02 11:15:09"
+    },
+    {
+        "id": "pr_6a980159683e8",
+        "session_id": "20260902_105809_3ae7e07f",
+        "photo_url": "uploads\/20260902_105809_3ae7e07f\/round_1_strip.jpeg",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-02 10:58:33",
+        "updated_at": "2026-09-02 10:58:33"
+    },
+    {
+        "id": "pr_6a97e256edeb4",
+        "session_id": "20260902_084605_f0af8000",
+        "photo_url": "uploads\/20260902_084605_f0af8000\/round_1_strip.jpeg",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-09-02 08:46:14",
+        "updated_at": "2026-09-03 09:11:08"
+    },
+    {
+        "id": "pr_6a97e1c8c068c",
+        "session_id": "20260902_084338_a18a5727",
+        "photo_url": "uploads\/20260902_084338_a18a5727\/round_1_strip.jpeg",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-02 08:43:52",
+        "updated_at": "2026-09-02 08:43:52"
+    },
+    {
+        "id": "pr_6a97decea3c0f",
+        "session_id": "20260902_082903_630c5610",
+        "photo_url": "uploads\/20260902_082903_630c5610\/round_1_strip.jpeg",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-09-02 08:31:10",
+        "updated_at": "2026-09-02 08:40:45"
+    },
+    {
+        "id": "pr_6a97dd5fae551",
+        "session_id": "20260902_082449_a6d9a7a2",
+        "photo_url": "uploads\/20260902_082449_a6d9a7a2\/round_1_strip.jpeg",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-09-02 08:25:03",
+        "updated_at": "2026-09-02 08:28:53"
+    },
+    {
+        "id": "pr_6a97dd3f2309d",
+        "session_id": "20260902_082352_52d38162",
+        "photo_url": "uploads\/20260902_082352_52d38162\/round_1_strip.jpeg",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-02 08:24:31",
+        "updated_at": "2026-09-02 08:24:31"
+    },
+    {
+        "id": "pr_6a97cfc6ed286",
+        "session_id": "20260902_072650_24040dd1",
+        "photo_url": "uploads\/20260902_072650_24040dd1\/round_1_strip.jpeg",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-09-02 07:27:02",
+        "updated_at": "2026-09-02 07:27:37"
+    },
+    {
+        "id": "pr_6a97c9dc9e292",
+        "session_id": "20260902_070115_fcbacaaf",
+        "photo_url": "uploads\/20260902_070115_fcbacaaf\/round_1_strip.jpeg",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-09-02 07:01:48",
+        "updated_at": "2026-09-02 08:43:07"
+    },
+    {
+        "id": "pr_6a97b8dd38386",
+        "session_id": "20260902_054838_dd1cff9b",
+        "photo_url": "uploads\/20260902_054838_dd1cff9b\/round_1_strip.jpeg",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-09-02 05:49:17",
+        "updated_at": "2026-09-02 11:16:53"
+    },
+    {
+        "id": "pr_6a97b3f00f165",
+        "session_id": "20260902_052742_61abf96d",
+        "photo_url": "uploads\/20260902_052742_61abf96d\/round_1_strip.jpeg",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-09-02 05:28:16",
+        "updated_at": "2026-09-02 11:17:09"
+    },
+    {
+        "id": "pr_6a96b553048cd",
+        "session_id": "20260901_112115_5829318d",
+        "photo_url": "uploads\/20260901_112115_5829318d\/round_1_strip.png",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-01 11:21:55",
+        "updated_at": "2026-09-01 11:21:55"
+    },
+    {
+        "id": "pr_6a93f1bc26b55",
+        "session_id": "20260830_090221_f7b0e57a",
+        "photo_url": "uploads\/20260830_090221_f7b0e57a\/round_1_strip.png",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-08-30 09:02:52",
+        "updated_at": "2026-08-30 09:03:09"
+    },
+    {
+        "id": "pr_6a93dab3b033f",
+        "session_id": "20260830_072157_03c0e0cc",
+        "photo_url": "uploads\/20260830_072157_03c0e0cc\/round_2_strip.png",
+        "label": "Sesi 2 - Photo Strip",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-08-30 07:24:35",
+        "updated_at": "2026-08-30 07:24:35"
+    },
+    {
+        "id": "pr_6a93dab0f335d",
+        "session_id": "20260830_072157_03c0e0cc",
+        "photo_url": "uploads\/20260830_072157_03c0e0cc\/round_1_strip.png",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-08-30 07:24:32",
+        "updated_at": "2026-08-30 07:24:40"
+    },
+    {
+        "id": "pr_6a93cfb907af3",
+        "session_id": "20260830_063458_ba10aa13",
+        "photo_url": "uploads\/20260830_063458_ba10aa13\/round_3_strip.png",
+        "label": "Sesi 3 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-08-30 06:37:45",
+        "updated_at": "2026-08-30 06:38:01"
+    },
+    {
+        "id": "pr_6a93cf4917fc3",
+        "session_id": "20260830_063458_ba10aa13",
+        "photo_url": "uploads\/20260830_063458_ba10aa13\/round_1_strip.png",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "completed",
+        "created_at": "2026-08-30 06:35:53",
+        "updated_at": "2026-08-30 06:36:11"
+    },
+    {
+        "id": "pr_6a93c72f4ecc2",
+        "session_id": "20260830_055837_16bdd84c",
+        "photo_url": "uploads\/20260830_055837_16bdd84c\/round_1_strip.png",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-08-30 06:01:19",
+        "updated_at": "2026-08-30 06:09:45"
+    },
+    {
+        "id": "pr_6a92e119460f6",
+        "session_id": "20260829_133902_cdbe289d",
+        "photo_url": "uploads\/20260829_133902_cdbe289d\/round_1_strip.png",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-08-29 13:39:37",
+        "updated_at": "2026-08-30 06:10:57"
+    },
+    {
+        "id": "pr_6a92e065b5db6",
+        "session_id": "20260829_133605_aa128ccb",
+        "photo_url": "uploads\/20260829_133605_aa128ccb\/round_1_strip.png",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-08-29 13:36:37",
+        "updated_at": "2026-08-29 13:37:40"
+    },
+    {
+        "id": "pr_6a92df9de2b37",
+        "session_id": "20260829_133111_e996a458",
+        "photo_url": "uploads\/20260829_133111_e996a458\/round_2_strip.png",
+        "label": "Sesi 2 - Photo Strip",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-08-29 13:33:17",
+        "updated_at": "2026-08-29 13:33:22"
+    },
+    {
         "id": "pr_6a92dd833d496",
         "session_id": "20260829_124915_5e32d55c",
         "photo_url": "uploads\/20260829_124915_5e32d55c\/round_1_strip.png",

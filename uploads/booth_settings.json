@@ -1,16 +1,16 @@
 {
-    "title": "ITS",
-    "subtitle": "Beasiswa Mahaghora",
-    "titleColor": "#d48c12",
-    "subtitleColor": "#d48c12",
-    "bgColor": "#263059",
+    "title": "Rek, Cekrek!",
+    "subtitle": "ready, set, smile! \u22c6\u02da\uaa5c\uff61",
+    "titleColor": "#d3124c",
+    "subtitleColor": "#ff1f62",
+    "bgColor": "#ffb8da",
     "bgImage": "",
-    "primaryColor": "#d48c12",
-    "secondaryColor": "#63392e",
-    "goldColor": "#d4af37",
+    "primaryColor": "#ff4d9a",
+    "secondaryColor": "#f5d60f",
+    "goldColor": "#ffdc6b",
     "showDeco": true,
-    "decoTopLeft": "uploads\/branding\/deco_tl_1788323643.png",
-    "decoTopRight": ".\/gambar\/lampu.webp",
-    "decoBottomLeft": ".\/gambar\/ketupat.webp",
-    "decoBottomRight": ".\/gambar\/ketupat.webp"
+    "decoTopLeft": "uploads\/branding\/deco_tl_1788349550.png",
+    "decoTopRight": "uploads\/branding\/deco_tr_1788349550.png",
+    "decoBottomLeft": "uploads\/branding\/deco_bl_1788349550.png",
+    "decoBottomRight": "uploads\/branding\/deco_br_1788349550.png"
 }
