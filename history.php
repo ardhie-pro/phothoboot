@@ -67,6 +67,30 @@ if (is_dir($uploadsDir)) {
     });
 }
 
+// Load Booth Settings & Branding
+$settingsFile = __DIR__ . '/uploads/booth_settings.json';
+$settings = [
+    'title' => 'Berbuka Bersama',
+    'subtitle' => 'Mahaghora Group',
+    'titleColor' => '#D48C12',
+    'subtitleColor' => '#D48C12',
+    'bgColor' => '#2D5A27',
+    'bgImage' => '',
+    'primaryColor' => '#D48C12',
+    'secondaryColor' => '#63392E',
+    'goldColor' => '#D4AF37',
+];
+
+if (file_exists($settingsFile)) {
+    $saved = json_decode(file_get_contents($settingsFile), true);
+    if (is_array($saved)) {
+        $settings = array_merge($settings, $saved);
+    }
+}
+
+$boothTitle = !empty($settings['title']) ? $settings['title'] : 'Photo Booth';
+$boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
+
 $totalSessions = count($sessions);
 ?>
 <!DOCTYPE html>
@@ -74,70 +98,99 @@ $totalSessions = count($sessions);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎞️ Riwayat Sesi Foto & Pasang Template | Photo Booth</title>
+    <title>🎞️ Riwayat Sesi Foto | <?= htmlspecialchars($boothTitle) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        :root {
+            --booth-bg: <?= htmlspecialchars($settings['bgColor']) ?>;
+            --booth-primary: <?= htmlspecialchars($settings['primaryColor']) ?>;
+            --booth-secondary: <?= htmlspecialchars($settings['secondaryColor']) ?>;
+            --booth-gold: <?= htmlspecialchars($settings['goldColor']) ?>;
+            --booth-cream: #FFFDF5;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Outfit', sans-serif;
-            background: #0f172a;
+            background-color: var(--booth-bg);
+            <?php if (!empty($settings['bgImage'])): ?>
+            background-image: url('<?= htmlspecialchars($settings['bgImage']) ?>');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            <?php else: ?>
             background-image:
-                radial-gradient(circle at 10% 15%, rgba(212,175,55,0.12) 0%, transparent 40%),
-                radial-gradient(circle at 90% 85%, rgba(45,90,39,0.2) 0%, transparent 40%);
+                radial-gradient(circle at 10% 15%, rgba(212, 140, 18, 0.18) 0%, transparent 35%),
+                radial-gradient(circle at 90% 85%, rgba(212, 140, 18, 0.18) 0%, transparent 35%);
+            <?php endif; ?>
             color: #FFFDF5;
             min-height: 100vh;
             padding-bottom: 80px;
         }
         .font-playfair { font-family: 'Playfair Display', serif; }
         .glass-card {
-            background: rgba(30, 41, 59, 0.75);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(212, 175, 55, 0.25);
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+            background: rgba(255, 253, 245, 0.94);
+            backdrop-filter: blur(20px);
+            border: 1.5px solid rgba(212, 140, 18, 0.25);
+            box-shadow: 0 25px 50px -12px rgba(45, 90, 39, 0.3);
+            color: var(--booth-secondary);
         }
         .gold-gradient-text {
-            background: linear-gradient(135deg, #FDE68A 0%, #D4AF37 50%, #B4730A 100%);
+            background: linear-gradient(135deg, var(--booth-primary) 0%, #B4730A 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .btn-gold {
-            background: linear-gradient(135deg, #D4AF37 0%, #B4730A 100%);
-            color: #0f172a;
+            background: linear-gradient(135deg, var(--booth-primary) 0%, #B4730A 100%);
+            color: #FFFDF5;
             font-weight: 700;
-            box-shadow: 0 8px 20px -4px rgba(212, 175, 55, 0.4);
-            transition: all 0.2s;
+            box-shadow: 0 8px 20px -4px rgba(212, 140, 18, 0.4);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .btn-gold:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 25px -4px rgba(212, 175, 55, 0.6);
+            box-shadow: 0 12px 25px -4px rgba(212, 140, 18, 0.6);
+        }
+        .btn-emerald {
+            background: linear-gradient(135deg, var(--booth-bg) 0%, #173814 100%);
+            color: #FFFDF5;
+            font-weight: 700;
+            box-shadow: 0 8px 20px -4px rgba(45, 90, 39, 0.4);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-emerald:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px -4px rgba(45, 90, 39, 0.6);
         }
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
-        ::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.4); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.8); }
+        ::-webkit-scrollbar-track { background: var(--booth-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--booth-gold); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--booth-primary); }
     </style>
 </head>
 <body class="p-4 sm:p-6 md:p-8">
 
     <div class="max-w-7xl mx-auto">
         <!-- Top Navigation Bar -->
-        <div class="flex flex-wrap items-center justify-between gap-4 mb-8 glass-card p-4 rounded-3xl">
-            <div class="flex items-center gap-3">
-                <span class="text-3xl">🎞️</span>
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-8 glass-card p-4 sm:p-5 rounded-3xl shadow-xl">
+            <div class="flex items-center gap-3.5">
+                <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-2xl shadow-inner">
+                    🎞️
+                </div>
                 <div>
-                    <h1 class="text-xl md:text-2xl font-bold font-playfair gold-gradient-text">Riwayat Sesi Foto</h1>
-                    <p class="text-xs text-slate-400">Total <span class="text-amber-400 font-bold"><?= $totalSessions ?> Sesi Foto</span> tersimpan</p>
+                    <h1 class="text-xl md:text-2xl font-bold font-playfair text-amber-950">Riwayat Sesi Foto</h1>
+                    <p class="text-xs text-amber-800/80 font-medium">Total <span class="text-amber-900 font-bold"><?= $totalSessions ?> Sesi Foto</span> tersimpan • <span class="font-semibold"><?= htmlspecialchars($boothTitle) ?></span></p>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <a href="index.html" class="px-4 py-2 bg-emerald-700/80 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all shadow flex items-center gap-1.5">
-                    <span>📸</span> Booth Foto
+            <div class="flex items-center gap-2.5">
+                <a href="index.html" class="px-5 py-2.5 btn-emerald rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 hover:scale-105 active:scale-95">
+                    <span>📸</span> Ke Booth Foto
                 </a>
-                <a href="admin.php" class="px-4 py-2 bg-slate-700/80 hover:bg-slate-600 text-white rounded-xl text-xs font-bold transition-all shadow flex items-center gap-1.5 border border-slate-600">
+                <a href="admin.php" class="px-4 py-2.5 bg-stone-800 hover:bg-stone-700 text-stone-100 rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 border border-stone-600 hover:scale-105 active:scale-95">
                     <span>⚙️</span> Dashboard Admin
                 </a>
             </div>
@@ -149,47 +202,47 @@ $totalSessions = count($sessions);
         </div>
 
         <!-- Search & Filter Bar -->
-        <div class="glass-card p-4 rounded-2xl mb-8 flex flex-wrap items-center justify-between gap-4">
+        <div class="glass-card p-4 rounded-2xl mb-8 flex flex-wrap items-center justify-between gap-4 shadow-lg">
             <div class="relative flex-1 min-w-[260px]">
-                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">🔍</span>
-                <input type="text" id="search-input" placeholder="Cari ID sesi atau tanggal..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-white placeholder-slate-400 text-sm outline-none focus:border-amber-400">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-500">🔍</span>
+                <input type="text" id="search-input" placeholder="Cari ID sesi atau tanggal..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/90 border border-amber-600/30 text-stone-900 placeholder-stone-400 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 shadow-inner">
             </div>
-            <div class="flex items-center gap-2 text-xs text-slate-300">
+            <div class="flex items-center gap-2 text-xs text-amber-900/90 font-medium">
                 <span>⚡ Tips: Klik <b>"🎨 Pasang Template Baru"</b> pada sesi mana pun untuk memasang desain tema frame yang aktif!</span>
             </div>
         </div>
 
         <!-- Session Grid -->
         <?php if (empty($sessions)): ?>
-            <div class="glass-card rounded-3xl p-12 text-center text-slate-400">
+            <div class="glass-card rounded-3xl p-12 text-center">
                 <p class="text-4xl mb-3">📷</p>
-                <p class="text-lg font-bold text-slate-200">Belum Ada Riwayat Sesi Foto</p>
-                <p class="text-xs text-slate-400 mt-1">Lakukan pemotretan pertama di Photobooth untuk melihat riwayat di sini.</p>
-                <a href="index.html" class="inline-block mt-4 px-6 py-2.5 btn-gold rounded-full text-xs font-bold">Mulai Foto Sekarang</a>
+                <p class="text-lg font-bold text-amber-950">Belum Ada Riwayat Sesi Foto</p>
+                <p class="text-xs text-amber-800/80 mt-1">Lakukan pemotretan pertama di Photobooth untuk melihat riwayat di sini.</p>
+                <a href="index.html" class="inline-block mt-4 px-6 py-2.5 btn-gold rounded-full text-xs font-bold shadow-lg">Mulai Foto Sekarang</a>
             </div>
         <?php else: ?>
             <div id="session-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <?php foreach ($sessions as $s): ?>
-                    <div class="session-card glass-card rounded-3xl overflow-hidden flex flex-col justify-between border border-amber-500/20 hover:border-amber-400/60 transition-all hover:shadow-2xl group" data-id="<?= htmlspecialchars($s['id']) ?>" data-date="<?= htmlspecialchars($s['date_str']) ?>">
+                    <div class="session-card glass-card rounded-3xl overflow-hidden flex flex-col justify-between border-2 border-amber-500/25 hover:border-amber-500/60 transition-all hover:shadow-2xl group" data-id="<?= htmlspecialchars($s['id']) ?>" data-date="<?= htmlspecialchars($s['date_str']) ?>">
                         <!-- Card Header -->
-                        <div class="p-4 border-b border-slate-700/50 flex items-center justify-between">
-                            <span class="text-[11px] font-bold text-amber-300 bg-amber-400/10 border border-amber-400/30 px-2.5 py-1 rounded-full flex items-center gap-1">
+                        <div class="p-4 border-b border-amber-900/10 flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-amber-900 bg-amber-400/20 border border-amber-400/40 px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
                                 📅 <?= htmlspecialchars($s['date_str']) ?>
                             </span>
-                            <span class="text-[10px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded-md font-mono">
+                            <span class="text-[10px] text-stone-600 bg-stone-200/80 px-2 py-0.5 rounded-md font-mono font-bold">
                                 #<?= htmlspecialchars(substr($s['id'], -8)) ?>
                             </span>
                         </div>
 
                         <!-- Card Preview -->
                         <div class="p-4 flex flex-col items-center justify-center">
-                            <div class="relative w-full aspect-[3/4] rounded-2xl bg-black/40 overflow-hidden flex items-center justify-center border border-slate-700/60 group-hover:scale-[1.02] transition-transform">
+                            <div class="relative w-full aspect-[3/4] rounded-2xl bg-black/10 overflow-hidden flex items-center justify-center border-2 border-amber-500/30 group-hover:scale-[1.02] transition-transform p-1.5 shadow-inner">
                                 <?php if (!empty($s['thumbnail'])): ?>
-                                    <img src="<?= htmlspecialchars($s['thumbnail']) ?>" alt="Strip Preview" class="w-full h-full object-contain p-2" loading="lazy">
+                                    <img src="<?= htmlspecialchars($s['thumbnail']) ?>" alt="Strip Preview" class="w-full h-full object-contain rounded-xl" loading="lazy">
                                 <?php else: ?>
-                                    <span class="text-3xl text-slate-500">🖼️</span>
+                                    <span class="text-3xl text-stone-400">🖼️</span>
                                 <?php endif; ?>
-                                <span class="absolute bottom-2 right-2 bg-black/80 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-amber-500/30 backdrop-blur-sm">
+                                <span class="absolute bottom-3 right-3 bg-black/80 text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-lg border border-amber-500/40 backdrop-blur-sm shadow-md">
                                     📸 <?= $s['photo_count'] ?> Foto
                                 </span>
                             </div>
@@ -197,16 +250,16 @@ $totalSessions = count($sessions);
 
                         <!-- Card Actions -->
                         <div class="p-4 pt-0 space-y-2">
-                            <button onclick="openCustomizer('<?= htmlspecialchars($s['id']) ?>', <?= htmlspecialchars(json_encode($s['photos'])) ?>)" class="w-full py-2.5 px-4 btn-gold rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg cursor-pointer">
+                            <button onclick="openCustomizer('<?= htmlspecialchars($s['id']) ?>', <?= htmlspecialchars(json_encode($s['photos'])) ?>)" class="w-full py-2.5 px-4 btn-gold rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md cursor-pointer hover:scale-[1.02] active:scale-95">
                                 <span>🎨</span> Pasang / Ganti Template
                             </button>
 
                             <div class="grid grid-cols-2 gap-2">
-                                <a href="view.php?s=<?= urlencode($s['id']) ?>" target="_blank" class="py-2 px-3 bg-slate-700/70 hover:bg-slate-600 text-slate-200 rounded-xl text-[11px] font-bold transition-all text-center flex items-center justify-center gap-1 border border-slate-600">
+                                <a href="view.php?s=<?= urlencode($s['id']) ?>" target="_blank" class="py-2.5 px-3 bg-stone-800 hover:bg-stone-700 text-stone-100 rounded-xl text-[11px] font-bold transition-all text-center flex items-center justify-center gap-1 border border-stone-600 shadow-sm hover:scale-[1.02] active:scale-95">
                                     <span>👁️</span> Buka Galeri
                                 </a>
-                                <button onclick="quickPrint('<?= htmlspecialchars($s['id']) ?>', '<?= htmlspecialchars(!empty($s['strips']) ? $s['strips'][0] : '') ?>')" class="py-2 px-3 bg-emerald-700/70 hover:bg-emerald-600 text-emerald-100 rounded-xl text-[11px] font-bold transition-all text-center flex items-center justify-center gap-1 border border-emerald-500/30 cursor-pointer">
-                                    <span>🖨️</span> Print Sesi
+                                <button onclick="quickPrint('<?= htmlspecialchars($s['id']) ?>', '<?= htmlspecialchars(!empty($s['strips']) ? $s['strips'][0] : '') ?>')" class="py-2.5 px-3 btn-emerald text-white rounded-xl text-[11px] font-bold transition-all text-center flex items-center justify-center gap-1 shadow-sm cursor-pointer hover:scale-[1.02] active:scale-95">
+                                    <span>🖨️</span> Cetak Sesi
                                 </button>
                             </div>
                         </div>
@@ -219,18 +272,18 @@ $totalSessions = count($sessions);
     <!-- ========================================================================= -->
     <!-- INTERACTIVE TEMPLATE CUSTOMIZER MODAL -->
     <!-- ========================================================================= -->
-    <div id="customizer-modal" class="fixed inset-0 z-[300] bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-3 md:p-6 overflow-y-auto">
-        <div class="glass-card max-w-5xl w-full rounded-[32px] border-2 border-amber-500/40 p-4 md:p-6 max-h-[92vh] flex flex-col relative animate-fadeIn bg-slate-900/95">
+    <div id="customizer-modal" class="fixed inset-0 z-[300] bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-3 md:p-6 overflow-y-auto">
+        <div class="glass-card max-w-5xl w-full rounded-[32px] border-2 border-amber-500/40 p-4 md:p-6 max-h-[92vh] flex flex-col relative animate-fadeIn shadow-2xl">
             <!-- Modal Header -->
-            <div class="flex items-center justify-between pb-4 border-b border-slate-700/80 mb-4">
+            <div class="flex items-center justify-between pb-4 border-b border-amber-900/15 mb-4">
                 <div class="flex items-center gap-2.5">
                     <span class="text-2xl">🎨</span>
                     <div>
-                        <h2 class="text-lg md:text-xl font-bold font-playfair gold-gradient-text">Pasang Template Baru untuk Sesi Ini</h2>
-                        <p class="text-xs text-slate-400">Pilih template aktif yang dicentang admin, lalu susun fotomu ke dalam frame A5!</p>
+                        <h2 class="text-lg md:text-xl font-bold font-playfair text-amber-950">Pasang Template Baru untuk Sesi Ini</h2>
+                        <p class="text-xs text-amber-800/80 font-medium">Pilih template aktif yang dicentang admin, lalu susun fotomu ke dalam frame A5!</p>
                     </div>
                 </div>
-                <button onclick="closeCustomizer()" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition-colors text-lg cursor-pointer">
+                <button onclick="closeCustomizer()" class="w-9 h-9 rounded-full bg-stone-200/80 hover:bg-stone-300 text-stone-700 flex items-center justify-center transition-colors text-lg cursor-pointer font-bold">
                     ✕
                 </button>
             </div>
@@ -240,13 +293,13 @@ $totalSessions = count($sessions);
                 <!-- Left: Controls & Template Picker (7 cols) -->
                 <div class="lg:col-span-7 space-y-4">
                     <!-- 1. Layout Mode Switcher -->
-                    <div class="bg-slate-800/80 p-3 rounded-2xl border border-slate-700 flex items-center justify-between gap-2">
-                        <span class="text-xs font-bold text-slate-300">Format Layout:</span>
+                    <div class="bg-black/5 p-3 rounded-2xl border border-amber-500/30 flex items-center justify-between gap-2">
+                        <span class="text-xs font-bold text-amber-950">Format Layout:</span>
                         <div class="flex gap-2">
-                            <button id="cust-layout-6-btn" onclick="setCustomizerLayout('6-grid')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-400 text-slate-900 shadow transition-all cursor-pointer">
+                            <button id="cust-layout-6-btn" onclick="setCustomizerLayout('6-grid')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-400 text-amber-950 shadow transition-all cursor-pointer">
                                 📸 6-Grid A5
                             </button>
-                            <button id="cust-layout-3-btn" onclick="setCustomizerLayout('3-strip')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-700 text-slate-300 hover:bg-slate-600 transition-all cursor-pointer">
+                            <button id="cust-layout-3-btn" onclick="setCustomizerLayout('3-strip')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-stone-200/90 text-stone-700 hover:bg-stone-300 transition-all cursor-pointer">
                                 🎞️ 3-Strip A5
                             </button>
                         </div>
@@ -255,29 +308,29 @@ $totalSessions = count($sessions);
                     <!-- 2. Active Templates Gallery (Checked by Admin) -->
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <label class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                            <label class="text-xs font-bold text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
                                 <span>✨</span> Pilih Template Aktif
                             </label>
-                            <span id="active-template-count" class="text-[11px] text-slate-400">Memuat template...</span>
+                            <span id="active-template-count" class="text-[11px] text-amber-800/70 font-medium">Memuat template...</span>
                         </div>
-                        <div id="customizer-templates-list" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[190px] overflow-y-auto p-1 bg-slate-950/60 rounded-2xl border border-slate-800">
+                        <div id="customizer-templates-list" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[190px] overflow-y-auto p-1.5 bg-black/5 rounded-2xl border border-amber-500/20">
                             <!-- Populated dynamically via JS -->
                         </div>
                     </div>
 
                     <!-- 3. Photo Pool & Slot Picker -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                        <label class="block text-xs font-bold text-amber-900 uppercase tracking-wider mb-2">
                             📷 Foto dari Sesi Ini (Klik Foto lalu Klik Slot di Kanan):
                         </label>
-                        <div id="customizer-photo-pool" class="flex flex-wrap gap-2 p-2 bg-slate-950/60 rounded-2xl border border-slate-800 min-h-[75px] items-center">
+                        <div id="customizer-photo-pool" class="flex flex-wrap gap-2 p-2.5 bg-black/5 rounded-2xl border border-amber-500/20 min-h-[75px] items-center">
                             <!-- Populated dynamically via JS -->
                         </div>
                     </div>
 
                     <!-- 4. Slots Mapping -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                        <label class="block text-xs font-bold text-amber-900 uppercase tracking-wider mb-2">
                             🎯 Susunan Slot Foto:
                         </label>
                         <div id="customizer-slots-grid" class="grid grid-cols-3 sm:grid-cols-6 gap-2">
@@ -287,22 +340,22 @@ $totalSessions = count($sessions);
                 </div>
 
                 <!-- Right: Live Canvas Preview (5 cols) -->
-                <div class="lg:col-span-5 flex flex-col items-center justify-between bg-black/60 p-4 rounded-2xl border border-slate-800">
+                <div class="lg:col-span-5 flex flex-col items-center justify-between bg-black/10 p-4 rounded-2xl border border-amber-500/30">
                     <div class="w-full flex items-center justify-between mb-2">
-                        <span class="text-xs font-bold text-amber-300">🖼️ Preview Hasil Jadi (A5):</span>
-                        <span id="preview-status-text" class="text-[11px] text-slate-400">Live Render</span>
+                        <span class="text-xs font-bold text-amber-950">🖼️ Preview Hasil Jadi (A5):</span>
+                        <span id="preview-status-text" class="text-[11px] text-amber-800/70 font-medium">Live Render</span>
                     </div>
 
                     <div class="relative flex-1 flex items-center justify-center max-h-[380px] w-full overflow-hidden p-2">
-                        <canvas id="customizer-canvas" class="max-h-[360px] w-auto max-w-full object-contain rounded-xl shadow-2xl border border-amber-500/30 bg-[#FFFDF5]"></canvas>
+                        <canvas id="customizer-canvas" class="max-h-[360px] w-auto max-w-full object-contain rounded-xl shadow-2xl border-2 border-amber-500/40 bg-[#FFFDF5]"></canvas>
                     </div>
 
                     <!-- Action Buttons -->
                     <div class="w-full space-y-2 mt-4">
-                        <button onclick="saveAndPrintCustomized()" id="cust-save-print-btn" class="w-full py-3 px-4 btn-gold rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg cursor-pointer">
+                        <button onclick="saveAndPrintCustomized()" id="cust-save-print-btn" class="w-full py-3 px-4 btn-gold rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg cursor-pointer hover:scale-[1.02] active:scale-95">
                             <span>🖨️</span> Simpan &amp; Kirim Antrean Cetak
                         </button>
-                        <button onclick="downloadCustomizedStrip()" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 border border-slate-700 cursor-pointer">
+                        <button onclick="downloadCustomizedStrip()" class="w-full py-2.5 px-4 bg-stone-800 hover:bg-stone-700 text-stone-100 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 border border-stone-600 cursor-pointer shadow hover:scale-[1.02] active:scale-95">
                             <span>📥</span> Unduh Foto Strip (JPEG)
                         </button>
                     </div>

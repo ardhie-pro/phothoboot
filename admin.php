@@ -1,9 +1,34 @@
+<?php
+// Load Booth Settings & Branding
+$settingsFile = __DIR__ . '/uploads/booth_settings.json';
+$settings = [
+    'title' => 'Berbuka Bersama',
+    'subtitle' => 'Mahaghora Group',
+    'titleColor' => '#D48C12',
+    'subtitleColor' => '#D48C12',
+    'bgColor' => '#2D5A27',
+    'bgImage' => '',
+    'primaryColor' => '#D48C12',
+    'secondaryColor' => '#63392E',
+    'goldColor' => '#D4AF37',
+];
+
+if (file_exists($settingsFile)) {
+    $saved = json_decode(file_get_contents($settingsFile), true);
+    if (is_array($saved)) {
+        $settings = array_merge($settings, $saved);
+    }
+}
+
+$boothTitle = !empty($settings['title']) ? $settings['title'] : 'Photo Booth';
+$boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Antrean Print & Template</title>
+    <title>Admin Dashboard - <?= htmlspecialchars($boothTitle) ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -15,7 +40,7 @@
                 secondary: "#63392E", 
                 cream: "#FFFDF5",     
                 gold: "#C9A227",      
-                green: "#1B4332",     
+                green: "#2D5A27",     
                 lightGreen: "#2D6A4F",
                 dark: "#0F172A",
               },
@@ -28,24 +53,56 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Outfit', sans-serif; background-color: #F8FAFC; color: #1E293B; }
+        :root {
+            --booth-bg: <?= htmlspecialchars($settings['bgColor']) ?>;
+            --booth-primary: <?= htmlspecialchars($settings['primaryColor']) ?>;
+            --booth-secondary: <?= htmlspecialchars($settings['secondaryColor']) ?>;
+            --booth-gold: <?= htmlspecialchars($settings['goldColor']) ?>;
+            --booth-cream: #FFFDF5;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--booth-bg);
+            <?php if (!empty($settings['bgImage'])): ?>
+            background-image: url('<?= htmlspecialchars($settings['bgImage']) ?>');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            <?php else: ?>
+            background-image:
+                radial-gradient(circle at 10% 15%, rgba(212, 140, 18, 0.18) 0%, transparent 35%),
+                radial-gradient(circle at 90% 85%, rgba(212, 140, 18, 0.18) 0%, transparent 35%);
+            <?php endif; ?>
+            color: #1E293B;
+        }
+
         .font-playfair { font-family: 'Playfair Display', serif; }
         
+        .glass-card {
+            background: rgba(255, 253, 245, 0.94);
+            backdrop-filter: blur(20px);
+            border: 1.5px solid rgba(212, 140, 18, 0.25);
+            box-shadow: 0 20px 40px -12px rgba(45, 90, 39, 0.25);
+        }
+
         .tab-btn.active {
-            background-color: #1B4332;
+            background: linear-gradient(135deg, var(--booth-primary) 0%, #B4730A 100%);
             color: #FFFDF5;
-            box-shadow: 0 10px 25px -5px rgba(27, 67, 50, 0.4);
+            box-shadow: 0 10px 25px -5px rgba(212, 140, 18, 0.4);
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
         }
 
         .tab-btn:not(.active) {
-            background-color: #FFFFFF;
-            color: #64748B;
-            border: 1px solid #E2E8F0;
+            background-color: rgba(255, 253, 245, 0.9);
+            color: var(--booth-secondary);
+            border: 1.5px solid rgba(212, 140, 18, 0.25);
         }
 
         .tab-btn:not(.active):hover {
-            background-color: #F1F5F9;
+            background-color: #FFFFFF;
             color: #1E293B;
+            transform: translateY(-1px);
         }
 
         @keyframes pulse-dot {
@@ -55,29 +112,35 @@
         .animate-pulse-dot {
             animation: pulse-dot 1.5s infinite ease-in-out;
         }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--booth-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--booth-gold); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--booth-primary); }
     </style>
 </head>
 <body class="p-4 md:p-8 min-h-screen">
     <div class="max-w-7xl mx-auto">
         <!-- Top Navbar -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 glass-card p-6 rounded-3xl shadow-xl">
             <div>
                 <div class="flex items-center gap-3 mb-1">
-                    <span class="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold uppercase tracking-wider">
-                        Ramadan Booth Master
+                    <span class="px-3 py-1 bg-amber-400/20 text-amber-900 border border-amber-400/40 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm">
+                        ✨ <?= htmlspecialchars($boothTitle) ?> Master
                     </span>
-                    <span class="text-xs text-slate-400 font-medium flex items-center gap-1.5">
+                    <span class="text-xs text-amber-800/80 font-semibold flex items-center gap-1.5">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Sistem Aktif
                     </span>
                 </div>
-                <h1 class="text-3xl font-playfair font-bold text-[#1B4332]">Dashboard Operator</h1>
+                <h1 class="text-3xl font-playfair font-bold text-amber-950">Dashboard Operator</h1>
             </div>
 
             <div class="flex items-center gap-3">
-                <a href="history.php" class="flex items-center gap-2 text-sm bg-amber-100 hover:bg-amber-200 text-amber-900 px-5 py-2.5 rounded-full font-bold transition-all shadow-sm">
+                <a href="history.php" class="flex items-center gap-2 text-sm bg-stone-800 hover:bg-stone-700 text-stone-100 px-5 py-2.5 rounded-full font-bold transition-all shadow border border-stone-600 hover:scale-105 active:scale-95">
                     <span>🎞️</span> Riwayat Sesi Foto
                 </a>
-                <a href="index.html" class="flex items-center gap-2 text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-full font-semibold transition-all">
+                <a href="index.html" class="flex items-center gap-2 text-sm bg-amber-400 hover:bg-amber-300 text-slate-900 px-5 py-2.5 rounded-full font-bold transition-all shadow hover:scale-105 active:scale-95">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
@@ -116,21 +179,21 @@
             </div>
 
             <!-- Queue Quick Filter & Sound Toggle (visible on queue tab) -->
-            <div id="queue-controls" class="flex items-center gap-3">
-                <label class="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-white border border-slate-200 px-3.5 py-2 rounded-xl cursor-pointer hover:bg-slate-50">
-                    <input type="checkbox" id="sound-toggle" checked class="w-4 h-4 accent-emerald-600 rounded">
+            <div id="queue-controls" class="flex flex-wrap items-center gap-3">
+                <label class="flex items-center gap-2 text-xs font-semibold text-stone-700 bg-white/90 border border-amber-600/30 px-3.5 py-2 rounded-xl cursor-pointer hover:bg-white shadow-sm">
+                    <input type="checkbox" id="sound-toggle" checked class="w-4 h-4 accent-amber-600 rounded">
                     <span>🔔 Notifikasi Suara</span>
                 </label>
 
-                <select id="status-filter" onchange="fetchQueue()" class="text-xs font-semibold bg-white border border-slate-200 px-3 py-2 rounded-xl text-slate-700 outline-none focus:border-emerald-600">
-                    <option value="all">Semua Status</option>
-                    <option value="pending" selected>⏳ Menunggu Cetak (Pending)</option>
+                <select id="status-filter" onchange="fetchQueue()" class="text-xs font-bold bg-white/90 border border-amber-600/30 px-3.5 py-2 rounded-xl text-stone-800 outline-none focus:border-amber-500 shadow-sm cursor-pointer">
+                    <option value="all" selected>📋 Semua Status (Item Tetap Tampil)</option>
+                    <option value="pending">⏳ Menunggu Cetak (Pending)</option>
                     <option value="printing">🖨️ Sedang Dicetak</option>
-                    <option value="completed">✅ Selesai</option>
+                    <option value="completed">✅ Selesai Dicetak</option>
                 </select>
 
-                <button onclick="clearCompletedQueue()" class="text-xs font-semibold bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 border border-slate-200 px-3 py-2 rounded-xl transition-colors">
-                    Bersihkan Riwayat
+                <button onclick="clearCompletedQueue()" class="text-xs font-bold bg-stone-100/90 hover:bg-red-50 hover:text-red-700 text-stone-700 border border-stone-300 px-3.5 py-2 rounded-xl transition-all shadow-sm">
+                    Bersihkan Riwayat Selesai
                 </button>
             </div>
         </div>
@@ -781,12 +844,12 @@
             
             if (items.length === 0) {
                 list.innerHTML = `
-                    <div class="col-span-full py-20 text-center bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
-                        <div class="w-16 h-16 rounded-3xl bg-slate-100 text-slate-400 flex items-center justify-center text-2xl mx-auto mb-3">
+                    <div class="col-span-full py-20 text-center glass-card rounded-3xl p-6 shadow-md">
+                        <div class="w-16 h-16 rounded-3xl bg-amber-500/20 text-amber-800 flex items-center justify-center text-2xl mx-auto mb-3 border border-amber-500/30">
                             ☕
                         </div>
-                        <h3 class="text-base font-bold text-slate-700">Belum Ada Antrean Cetak</h3>
-                        <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Saat peserta menekan tombol cetak di galeri HP mereka, daftar foto yang diminta cetak akan langsung muncul di sini.</p>
+                        <h3 class="text-base font-bold text-amber-950">Belum Ada Antrean Cetak</h3>
+                        <p class="text-xs text-amber-800/80 mt-1 max-w-sm mx-auto">Saat peserta menekan tombol cetak di galeri HP mereka, daftar foto yang diminta cetak akan langsung muncul di sini.</p>
                     </div>
                 `;
                 return;
@@ -799,66 +862,66 @@
 
                 let statusBadge = '';
                 if (isPending) {
-                    statusBadge = `<span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-[10px] font-extrabold uppercase flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse-dot"></span> Menunggu Cetak</span>`;
+                    statusBadge = `<span class="px-2.5 py-1 bg-amber-400/20 text-amber-900 border border-amber-400/50 rounded-full text-[10px] font-black uppercase flex items-center gap-1 shadow-sm"><span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse-dot"></span> Menunggu Cetak</span>`;
                 } else if (isPrinting) {
-                    statusBadge = `<span class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full text-[10px] font-extrabold uppercase flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> Sedang Dicetak</span>`;
+                    statusBadge = `<span class="px-2.5 py-1 bg-blue-100 text-blue-900 border border-blue-300 rounded-full text-[10px] font-black uppercase flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span> Sedang Dicetak</span>`;
                 } else if (isCompleted) {
-                    statusBadge = `<span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-extrabold uppercase flex items-center gap-1">✓ Selesai</span>`;
+                    statusBadge = `<span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-full text-[10px] font-black uppercase flex items-center gap-1">✓ Selesai Dicetak</span>`;
                 } else {
-                    statusBadge = `<span class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-extrabold uppercase">Dibatalkan</span>`;
+                    statusBadge = `<span class="px-2.5 py-1 bg-stone-200 text-stone-700 rounded-full text-[10px] font-black uppercase">Dibatalkan</span>`;
                 }
 
                 return `
-                    <div class="bg-white rounded-3xl border ${isPending ? 'border-amber-300 ring-2 ring-amber-100 shadow-md' : 'border-slate-200 shadow-sm'} p-4 flex flex-col justify-between transition-all hover:shadow-lg">
+                    <div class="glass-card rounded-3xl border-2 ${isPending ? 'border-amber-400 ring-2 ring-amber-400/30 shadow-xl' : 'border-amber-500/25 shadow-md'} p-5 flex flex-col justify-between transition-all hover:shadow-2xl">
                         <div>
                             <!-- Header Info -->
                             <div class="flex items-center justify-between gap-2 mb-3">
                                 <div>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">ID: ${item.session_id.substring(0, 15)}...</span>
-                                    <h4 class="text-sm font-bold text-slate-800">${item.label || 'Photo Strip'}</h4>
+                                    <span class="text-[10px] font-bold text-amber-800/60 uppercase tracking-wider block">ID: ${item.session_id.substring(0, 15)}...</span>
+                                    <h4 class="text-sm font-bold text-amber-950">${item.label || 'Photo Strip'}</h4>
                                 </div>
                                 ${statusBadge}
                             </div>
 
                             <!-- Photo Preview -->
-                            <div class="aspect-[9/16] bg-slate-900 rounded-2xl overflow-hidden mb-4 border border-slate-100 relative group flex items-center justify-center">
-                                <img src="${item.photo_url}" class="w-full h-full object-contain cursor-pointer transition-transform group-hover:scale-105" onclick="window.open('${item.photo_url}', '_blank')">
-                                <a href="${item.photo_url}" target="_blank" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold gap-1.5 backdrop-blur-[1px]">
+                            <div class="aspect-[9/16] bg-black/10 rounded-2xl overflow-hidden mb-4 border-2 border-amber-500/30 relative group flex items-center justify-center p-1.5 shadow-inner">
+                                <img src="${item.photo_url}" class="w-full h-full object-contain rounded-xl cursor-pointer transition-transform group-hover:scale-105" onclick="window.open('${item.photo_url}', '_blank')">
+                                <a href="${item.photo_url}" target="_blank" class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold gap-1.5 backdrop-blur-[2px] rounded-xl">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                     Lihat HD
                                 </a>
                             </div>
 
                             <!-- Meta Info -->
-                            <div class="text-[11px] text-slate-400 space-y-1 mb-4">
-                                <p>⏱️ Request: <span class="text-slate-600 font-semibold">${item.created_at}</span></p>
+                            <div class="text-[11px] text-amber-800/80 space-y-1 mb-4 font-medium">
+                                <p>⏱️ Request: <span class="text-amber-950 font-bold">${item.created_at}</span></p>
                             </div>
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="space-y-2 pt-3 border-t border-slate-100">
+                        <div class="space-y-2 pt-3 border-t border-amber-900/10">
                             <button onclick="printPhoto('${item.id}', '${item.photo_url}')" 
-                                    class="w-full py-3 px-4 bg-[#1B4332] hover:bg-[#2D6A4F] text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-95">
+                                    class="w-full py-3 px-4 ${isCompleted ? 'bg-amber-500 hover:bg-amber-600 text-stone-900' : 'bg-[#2D5A27] hover:bg-[#1f401b] text-white'} rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-95 cursor-pointer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                                 </svg>
-                                <span>🖨️ Cetak / Print Sekarang</span>
+                                <span>${isCompleted ? '🖨️ Cetak / Print Ulang' : '🖨️ Cetak / Print Sekarang'}</span>
                             </button>
 
                             <div class="grid grid-cols-2 gap-2">
                                 ${!isCompleted ? `
                                     <button onclick="updateQueueStatus('${item.id}', 'completed')" 
-                                            class="py-2 px-3 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl font-bold text-[11px] transition-colors">
+                                            class="py-2 px-3 bg-emerald-100 text-emerald-900 hover:bg-emerald-200 border border-emerald-300 rounded-xl font-bold text-[11px] transition-all shadow-sm cursor-pointer">
                                         ✓ Tandai Selesai
                                     </button>
                                 ` : `
                                     <button onclick="updateQueueStatus('${item.id}', 'pending')" 
-                                            class="py-2 px-3 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-xl font-bold text-[11px] transition-colors">
+                                            class="py-2 px-3 bg-stone-200/80 text-stone-800 hover:bg-stone-300 rounded-xl font-bold text-[11px] transition-all shadow-sm cursor-pointer">
                                         ↩ Jadikan Pending
                                     </button>
                                 `}
                                 <button onclick="deleteQueueItem('${item.id}')" 
-                                        class="py-2 px-3 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-xl font-bold text-[11px] transition-colors">
+                                        class="py-2 px-3 bg-rose-100 text-rose-700 hover:bg-rose-200 border border-rose-300 rounded-xl font-bold text-[11px] transition-all shadow-sm cursor-pointer">
                                     Hapus
                                 </button>
                             </div>
@@ -870,8 +933,8 @@
 
         // Dedicated Clean Print Handler (Opens print dialog for just the image, borderless)
         function printPhoto(queueId, imageUrl) {
-            // 1. Mark status as printing
-            updateQueueStatus(queueId, 'printing');
+            // 1. Mark status as completed without removing from list
+            updateQueueStatus(queueId, 'completed');
 
             // 2. Open clean print window
             const printWindow = window.open('', '_blank', 'width=800,height=900');
@@ -1272,7 +1335,24 @@
         }
 
         // ================= BRANDING & BOOTH APPEARANCE LOGIC =================
-        let currentBranding = null;
+        function applyAdminTheme(s) {
+            if (!s) return;
+            const root = document.documentElement;
+            if (s.bgColor) root.style.setProperty('--booth-bg', s.bgColor);
+            if (s.primaryColor) root.style.setProperty('--booth-primary', s.primaryColor);
+            if (s.secondaryColor) root.style.setProperty('--booth-secondary', s.secondaryColor);
+            if (s.goldColor) root.style.setProperty('--booth-gold', s.goldColor);
+
+            if (s.bgImage) {
+                document.body.style.backgroundImage = `url('${s.bgImage}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundAttachment = 'fixed';
+            } else if (s.bgColor) {
+                document.body.style.backgroundColor = s.bgColor;
+                document.body.style.backgroundImage = 'radial-gradient(circle at 10% 15%, rgba(212, 140, 18, 0.18) 0%, transparent 35%), radial-gradient(circle at 90% 85%, rgba(212, 140, 18, 0.18) 0%, transparent 35%)';
+            }
+        }
 
         async function fetchBrandingSettings() {
             try {
@@ -1282,6 +1362,7 @@
                     currentBranding = data.settings;
                     populateBrandingForm(data.settings);
                     updateMockupPreview();
+                    applyAdminTheme(data.settings);
                 }
             } catch (err) {
                 console.error("Failed to fetch branding settings:", err);

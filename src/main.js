@@ -221,7 +221,7 @@ function loadCachedImage(src) {
 
 function updateStudioLayoutUI() {
     const currentTemplate = availableTemplates.find(t => t.id === selectedTemplateId);
-    const templateName = currentTemplate ? currentTemplate.name : 'Standar Ramadan';
+    const templateName = currentTemplate ? currentTemplate.name : 'Tema Standar';
     
     const themeBadge = document.getElementById('studio-theme-name-badge');
     const themeLabel = document.getElementById('studio-current-theme-label');
@@ -1206,7 +1206,7 @@ downloadBtn.addEventListener('click', () => {
         const link = document.createElement('a');
         link.style.display = 'none';
         link.href = dataUrl;
-        link.download = 'ramadhankarimmmahaghora1.jpg';
+        link.download = 'photobooth_strip.jpg';
         document.body.appendChild(link);
         link.click();
         setTimeout(() => document.body.removeChild(link), 100);
@@ -1216,7 +1216,7 @@ downloadBtn.addEventListener('click', () => {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = 'ramadhankarimmmahaghora1.jpg';
+            link.download = 'photobooth_strip.jpg';
             link.click();
             setTimeout(() => URL.revokeObjectURL(url), 1000);
         }, 'image/jpeg', 0.95);

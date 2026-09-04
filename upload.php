@@ -89,9 +89,84 @@ if (count($savedFiles) === 0) {
     exit();
 }
 
+// Helper to detect primary LAN IP of the laptop (Wi-Fi or active Ethernet)
+function getLaptopLanIp() {
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        @exec('ipconfig', $lines);
+        if (is_array($lines)) {
+            $adapters = [];
+            $currentAdapter = 'unknown';
+            foreach ($lines as $line) {
+                if (preg_match('/^([^\s].*):$/', $line, $match)) {
+                    $currentAdapter = trim($match[1]);
+                    $adapters[$currentAdapter] = ['name' => $currentAdapter, 'ip' => '', 'gateway' => ''];
+                    continue;
+                }
+                if (preg_match('/(?:IPv4 Address|Alamat IPv4)[^:]*:\s*([0-9\.]+)/i', $line, $m)) {
+                    $adapters[$currentAdapter]['ip'] = trim($m[1]);
+                }
+                if (preg_match('/(?:Default Gateway|Gateway Default)[^:]*:\s*([0-9\.]+)/i', $line, $m)) {
+                    $adapters[$currentAdapter]['gateway'] = trim($m[1]);
+                }
+            }
+
+            // 1. Adapter with both IPv4 and active Default Gateway (e.g. connected Wi-Fi / Router)
+            foreach ($adapters as $name => $data) {
+                if (!empty($data['ip']) && !empty($data['gateway']) && $data['ip'] !== '127.0.0.1' && !str_starts_with($data['ip'], '169.254.')) {
+                    return $data['ip'];
+                }
+            }
+
+            // 2. Wi-Fi / Wireless adapter with valid IPv4
+            foreach ($adapters as $name => $data) {
+                if (stripos($name, 'Wi-Fi') !== false || stripos($name, 'Wireless') !== false) {
+                    if (!empty($data['ip']) && $data['ip'] !== '127.0.0.1' && !str_starts_with($data['ip'], '169.254.')) {
+                        return $data['ip'];
+                    }
+                }
+            }
+
+            // 3. Physical adapter that is NOT VirtualBox / VMware / vEthernet
+            foreach ($adapters as $name => $data) {
+                if (stripos($name, 'Virtual') === false && stripos($name, 'VMware') === false && stripos($name, 'vEthernet') === false) {
+                    if (!empty($data['ip']) && $data['ip'] !== '127.0.0.1' && !str_starts_with($data['ip'], '169.254.') && !str_starts_with($data['ip'], '192.168.56.')) {
+                        return $data['ip'];
+                    }
+                }
+            }
+
+            // 4. Any valid non-loopback IP
+            foreach ($adapters as $name => $data) {
+                if (!empty($data['ip']) && $data['ip'] !== '127.0.0.1' && !str_starts_with($data['ip'], '169.254.')) {
+                    return $data['ip'];
+                }
+            }
+        }
+    }
+
+    $hostIp = @gethostbyname(gethostname());
+    if ($hostIp && $hostIp !== '127.0.0.1' && strpos($hostIp, '127.') !== 0) {
+        return $hostIp;
+    }
+    return '127.0.0.1';
+}
+
 // Build the view URL
 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-$host = $_SERVER['HTTP_HOST'];
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+
+$hostParts = explode(':', $host);
+$hostName = $hostParts[0];
+$hostPort = isset($hostParts[1]) ? ':' . $hostParts[1] : '';
+
+// If accessed via localhost or 127.0.0.1, convert host to the laptop's LAN IP so phones scanning the QR can open it
+if ($hostName === 'localhost' || $hostName === '127.0.0.1' || $hostName === '::1') {
+    $lanIp = getLaptopLanIp();
+    if ($lanIp && $lanIp !== '127.0.0.1') {
+        $host = $lanIp . $hostPort;
+    }
+}
+
 $basePath = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), "", $_SERVER['PHP_SELF']), '/');
 
 $viewUrl = $protocol . "://" . $host . $basePath . '/view.php?s=' . $sessionId;

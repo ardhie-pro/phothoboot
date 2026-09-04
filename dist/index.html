@@ -6,7 +6,7 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ramadan Kareem Photo Booth</title>
+    <title>Photo Booth</title>
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -150,7 +150,7 @@
           }).catch(console.warn);
       })();
     </script>
-    <script type="module" crossorigin src="./assets/index-CY2BbVYL.js"></script>
+    <script type="module" crossorigin src="./assets/index-Bt5wmthb.js"></script>
   </head>
   <body
     class="bg-ramadan-cream min-h-screen flex flex-col items-center justify-start p-2 md:p-4 text-ramadan-secondary font-outfit overflow-y-auto custom-scrollbar relative"
@@ -174,14 +174,19 @@
       ></div>
     </div>
 
-    <!-- Settings Button -->
-    <button id="settings-toggle" class="fixed top-6 right-6 z-50 flex items-center gap-2 py-3 px-5 bg-ramadan-primary text-ramadan-cream rounded-full hover:scale-105 active:scale-95 transition-all shadow-xl font-bold border-2 border-ramadan-cream/20">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-        <span>Ganti Tema</span>
-    </button>
+    <!-- Top Action Buttons -->
+    <div class="fixed top-6 right-6 z-50 flex items-center gap-3">
+        <a href="history.php" class="flex items-center gap-2 py-3 px-5 bg-black/60 hover:bg-black/80 text-ramadan-cream rounded-full hover:scale-105 active:scale-95 transition-all shadow-xl font-bold border-2 border-ramadan-gold/40 text-sm backdrop-blur-md">
+            <span>🎞️</span> <span>Riwayat Foto</span>
+        </a>
+        <button id="settings-toggle" class="flex items-center gap-2 py-3 px-5 bg-ramadan-primary text-ramadan-cream rounded-full hover:scale-105 active:scale-95 transition-all shadow-xl font-bold border-2 border-ramadan-cream/20 text-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span>Ganti Tema</span>
+        </button>
+    </div>
 
 
     <div id="settings-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-ramadan-green/90 backdrop-blur-md hidden">
@@ -640,7 +645,7 @@
 
     <!-- Footer Decor -->
     <footer class="mt-4 md:mt-12 text-ramadan-gold/60 text-xs md:text-sm hidden md:block">
-      &copy; 2026 Ramadan Kareem Photo Booth Experience
+      &copy; 2026 Photo Booth Experience
     </footer>
 
   </body>
