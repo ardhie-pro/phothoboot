@@ -5,11 +5,17 @@ header('Pragma: no-cache');
 header('Expires: 0');
 header('Access-Control-Allow-Origin: *');
 
+@ini_set('upload_max_filesize', '100M');
+@ini_set('post_max_size', '120M');
+@ini_set('memory_limit', '512M');
+@ini_set('max_execution_time', '600');
+@ini_set('max_input_time', '600');
+
 $settingsFile = __DIR__ . '/uploads/booth_settings.json';
 $uploadDir = __DIR__ . '/uploads/branding/';
 
 if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0755, true);
+    @mkdir($uploadDir, 0777, true);
 }
 
 $defaultSettings = [
@@ -72,15 +78,28 @@ if ($action === 'save' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Handle Background Image Upload
-    if (isset($_FILES['bgImage']) && $_FILES['bgImage']['error'] === 0) {
-        $ext = pathinfo($_FILES['bgImage']['name'], PATHINFO_EXTENSION);
-        $filename = 'bg_' . time() . '.' . $ext;
-        $dest = 'uploads/branding/' . $filename;
-        if (move_uploaded_file($_FILES['bgImage']['tmp_name'], __DIR__ . '/' . $dest)) {
-            if (!empty($current['bgImage']) && file_exists(__DIR__ . '/' . $current['bgImage'])) {
-                @unlink(__DIR__ . '/' . $current['bgImage']);
+    if (isset($_FILES['bgImage']) && $_FILES['bgImage']['name'] !== '') {
+        if ($_FILES['bgImage']['error'] === UPLOAD_ERR_OK) {
+            $ext = pathinfo($_FILES['bgImage']['name'], PATHINFO_EXTENSION);
+            $filename = 'bg_' . time() . '.' . $ext;
+            $dest = 'uploads/branding/' . $filename;
+            if (move_uploaded_file($_FILES['bgImage']['tmp_name'], __DIR__ . '/' . $dest)) {
+                if (!empty($current['bgImage']) && file_exists(__DIR__ . '/' . $current['bgImage'])) {
+                    @unlink(__DIR__ . '/' . $current['bgImage']);
+                }
+                $current['bgImage'] = $dest;
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Gagal memindahkan file background ke folder server. Periksa permission folder uploads/branding/ (chmod 777).']);
+                exit();
             }
-            $current['bgImage'] = $dest;
+        } else {
+            $errCode = $_FILES['bgImage']['error'];
+            $errMsg = 'Gagal mengupload background (Error code ' . $errCode . '). ';
+            if ($errCode === UPLOAD_ERR_INI_SIZE || $errCode === UPLOAD_ERR_FORM_SIZE) {
+                $errMsg .= 'Ukuran file melebihi batas upload server (upload_max_filesize). Harap periksa konfigurasi php.ini atau .htaccess.';
+            }
+            echo json_encode(['success' => false, 'error' => $errMsg]);
+            exit();
         }
     }
 

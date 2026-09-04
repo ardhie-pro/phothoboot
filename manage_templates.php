@@ -1,11 +1,17 @@
 <?php
 header('Content-Type: application/json');
 
+@ini_set('upload_max_filesize', '100M');
+@ini_set('post_max_size', '120M');
+@ini_set('memory_limit', '512M');
+@ini_set('max_execution_time', '600');
+@ini_set('max_input_time', '600');
+
 $jsonFile = __DIR__ . '/uploads/templates.json';
 $targetDir = __DIR__ . '/uploads/templates/';
 
 if (!is_dir($targetDir)) {
-    mkdir($targetDir, 0755, true);
+    @mkdir($targetDir, 0777, true);
 }
 
 $action = $_GET['action'] ?? 'list';
@@ -92,7 +98,7 @@ if ($action === 'upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = $isEdit ? $editId : uniqid();
     $templateDir = $targetDir . $id . '/';
     if (!is_dir($templateDir)) {
-        mkdir($templateDir, 0755, true);
+        @mkdir($templateDir, 0777, true);
     }
     
     $outerPath = $existingTemplate['outer'] ?? '';
@@ -100,28 +106,47 @@ if ($action === 'upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $lampuPath = $existingTemplate['lampu'] ?? '';
     $ramaPath = $existingTemplate['rama'] ?? '';
     
-    if (isset($_FILES['outerImage']) && $_FILES['outerImage']['error'] === UPLOAD_ERR_OK) {
-        $ext = pathinfo($_FILES['outerImage']['name'], PATHINFO_EXTENSION) ?: 'png';
-        $outerPath = 'uploads/templates/' . $id . '/outer.' . $ext;
-        move_uploaded_file($_FILES['outerImage']['tmp_name'], __DIR__ . '/' . $outerPath);
+    if (isset($_FILES['outerImage']) && $_FILES['outerImage']['name'] !== '') {
+        if ($_FILES['outerImage']['error'] === UPLOAD_ERR_OK) {
+            $ext = pathinfo($_FILES['outerImage']['name'], PATHINFO_EXTENSION) ?: 'png';
+            $outerPath = 'uploads/templates/' . $id . '/outer.' . $ext;
+            if (!move_uploaded_file($_FILES['outerImage']['tmp_name'], __DIR__ . '/' . $outerPath)) {
+                echo json_encode(['success' => false, 'error' => 'Gagal menyimpan file background luar/frame. Periksa izin tulis (chmod 777) folder uploads/templates.']);
+                exit();
+            }
+        } else {
+            $errCode = $_FILES['outerImage']['error'];
+            $errMsg = 'Gagal upload background luar/frame (Error code ' . $errCode . '). ';
+            if ($errCode === UPLOAD_ERR_INI_SIZE || $errCode === UPLOAD_ERR_FORM_SIZE) {
+                $errMsg .= 'Ukuran file terlalu besar untuk server. Periksa upload_max_filesize di php.ini atau .htaccess.';
+            }
+            echo json_encode(['success' => false, 'error' => $errMsg]);
+            exit();
+        }
     }
 
-    if (isset($_FILES['ketupat']) && $_FILES['ketupat']['error'] === UPLOAD_ERR_OK) {
-        $ext = pathinfo($_FILES['ketupat']['name'], PATHINFO_EXTENSION) ?: 'png';
-        $ketupatPath = 'uploads/templates/' . $id . '/ketupat.' . $ext;
-        move_uploaded_file($_FILES['ketupat']['tmp_name'], __DIR__ . '/' . $ketupatPath);
+    if (isset($_FILES['ketupat']) && $_FILES['ketupat']['name'] !== '') {
+        if ($_FILES['ketupat']['error'] === UPLOAD_ERR_OK) {
+            $ext = pathinfo($_FILES['ketupat']['name'], PATHINFO_EXTENSION) ?: 'png';
+            $ketupatPath = 'uploads/templates/' . $id . '/ketupat.' . $ext;
+            move_uploaded_file($_FILES['ketupat']['tmp_name'], __DIR__ . '/' . $ketupatPath);
+        }
     }
 
-    if (isset($_FILES['lampu']) && $_FILES['lampu']['error'] === UPLOAD_ERR_OK) {
-        $ext = pathinfo($_FILES['lampu']['name'], PATHINFO_EXTENSION) ?: 'png';
-        $lampuPath = 'uploads/templates/' . $id . '/lampu.' . $ext;
-        move_uploaded_file($_FILES['lampu']['tmp_name'], __DIR__ . '/' . $lampuPath);
+    if (isset($_FILES['lampu']) && $_FILES['lampu']['name'] !== '') {
+        if ($_FILES['lampu']['error'] === UPLOAD_ERR_OK) {
+            $ext = pathinfo($_FILES['lampu']['name'], PATHINFO_EXTENSION) ?: 'png';
+            $lampuPath = 'uploads/templates/' . $id . '/lampu.' . $ext;
+            move_uploaded_file($_FILES['lampu']['tmp_name'], __DIR__ . '/' . $lampuPath);
+        }
     }
 
-    if (isset($_FILES['rama']) && $_FILES['rama']['error'] === UPLOAD_ERR_OK) {
-        $ext = pathinfo($_FILES['rama']['name'], PATHINFO_EXTENSION) ?: 'png';
-        $ramaPath = 'uploads/templates/' . $id . '/rama.' . $ext;
-        move_uploaded_file($_FILES['rama']['tmp_name'], __DIR__ . '/' . $ramaPath);
+    if (isset($_FILES['rama']) && $_FILES['rama']['name'] !== '') {
+        if ($_FILES['rama']['error'] === UPLOAD_ERR_OK) {
+            $ext = pathinfo($_FILES['rama']['name'], PATHINFO_EXTENSION) ?: 'png';
+            $ramaPath = 'uploads/templates/' . $id . '/rama.' . $ext;
+            move_uploaded_file($_FILES['rama']['tmp_name'], __DIR__ . '/' . $ramaPath);
+        }
     }
     
     $newTemplate = [

@@ -5,6 +5,12 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
+@ini_set('upload_max_filesize', '100M');
+@ini_set('post_max_size', '120M');
+@ini_set('memory_limit', '512M');
+@ini_set('max_execution_time', '600');
+@ini_set('max_input_time', '600');
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();

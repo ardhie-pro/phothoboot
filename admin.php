@@ -1289,7 +1289,7 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             }
         };
 
-        form.onsubmit = async (e) => {
+        form.onsubmit = (e) => {
             e.preventDefault();
             const formData = new FormData(form);
             if (form.overlayMode.checked) formData.set('overlayMode', 'true');
@@ -1297,27 +1297,27 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             const btn = form.querySelector('button[type="submit"]');
             const originalText = btn.innerText;
             btn.disabled = true;
-            btn.innerText = 'Menyimpan Konfigurasi...';
+            btn.innerText = 'Mengunggah & Menyimpan...';
 
-            try {
-                const res = await fetch('manage_templates.php?action=upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                const result = await res.json();
-                if (result.success) {
-                    alert('Template & Layout berhasil disimpan!');
-                    fetchTemplates();
-                    form.reset();
-                } else {
-                    alert('Gagal: ' + (result.error || 'Terjadi kesalahan'));
+            uploadWithProgress('manage_templates.php?action=upload', formData, {
+                title: 'Mengunggah File Template & Background...',
+                onSuccess: (result) => {
+                    btn.disabled = false;
+                    btn.innerText = originalText;
+                    if (result.success) {
+                        alert('Template & Layout berhasil disimpan!');
+                        fetchTemplates();
+                        form.reset();
+                    } else {
+                        alert('Gagal: ' + (result.error || 'Terjadi kesalahan'));
+                    }
+                },
+                onError: (errMsg) => {
+                    btn.disabled = false;
+                    btn.innerText = originalText;
+                    alert('Gagal menyimpan template: ' + errMsg);
                 }
-            } catch (err) {
-                alert('Connection error');
-            } finally {
-                btn.disabled = false;
-                btn.innerText = originalText;
-            }
+            });
         };
 
         async function deleteTemplate(id) {
@@ -1528,10 +1528,10 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             }
         });
 
-        // Branding Form Submit
+        // Branding Form Submit with Realtime Progress
         const brandingForm = document.getElementById('branding-form');
         if (brandingForm) {
-            brandingForm.onsubmit = async (e) => {
+            brandingForm.onsubmit = (e) => {
                 e.preventDefault();
                 const formData = new FormData(brandingForm);
                 formData.set('showDeco', document.getElementById('brand-show-deco').checked ? 'true' : 'false');
@@ -1539,26 +1539,26 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 const btn = document.getElementById('btn-save-branding');
                 const originalText = btn.innerHTML;
                 btn.disabled = true;
-                btn.innerHTML = '<span>Menyimpan Pengaturan...</span>';
+                btn.innerHTML = '<span>Mengunggah & Menyimpan...</span>';
 
-                try {
-                    const res = await fetch('manage_settings.php?action=save', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const data = await res.json();
-                    if (data.success) {
-                        alert('Pengaturan tampilan booth berhasil disimpan!');
-                        fetchBrandingSettings();
-                    } else {
-                        alert('Gagal menyimpan: ' + (data.error || 'Terjadi kesalahan'));
+                uploadWithProgress('manage_settings.php?action=save', formData, {
+                    title: 'Mengunggah Pengaturan Tampilan & Background...',
+                    onSuccess: (data) => {
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+                        if (data.success) {
+                            alert('Pengaturan tampilan booth berhasil disimpan!');
+                            fetchBrandingSettings();
+                        } else {
+                            alert('Gagal menyimpan: ' + (data.error || 'Terjadi kesalahan'));
+                        }
+                    },
+                    onError: (errMsg) => {
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+                        alert('Gagal koneksi saat menyimpan pengaturan: ' + errMsg);
                     }
-                } catch (err) {
-                    alert('Gagal koneksi saat menyimpan pengaturan');
-                } finally {
-                    btn.disabled = false;
-                    btn.innerHTML = originalText;
-                }
+                });
             };
         }
 
@@ -1576,9 +1576,112 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             }
         }
 
+        // ================= REUSABLE PROGRESS UPLOAD HANDLER =================
+        function uploadWithProgress(url, formData, { title = 'Mengunggah Berkas...', onSuccess, onError }) {
+            const modal = document.getElementById('upload-progress-modal');
+            const titleEl = document.getElementById('upload-modal-title');
+            const bar = document.getElementById('upload-progress-bar');
+            const bytesEl = document.getElementById('upload-progress-bytes');
+            const percentEl = document.getElementById('upload-progress-percent');
+            const subtextEl = document.getElementById('upload-status-subtext');
+
+            if (modal) {
+                if (titleEl) titleEl.textContent = title;
+                if (bar) bar.style.width = '0%';
+                if (bytesEl) bytesEl.textContent = 'Menghitung...';
+                if (percentEl) percentEl.textContent = '0%';
+                if (subtextEl) {
+                    subtextEl.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping"></span><span>Mengunggah file ke server... Jangan tutup halaman ini.</span>';
+                }
+                modal.classList.remove('hidden');
+            }
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+
+            xhr.upload.onprogress = (e) => {
+                if (e.lengthComputable) {
+                    const percent = Math.min(100, Math.round((e.loaded / e.total) * 100));
+                    const loadedMB = (e.loaded / (1024 * 1024)).toFixed(1);
+                    const totalMB = (e.total / (1024 * 1024)).toFixed(1);
+
+                    if (bar) bar.style.width = percent + '%';
+                    if (percentEl) percentEl.textContent = percent + '%';
+                    if (bytesEl) bytesEl.textContent = `${loadedMB} MB / ${totalMB} MB`;
+
+                    if (percent >= 100 && subtextEl) {
+                        subtextEl.innerHTML = '<span class="w-3 h-3 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></span><span class="text-emerald-950 font-black">Upload 100% Selesai! Memproses & menyimpan data di server...</span>';
+                    }
+                }
+            };
+
+            xhr.onload = () => {
+                if (modal) modal.classList.add('hidden');
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const res = JSON.parse(xhr.responseText);
+                        onSuccess(res);
+                    } catch (err) {
+                        onError('Respons server tidak valid: ' + xhr.responseText);
+                    }
+                } else {
+                    onError(`Upload gagal (Status ${xhr.status}): ` + xhr.statusText);
+                }
+            };
+
+            xhr.onerror = () => {
+                if (modal) modal.classList.add('hidden');
+                onError('Terjadi kesalahan jaringan atau koneksi terputus');
+            };
+
+            xhr.ontimeout = () => {
+                if (modal) modal.classList.add('hidden');
+                onError('Upload timeout (waktu unggah habis)');
+            };
+
+            xhr.send(formData);
+        }
+
         // Init
         fetchQueue();
         setInterval(fetchQueue, 3000); // Polling every 3 seconds
     </script>
+
+    <!-- REAL-TIME UPLOAD PROGRESS MODAL -->
+    <div id="upload-progress-modal" class="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-card w-full max-w-md rounded-3xl p-6 sm:p-8 border-2 border-amber-400/50 shadow-2xl text-center relative overflow-hidden">
+            <!-- Glow background -->
+            <div class="absolute -top-12 -left-12 w-40 h-40 bg-amber-400/20 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="relative z-10">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center shadow-inner">
+                    <svg class="w-8 h-8 text-amber-900 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                </div>
+
+                <h3 id="upload-modal-title" class="text-lg sm:text-xl font-black text-amber-950 mb-1">Mengunggah Berkas...</h3>
+                <p id="upload-modal-subtitle" class="text-xs font-semibold text-amber-800/80 mb-6">Harap tunggu, berkas resolusi tinggi sedang dikirim ke server</p>
+
+                <!-- Progress Bar -->
+                <div class="w-full bg-black/10 rounded-full h-5 p-1 border border-amber-900/20 mb-3 shadow-inner overflow-hidden">
+                    <div id="upload-progress-bar" class="h-full bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-500 rounded-full transition-all duration-150 ease-out shadow-sm" style="width: 0%;"></div>
+                </div>
+
+                <!-- Progress Numbers -->
+                <div class="flex items-center justify-between text-xs font-black text-amber-950 px-1 mb-4">
+                    <span id="upload-progress-bytes" class="text-amber-800 font-bold font-mono">0 MB / 0 MB</span>
+                    <span id="upload-progress-percent" class="text-base text-amber-950 font-black font-mono">0%</span>
+                </div>
+
+                <!-- Status subtext -->
+                <div id="upload-status-subtext" class="text-[11px] sm:text-xs font-bold text-amber-950 bg-amber-500/15 py-2.5 px-3.5 rounded-2xl border border-amber-500/30 flex items-center justify-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping"></span>
+                    <span>Mengunggah file ke server... Jangan tutup halaman ini.</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
