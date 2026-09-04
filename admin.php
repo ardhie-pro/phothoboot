@@ -711,30 +711,32 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             const queueControls = document.getElementById('queue-controls');
 
             // Reset all active classes & hide all sections
-            btnQueue.classList.remove('active');
-            btnTemplates.classList.remove('active');
-            btnBranding.classList.remove('active');
-            contentQueue.classList.add('hidden');
-            contentTemplates.classList.add('hidden');
-            contentBranding.classList.add('hidden');
-            queueControls.classList.add('hidden');
+            if (btnQueue) btnQueue.classList.remove('active');
+            if (btnTemplates) btnTemplates.classList.remove('active');
+            if (btnBranding) btnBranding.classList.remove('active');
+            if (contentQueue) contentQueue.classList.add('hidden');
+            if (contentTemplates) contentTemplates.classList.add('hidden');
+            if (contentBranding) contentBranding.classList.add('hidden');
+            if (queueControls) queueControls.classList.add('hidden');
 
             if (tab === 'queue') {
-                btnQueue.classList.add('active');
-                contentQueue.classList.remove('hidden');
-                queueControls.classList.remove('hidden');
+                if (btnQueue) btnQueue.classList.add('active');
+                if (contentQueue) contentQueue.classList.remove('hidden');
+                if (queueControls) queueControls.classList.remove('hidden');
                 fetchQueue();
             } else if (tab === 'templates') {
-                btnTemplates.classList.add('active');
-                contentTemplates.classList.remove('hidden');
+                if (btnTemplates) btnTemplates.classList.add('active');
+                if (contentTemplates) contentTemplates.classList.remove('hidden');
                 fetchTemplates();
-                setTimeout(updateLivePreview, 200);
+                if (typeof renderTemplateItems === 'function') renderTemplateItems();
+                if (typeof updateLivePreview === 'function') setTimeout(updateLivePreview, 100);
             } else if (tab === 'branding') {
-                btnBranding.classList.add('active');
-                contentBranding.classList.remove('hidden');
+                if (btnBranding) btnBranding.classList.add('active');
+                if (contentBranding) contentBranding.classList.remove('hidden');
                 fetchBrandingSettings();
             }
         }
+        window.switchTab = switchTab;
 
         // ================= AUDIO NOTIFICATION =================
         function playChime() {
@@ -971,32 +973,6 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 console.error(e);
             }
         }
-
-        // ================= TEMPLATE MANAGER LOGIC =================
-        const form = document.getElementById('upload-form');
-        const list = document.getElementById('template-list');
-        const canvas = document.getElementById('preview-canvas');
-        const ctx = canvas.getContext('2d');
-
-        // Preview State & Drag Variables
-        let itemBounds = {};
-        let activeDraggedItem = null;
-        let selectedDeco = null;
-        let hoveredDeco = null;
-        let dragStartMouseX = 0;
-        let dragStartMouseY = 0;
-        let dragInitialXOff = 0;
-        let dragInitialYOff = 0;
-
-        const previewImages = {
-            outer: null,
-            ketupat: null,
-            lampu: null,
-            rama: null,
-            default_ketupat: new Image(),
-            default_lampu: new Image(),
-            default_rama: new Image()
-        };
 
         // ================= DYNAMIC MULTI-ITEM TEMPLATE LOGIC =================
         const form = document.getElementById('upload-form');
