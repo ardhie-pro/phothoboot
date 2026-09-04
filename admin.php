@@ -452,19 +452,41 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
 
                 <!-- Right: Preview (Sticky) -->
                 <div class="lg:sticky lg:top-8 space-y-4">
-                    <h2 class="text-xl font-bold text-[#2D6A4F] flex items-center gap-2">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                        Live Preview Monitor
-                    </h2>
-                    <div class="relative bg-white rounded-[3rem] p-4 shadow-2xl border-8 border-gray-100 overflow-hidden aspect-[9/16] w-full max-w-[350px] mx-auto">
-                        <canvas id="preview-canvas" width="1080" height="1920" class="w-full h-full object-contain rounded-[2rem] bg-[#FFFDF5]"></canvas>
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-bold text-[#2D6A4F] flex items-center gap-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            Live Preview Monitor
+                        </h2>
+                        <span class="text-[11px] font-bold px-2.5 py-1 bg-amber-500/20 text-amber-900 border border-amber-400/50 rounded-full flex items-center gap-1 shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span> Drag & Drop Aktif
+                        </span>
+                    </div>
+
+                    <!-- Interactive Item Selector Badges -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-1">
+                        <button type="button" onclick="selectDecoForDrag('ketupat')" id="btn-select-ketupat" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 hover:bg-emerald-200 transition-all flex items-center gap-1.5 shrink-0 shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Item 1 (Ketupat)
+                        </button>
+                        <button type="button" onclick="selectDecoForDrag('lampu')" id="btn-select-lampu" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200 transition-all flex items-center gap-1.5 shrink-0 shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Item 2 (Lampu)
+                        </button>
+                        <button type="button" onclick="selectDecoForDrag('rama')" id="btn-select-rama" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-100 text-indigo-900 border border-indigo-300 hover:bg-indigo-200 transition-all flex items-center gap-1.5 shrink-0 shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-indigo-500"></span> Item 3 (Stiker)
+                        </button>
+                    </div>
+
+                    <div class="relative bg-white rounded-[3rem] p-4 shadow-2xl border-8 border-gray-100 overflow-hidden aspect-[9/16] w-full max-w-[350px] mx-auto select-none touch-none">
+                        <canvas id="preview-canvas" width="1080" height="1920" class="w-full h-full object-contain rounded-[2rem] bg-[#FFFDF5] cursor-grab"></canvas>
                         <div class="absolute inset-0 pointer-events-none border-[12px] border-white/50 rounded-[2.5rem]"></div>
                     </div>
-                    <div class="bg-[#1B4332] text-ramadan-cream p-4 rounded-2xl text-[10px] space-y-1 shadow-md">
-                        <p class="font-bold border-b border-ramadan-cream/20 pb-1 mb-1">INFO LAYOUT (1080x1920)</p>
-                        <p>• Angka adalah pixel (px)</p>
-                        <p>• Geser X: (+) Kanan, (-) Kiri</p>
-                        <p>• Geser Y: (+) Bawah, (-) Atas</p>
+
+                    <div class="bg-[#1B4332] text-ramadan-cream p-4 rounded-2xl text-xs space-y-1.5 shadow-md">
+                        <div class="flex items-center justify-between border-b border-ramadan-cream/20 pb-1.5 mb-1.5 font-bold">
+                            <span>🖐️ CARA GESER POSISI ITEM</span>
+                            <span id="drag-coord-status" class="font-mono text-[11px] text-amber-300">Siap digeser</span>
+                        </div>
+                        <p>• <strong>Klik / sentuh & geser</strong> item di gambar monitor di atas untuk memposisikannya secara visual.</p>
+                        <p>• Nilai <strong>Geser X</strong> dan <strong>Geser Y</strong> pada form akan terisi otomatis mengikuti posisi geseran Anda.</p>
                     </div>
                 </div>
             </div>
@@ -1022,7 +1044,16 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
         const canvas = document.getElementById('preview-canvas');
         const ctx = canvas.getContext('2d');
 
-        // Preview State
+        // Preview State & Drag Variables
+        let itemBounds = {};
+        let activeDraggedItem = null;
+        let selectedDeco = null;
+        let hoveredDeco = null;
+        let dragStartMouseX = 0;
+        let dragStartMouseY = 0;
+        let dragInitialXOff = 0;
+        let dragInitialYOff = 0;
+
         const previewImages = {
             outer: null,
             ketupat: null,
@@ -1057,6 +1088,7 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
 
             canvas.width = isA5 ? 1748 : 1080;
             canvas.height = isA5 ? 2480 : 1920;
+            itemBounds = {}; // Reset bounds for hit testing
             
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = '#FFFDF5';
@@ -1096,7 +1128,7 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 }
 
                 // Draw Ornaments for 6 Grid
-                const drawDeco6 = (type, slotIdx) => {
+                const drawDeco6 = (type, slotIdx, label) => {
                     const img = previewImages[type] || previewImages[`default_${type}`];
                     if (!img || !img.complete) return;
 
@@ -1117,12 +1149,23 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                     }
                     y = slotY + imgH - size + yOff;
 
+                    itemBounds[type] = {
+                        type,
+                        label,
+                        x,
+                        y,
+                        width: size,
+                        height: size,
+                        xOff,
+                        yOff
+                    };
+
                     ctx.drawImage(img, x, y, size, size);
                 };
 
-                drawDeco6('ketupat', 1); // Slot #2 Kanan Atas
-                drawDeco6('lampu', 2);   // Slot #3 Kiri Tengah
-                drawDeco6('rama', 5);    // Slot #6 Kanan Bawah
+                drawDeco6('ketupat', 1, 'Item 1 / Ketupat'); // Slot #2 Kanan Atas
+                drawDeco6('lampu', 2, 'Item 2 / Lampu');   // Slot #3 Kiri Tengah
+                drawDeco6('rama', 5, 'Item 3 / Stiker');    // Slot #6 Kanan Bawah
 
             } else {
                 let imgWidth, imgHeight, padding, headerHeight, gap;
@@ -1152,7 +1195,7 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                     ctx.fill();
                 }
 
-                const drawDeco = (type, index) => {
+                const drawDeco = (type, index, label) => {
                     const img = previewImages[type] || previewImages[`default_${type}`];
                     if (!img || !img.complete) return;
 
@@ -1170,21 +1213,203 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                     }
                     y = yPos + imgHeight - size + yOff;
 
+                    itemBounds[type] = {
+                        type,
+                        label,
+                        x,
+                        y,
+                        width: size,
+                        height: size,
+                        xOff,
+                        yOff
+                    };
+
                     ctx.drawImage(img, x, y, size, size);
                 };
 
-                drawDeco('ketupat', 0);
-                drawDeco('lampu', 1);
-                drawDeco('rama', 2);
+                drawDeco('ketupat', 0, 'Item 1 / Ketupat');
+                drawDeco('lampu', 1, 'Item 2 / Lampu');
+                drawDeco('rama', 2, 'Item 3 / Stiker');
             }
 
             if (isOverlay && previewImages.outer && previewImages.outer.complete) {
                 ctx.drawImage(previewImages.outer, 0, 0, canvas.width, canvas.height);
             }
+
+            // Draw Interactive Highlight Selection Boxes for Active / Hovered Items
+            const targetHighlight = activeDraggedItem || hoveredDeco || selectedDeco;
+            if (targetHighlight && itemBounds[targetHighlight]) {
+                const b = itemBounds[targetHighlight];
+                ctx.save();
+                ctx.strokeStyle = activeDraggedItem ? '#22C55E' : '#D4AF37';
+                ctx.lineWidth = 5;
+                ctx.setLineDash([16, 10]);
+                ctx.strokeRect(b.x, b.y, b.width, b.height);
+
+                // Corner handles
+                ctx.fillStyle = activeDraggedItem ? '#22C55E' : '#1B4332';
+                ctx.strokeStyle = '#FFFFFF';
+                ctx.lineWidth = 4;
+                ctx.setLineDash([]);
+                const corners = [
+                    [b.x, b.y],
+                    [b.x + b.width, b.y],
+                    [b.x, b.y + b.height],
+                    [b.x + b.width, b.y + b.height]
+                ];
+                corners.forEach(([cx, cy]) => {
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+                });
+
+                // Pill label badge
+                const tagText = `${b.label} (X: ${b.xOff}, Y: ${b.yOff})`;
+                ctx.font = 'bold 26px sans-serif';
+                const tagWidth = ctx.measureText(tagText).width + 36;
+                const tagHeight = 46;
+                const tagX = Math.max(10, Math.min(canvas.width - tagWidth - 10, b.x));
+                const tagY = Math.max(tagHeight + 10, b.y - 12);
+
+                ctx.fillStyle = 'rgba(27, 67, 50, 0.95)';
+                ctx.beginPath();
+                if (ctx.roundRect) ctx.roundRect(tagX, tagY - tagHeight, tagWidth, tagHeight, 14);
+                else ctx.rect(tagX, tagY - tagHeight, tagWidth, tagHeight);
+                ctx.fill();
+
+                ctx.strokeStyle = activeDraggedItem ? '#22C55E' : '#D4AF37';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.fillStyle = '#FFFDF5';
+                ctx.fillText(tagText, tagX + 18, tagY - 14);
+                ctx.restore();
+            }
         }
 
+        // ================= CANVAS DRAG & DROP INTERACTION =================
+        function getCanvasMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+
+        function hitTestDeco(pos) {
+            const types = ['rama', 'lampu', 'ketupat']; // Top to bottom hit test
+            for (const type of types) {
+                const b = itemBounds[type];
+                if (b && pos.x >= b.x && pos.x <= (b.x + b.width) && pos.y >= b.y && pos.y <= (b.y + b.height)) {
+                    return type;
+                }
+            }
+            return null;
+        }
+
+        function selectDecoForDrag(type) {
+            selectedDeco = type;
+            ['ketupat', 'lampu', 'rama'].forEach(t => {
+                const btn = document.getElementById('btn-select-' + t);
+                if (btn) {
+                    if (t === type) {
+                        btn.className = 'px-3 py-1.5 rounded-xl text-xs font-black bg-amber-500 text-stone-950 border-2 border-amber-600 shadow-md scale-105 flex items-center gap-1.5 shrink-0 transition-all';
+                    } else {
+                        btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-stone-100 text-stone-700 border border-stone-200 hover:bg-stone-200 flex items-center gap-1.5 shrink-0 transition-all';
+                    }
+                }
+            });
+
+            // Focus on input
+            const inputX = form[type + '_x'];
+            if (inputX) {
+                inputX.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                inputX.focus();
+            }
+
+            const statusEl = document.getElementById('drag-coord-status');
+            if (statusEl && form[type + '_x'] && form[type + '_y']) {
+                statusEl.textContent = `${type.toUpperCase()} X:${form[type + '_x'].value} Y:${form[type + '_y'].value}`;
+            }
+
+            updateLivePreview();
+        }
+
+        const startCanvasDrag = (e) => {
+            const pos = getCanvasMousePos(e);
+            const hit = hitTestDeco(pos);
+            if (hit) {
+                activeDraggedItem = hit;
+                selectedDeco = hit;
+                dragStartMouseX = pos.x;
+                dragStartMouseY = pos.y;
+                dragInitialXOff = parseInt(form[hit + '_x'].value) || 0;
+                dragInitialYOff = parseInt(form[hit + '_y'].value) || 0;
+                canvas.style.cursor = 'grabbing';
+                selectDecoForDrag(hit);
+                if (e.cancelable) e.preventDefault();
+            }
+        };
+
+        const onCanvasDragMove = (e) => {
+            const pos = getCanvasMousePos(e);
+            if (activeDraggedItem) {
+                const deltaX = Math.round(pos.x - dragStartMouseX);
+                const deltaY = Math.round(pos.y - dragStartMouseY);
+                
+                const newX = dragInitialXOff + deltaX;
+                const newY = dragInitialYOff + deltaY;
+
+                form[activeDraggedItem + '_x'].value = newX;
+                form[activeDraggedItem + '_y'].value = newY;
+
+                const statusEl = document.getElementById('drag-coord-status');
+                if (statusEl) {
+                    statusEl.textContent = `${activeDraggedItem.toUpperCase()} X:${newX} Y:${newY}`;
+                }
+
+                updateLivePreview();
+                if (e.cancelable) e.preventDefault();
+            } else {
+                const hit = hitTestDeco(pos);
+                if (hit !== hoveredDeco) {
+                    hoveredDeco = hit;
+                    canvas.style.cursor = hit ? 'grab' : 'default';
+                    updateLivePreview();
+                }
+            }
+        };
+
+        const endCanvasDrag = () => {
+            if (activeDraggedItem) {
+                activeDraggedItem = null;
+                canvas.style.cursor = hoveredDeco ? 'grab' : 'default';
+                updateLivePreview();
+            }
+        };
+
+        canvas.addEventListener('mousedown', startCanvasDrag);
+        window.addEventListener('mousemove', onCanvasDragMove);
+        window.addEventListener('mouseup', endCanvasDrag);
+
+        canvas.addEventListener('touchstart', startCanvasDrag, { passive: false });
+        window.addEventListener('touchmove', onCanvasDragMove, { passive: false });
+        window.addEventListener('touchend', endCanvasDrag);
+        window.addEventListener('touchcancel', endCanvasDrag);
+
         document.querySelectorAll('.deco-input, #form-overlay, #form-size-type').forEach(el => {
-            el.addEventListener('input', updateLivePreview);
+            el.addEventListener('input', () => {
+                const statusEl = document.getElementById('drag-coord-status');
+                if (statusEl && selectedDeco && form[selectedDeco + '_x'] && form[selectedDeco + '_y']) {
+                    statusEl.textContent = `${selectedDeco.toUpperCase()} X:${form[selectedDeco + '_x'].value} Y:${form[selectedDeco + '_y'].value}`;
+                }
+                updateLivePreview();
+            });
             el.addEventListener('change', updateLivePreview);
         });
 
