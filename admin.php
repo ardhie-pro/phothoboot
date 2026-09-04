@@ -414,13 +414,13 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                         <div class="absolute inset-0 pointer-events-none border-[12px] border-white/50 rounded-[2.5rem]"></div>
                     </div>
 
-                    <div class="bg-[#1B4332] text-ramadan-cream p-4 rounded-2xl text-xs space-y-1.5 shadow-md">
-                        <div class="flex items-center justify-between border-b border-ramadan-cream/20 pb-1.5 mb-1.5 font-bold">
-                            <span>🖐️ CARA GESER POSISI ITEM</span>
-                            <span id="drag-coord-status" class="font-mono text-[11px] text-amber-300">Siap digeser</span>
+                    <div class="bg-[#1B4332] text-[#FFFDF5] p-4 rounded-2xl text-xs space-y-1.5 shadow-md">
+                        <div class="flex items-center justify-between border-b border-white/20 pb-1.5 mb-1.5 font-bold">
+                            <span>🖐️ CARA GESER &amp; UBAH UKURAN</span>
+                            <span id="drag-coord-status" class="font-mono text-[11px] text-amber-300">Siap</span>
                         </div>
-                        <p>• <strong>Klik / sentuh & geser</strong> item di gambar monitor di atas untuk memposisikannya secara visual.</p>
-                        <p>• Nilai <strong>Geser X</strong> dan <strong>Geser Y</strong> pada form akan terisi otomatis mengikuti posisi geseran Anda.</p>
+                        <p>• <strong>Geser Posisi</strong>: Klik / sentuh tengah item lalu geser ke posisi yang diinginkan.</p>
+                        <p>• <strong>Ubah Ukuran (Lebar &amp; Panjang)</strong>: Tarik <strong>titik sudut kanan-bawah</strong> kotak item di monitor, atau isi angka <strong>Lebar</strong> &amp; <strong>Panjang</strong> pada form di sebelah kiri.</p>
                     </div>
                 </div>
             </div>
@@ -980,11 +980,11 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
         const canvas = document.getElementById('preview-canvas');
         const ctx = canvas.getContext('2d');
 
-        // Dynamic items array
+        // Dynamic items array with width & height (lebar & panjang)
         let templateItems = [
-            { id: 'item_1', name: 'Item 1 (Ketupat)', src: './gambar/ketupat.webp', size: 350, x: 120, y: 150, slot: 1 },
-            { id: 'item_2', name: 'Item 2 (Lampu)', src: './gambar/lampu.webp', size: 300, x: -100, y: 140, slot: 2 },
-            { id: 'item_3', name: 'Item 3 (Stiker)', src: './gambar/rama.png', size: 550, x: 150, y: 300, slot: 5 }
+            { id: 'item_1', name: 'Item 1 (Ketupat)', src: './gambar/ketupat.webp', width: 350, height: 350, size: 350, x: 120, y: 150, slot: 1 },
+            { id: 'item_2', name: 'Item 2 (Lampu)', src: './gambar/lampu.webp', width: 300, height: 300, size: 300, x: -100, y: 140, slot: 2 },
+            { id: 'item_3', name: 'Item 3 (Stiker)', src: './gambar/rama.png', width: 550, height: 550, size: 550, x: 150, y: 300, slot: 5 }
         ];
 
         // Cached Image elements for dynamic items
@@ -1004,17 +1004,21 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
         // Preview Outer background image
         let outerPreviewImage = null;
 
-        // Drag State Variables
+        // Drag & Resize State Variables
         let itemBounds = {};
         let activeDraggedId = null;
+        let dragMode = null; // 'move' or 'resize'
         let selectedItemId = null;
         let hoveredItemId = null;
+        let hoveredResize = false;
         let dragStartMouseX = 0;
         let dragStartMouseY = 0;
         let dragInitialX = 0;
         let dragInitialY = 0;
+        let dragInitialW = 300;
+        let dragInitialH = 300;
 
-        // Render Dynamic Item Cards in Form
+        // Render Dynamic Item Cards in Form with Width & Height controls
         function renderTemplateItems() {
             const container = document.getElementById('dynamic-items-container');
             const buttonsContainer = document.getElementById('preview-item-buttons');
@@ -1035,6 +1039,8 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 const isSelected = selectedItemId === itm.id;
                 const colors = ['bg-emerald-500', 'bg-amber-500', 'bg-indigo-500', 'bg-purple-500', 'bg-rose-500', 'bg-blue-500'];
                 const dotColor = colors[idx % colors.length];
+                const itmW = itm.width || itm.size || 300;
+                const itmH = itm.height || itm.size || 300;
 
                 return `
                     <div id="card-item-${itm.id}" class="p-4 bg-gray-50 rounded-2xl border transition-all ${isSelected ? 'border-amber-400 ring-2 ring-amber-400/40 bg-amber-50/20' : 'border-gray-200'}">
@@ -1053,15 +1059,17 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 items-end">
-                            <div class="col-span-2 md:col-span-1">
-                                <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Gambar / Upload</label>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 items-end">
+                            <!-- 1. Gambar -->
+                            <div class="col-span-2 sm:col-span-1">
+                                <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Gambar</label>
                                 <div class="flex items-center gap-2">
                                     <img src="${itm.src || './gambar/ketupat.webp'}" id="thumb-${itm.id}" class="w-9 h-9 object-contain bg-white rounded-lg border border-gray-200 p-0.5 shrink-0">
                                     <input type="file" accept="image/*" onchange="handleItemFileUpload('${itm.id}', this)" class="w-full text-[10px] text-slate-500 file:mr-1.5 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[9px] file:font-bold file:bg-emerald-50 file:text-emerald-800">
                                 </div>
                             </div>
 
+                            <!-- 2. Slot -->
                             <div>
                                 <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Patokan Slot</label>
                                 <select onchange="updateItemProp('${itm.id}', 'slot', parseInt(this.value))" class="w-full px-2 py-1.5 rounded-lg border border-gray-200 text-xs bg-white font-medium">
@@ -1074,16 +1082,43 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                                 </select>
                             </div>
 
+                            <!-- 3. Lebar (Width) -->
                             <div>
-                                <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Ukuran (px)</label>
-                                <input type="number" id="item_size_${itm.id}" value="${itm.size || 300}" oninput="updateItemProp('${itm.id}', 'size', parseInt(this.value)||0)" class="w-full px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold">
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-[10px] uppercase font-bold text-gray-400">Lebar (px)</label>
+                                    <span class="text-[9px] text-emerald-700 font-bold">W</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <input type="number" id="item_w_${itm.id}" value="${itmW}" oninput="updateItemDimension('${itm.id}', 'width', parseInt(this.value)||50)" class="w-full px-2 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold">
+                                    <div class="flex flex-col gap-0.5">
+                                        <button type="button" onclick="stepItemDimension('${itm.id}', 'width', 20)" class="px-1 py-0.5 bg-stone-200 hover:bg-stone-300 text-[9px] font-bold rounded leading-none">+</button>
+                                        <button type="button" onclick="stepItemDimension('${itm.id}', 'width', -20)" class="px-1 py-0.5 bg-stone-200 hover:bg-stone-300 text-[9px] font-bold rounded leading-none">-</button>
+                                    </div>
+                                </div>
                             </div>
 
+                            <!-- 4. Panjang / Tinggi (Height) -->
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-[10px] uppercase font-bold text-gray-400">Panjang (px)</label>
+                                    <span class="text-[9px] text-emerald-700 font-bold">H</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <input type="number" id="item_h_${itm.id}" value="${itmH}" oninput="updateItemDimension('${itm.id}', 'height', parseInt(this.value)||50)" class="w-full px-2 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold">
+                                    <div class="flex flex-col gap-0.5">
+                                        <button type="button" onclick="stepItemDimension('${itm.id}', 'height', 20)" class="px-1 py-0.5 bg-stone-200 hover:bg-stone-300 text-[9px] font-bold rounded leading-none">+</button>
+                                        <button type="button" onclick="stepItemDimension('${itm.id}', 'height', -20)" class="px-1 py-0.5 bg-stone-200 hover:bg-stone-300 text-[9px] font-bold rounded leading-none">-</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 5. Geser X -->
                             <div>
                                 <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Geser X (px)</label>
                                 <input type="number" id="item_x_${itm.id}" value="${itm.x || 0}" oninput="updateItemProp('${itm.id}', 'x', parseInt(this.value)||0)" class="w-full px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold">
                             </div>
 
+                            <!-- 6. Geser Y -->
                             <div>
                                 <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Geser Y (px)</label>
                                 <input type="number" id="item_y_${itm.id}" value="${itm.y || 0}" oninput="updateItemProp('${itm.id}', 'y', parseInt(this.value)||0)" class="w-full px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold">
@@ -1097,10 +1132,12 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             if (buttonsContainer) {
                 buttonsContainer.innerHTML = templateItems.map((itm, idx) => {
                     const isSelected = selectedItemId === itm.id;
+                    const itmW = itm.width || itm.size || 300;
+                    const itmH = itm.height || itm.size || 300;
                     return `
                         <button type="button" onclick="selectItemForDrag('${itm.id}')" id="btn-select-${itm.id}" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 shadow-sm ${isSelected ? 'bg-amber-500 text-stone-950 font-black border-2 border-amber-600 scale-105' : 'bg-stone-100 text-stone-700 border border-stone-200 hover:bg-stone-200'}">
                             <span class="w-2 h-2 rounded-full ${isSelected ? 'bg-stone-900' : 'bg-emerald-500'}"></span>
-                            <span>${itm.name || 'Item ' + (idx + 1)}</span>
+                            <span>${itm.name || 'Item ' + (idx + 1)} (${itmW}x${itmH})</span>
                         </button>
                     `;
                 }).join('');
@@ -1116,6 +1153,8 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 id: 'item_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
                 name: 'Item ' + nextIdx + ' (Stiker)',
                 src: defaultImg,
+                width: 320,
+                height: 320,
                 size: 320,
                 x: 0,
                 y: 0,
@@ -1138,6 +1177,30 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             const itm = templateItems.find(item => item.id === id);
             if (itm) {
                 itm[prop] = val;
+                updateLivePreview();
+            }
+        }
+
+        function updateItemDimension(id, dim, val) {
+            const itm = templateItems.find(item => item.id === id);
+            if (itm) {
+                itm[dim] = Math.max(30, val);
+                itm.size = Math.max(itm.width || 300, itm.height || 300);
+                updateLivePreview();
+            }
+        }
+
+        function stepItemDimension(id, dim, delta) {
+            const itm = templateItems.find(item => item.id === id);
+            if (itm) {
+                const currentVal = parseInt(itm[dim]) || parseInt(itm.size) || 300;
+                const nextVal = Math.max(30, currentVal + delta);
+                itm[dim] = nextVal;
+                itm.size = Math.max(itm.width || 300, itm.height || 300);
+                
+                const inputEl = document.getElementById((dim === 'width' ? 'item_w_' : 'item_h_') + id);
+                if (inputEl) inputEl.value = nextVal;
+                
                 updateLivePreview();
             }
         }
@@ -1174,9 +1237,11 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 const card = document.getElementById('card-item-' + id);
                 if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
+                const itmW = itm.width || itm.size || 300;
+                const itmH = itm.height || itm.size || 300;
                 const statusEl = document.getElementById('drag-coord-status');
                 if (statusEl) {
-                    statusEl.textContent = `${(itm.name || 'ITEM').toUpperCase()} X:${itm.x} Y:${itm.y}`;
+                    statusEl.textContent = `${(itm.name || 'ITEM').toUpperCase()} (${itmW}x${itmH}) X:${itm.x} Y:${itm.y}`;
                 }
             }
             updateLivePreview();
@@ -1216,7 +1281,7 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
 
             canvas.width = isA5 ? 1748 : 1080;
             canvas.height = isA5 ? 2480 : 1920;
-            itemBounds = {}; // Reset bounds for hit testing
+            itemBounds = {}; // Reset bounds for hit testing & rendering
             
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = '#FFFDF5';
@@ -1260,28 +1325,29 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                     const img = getItemImage(itm.src);
                     if (!img || !img.complete) return;
 
-                    const size = parseInt(itm.size) || 300;
+                    const width = parseInt(itm.width) || parseInt(itm.size) || 300;
+                    const height = parseInt(itm.height) || parseInt(itm.size) || 300;
                     const slot = parseInt(itm.slot) || 0;
                     const col = slot % 2;
                     const row = Math.floor(slot / 2);
                     const slotX = paddingX + col * (imgW + gapX);
                     const slotY = topY + row * (imgH + gapY);
 
-                    const x = slotX + imgW - size + (parseInt(itm.x) || 0);
-                    const y = slotY + imgH - size + (parseInt(itm.y) || 0);
+                    const x = slotX + imgW - width + (parseInt(itm.x) || 0);
+                    const y = slotY + imgH - height + (parseInt(itm.y) || 0);
 
                     itemBounds[itm.id] = {
                         id: itm.id,
                         name: itm.name || 'Item',
                         x: x,
                         y: y,
-                        width: size,
-                        height: size,
+                        width: width,
+                        height: height,
                         xOff: itm.x || 0,
                         yOff: itm.y || 0
                     };
 
-                    ctx.drawImage(img, x, y, size, size);
+                    ctx.drawImage(img, x, y, width, height);
                 });
 
             } else {
@@ -1317,25 +1383,26 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                     const img = getItemImage(itm.src);
                     if (!img || !img.complete) return;
 
-                    const size = parseInt(itm.size) || 300;
+                    const width = parseInt(itm.width) || parseInt(itm.size) || 300;
+                    const height = parseInt(itm.height) || parseInt(itm.size) || 300;
                     const slot = Math.min(2, Math.max(0, parseInt(itm.slot) || 0));
                     const yPos = padding + headerHeight + (slot * (imgHeight + gap));
 
-                    const x = padding + imgWidth - size + (parseInt(itm.x) || 0);
-                    const y = yPos + imgHeight - size + (parseInt(itm.y) || 0);
+                    const x = padding + imgWidth - width + (parseInt(itm.x) || 0);
+                    const y = yPos + imgHeight - height + (parseInt(itm.y) || 0);
 
                     itemBounds[itm.id] = {
                         id: itm.id,
                         name: itm.name || 'Item',
                         x: x,
                         y: y,
-                        width: size,
-                        height: size,
+                        width: width,
+                        height: height,
                         xOff: itm.x || 0,
                         yOff: itm.y || 0
                     };
 
-                    ctx.drawImage(img, x, y, size, size);
+                    ctx.drawImage(img, x, y, width, height);
                 });
             }
 
@@ -1343,36 +1410,61 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 ctx.drawImage(outerPreviewImage, 0, 0, canvas.width, canvas.height);
             }
 
-            // Draw Interactive Highlight Selection Boxes for Active / Hovered Items
+            // Draw Interactive Highlight Selection Boxes & Resize Handles for Active / Hovered Items
             const targetHighlight = activeDraggedId || hoveredItemId || selectedItemId;
             if (targetHighlight && itemBounds[targetHighlight]) {
                 const b = itemBounds[targetHighlight];
+                const isDraggingThis = activeDraggedId === targetHighlight;
                 ctx.save();
-                ctx.strokeStyle = activeDraggedId ? '#22C55E' : '#D4AF37';
+                
+                // Border box
+                ctx.strokeStyle = isDraggingThis ? (dragMode === 'resize' ? '#3B82F6' : '#22C55E') : '#D4AF37';
                 ctx.lineWidth = 5;
                 ctx.setLineDash([16, 10]);
                 ctx.strokeRect(b.x, b.y, b.width, b.height);
 
                 // Corner handles
-                ctx.fillStyle = activeDraggedId ? '#22C55E' : '#1B4332';
-                ctx.strokeStyle = '#FFFFFF';
                 ctx.lineWidth = 4;
                 ctx.setLineDash([]);
+                
                 const corners = [
-                    [b.x, b.y],
-                    [b.x + b.width, b.y],
-                    [b.x, b.y + b.height],
-                    [b.x + b.width, b.y + b.height]
+                    { x: b.x, y: b.y, isResize: false },
+                    { x: b.x + b.width, y: b.y, isResize: false },
+                    { x: b.x, y: b.y + b.height, isResize: false },
+                    { x: b.x + b.width, y: b.y + b.height, isResize: true } // Bottom-right corner = Resize Handle
                 ];
-                corners.forEach(([cx, cy]) => {
+
+                corners.forEach(c => {
                     ctx.beginPath();
-                    ctx.arc(cx, cy, 12, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.stroke();
+                    if (c.isResize) {
+                        // Prominent resize handle (Amber / Blue when active)
+                        ctx.fillStyle = isDraggingThis && dragMode === 'resize' ? '#3B82F6' : '#F59E0B';
+                        ctx.strokeStyle = '#FFFFFF';
+                        ctx.arc(c.x, c.y, 18, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.stroke();
+
+                        // Draw diagonal resize arrow inside handle
+                        ctx.strokeStyle = '#FFFFFF';
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.moveTo(c.x - 7, c.y - 7);
+                        ctx.lineTo(c.x + 7, c.y + 7);
+                        ctx.moveTo(c.x + 7, c.y + 2);
+                        ctx.lineTo(c.x + 7, c.y + 7);
+                        ctx.lineTo(c.x + 2, c.y + 7);
+                        ctx.stroke();
+                    } else {
+                        ctx.fillStyle = isDraggingThis ? '#22C55E' : '#1B4332';
+                        ctx.strokeStyle = '#FFFFFF';
+                        ctx.arc(c.x, c.y, 12, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.stroke();
+                    }
                 });
 
-                // Pill label badge
-                const tagText = `${b.name} (X: ${b.xOff}, Y: ${b.yOff})`;
+                // Pill label badge with Dimensions (Lebar x Panjang) & Offsets (X, Y)
+                const tagText = `${b.name} (${b.width}x${b.height}px | X: ${b.xOff}, Y: ${b.yOff})`;
                 ctx.font = 'bold 26px sans-serif';
                 const tagWidth = ctx.measureText(tagText).width + 36;
                 const tagHeight = 46;
@@ -1385,7 +1477,7 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 else ctx.rect(tagX, tagY - tagHeight, tagWidth, tagHeight);
                 ctx.fill();
 
-                ctx.strokeStyle = activeDraggedId ? '#22C55E' : '#D4AF37';
+                ctx.strokeStyle = isDraggingThis ? (dragMode === 'resize' ? '#3B82F6' : '#22C55E') : '#D4AF37';
                 ctx.lineWidth = 3;
                 ctx.stroke();
 
@@ -1395,7 +1487,7 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             }
         }
 
-        // ================= CANVAS DRAG & DROP INTERACTION =================
+        // ================= CANVAS DRAG & RESIZE INTERACTION =================
         function getCanvasMousePos(e) {
             const rect = canvas.getBoundingClientRect();
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -1406,6 +1498,23 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 x: (clientX - rect.left) * scaleX,
                 y: (clientY - rect.top) * scaleY
             };
+        }
+
+        function hitTestResizeHandle(pos) {
+            // Check if pos is close to the bottom-right resize handle of any item (prioritize selected item)
+            const ids = Object.keys(itemBounds).reverse();
+            for (const id of ids) {
+                const b = itemBounds[id];
+                if (b) {
+                    const handleX = b.x + b.width;
+                    const handleY = b.y + b.height;
+                    const dist = Math.hypot(pos.x - handleX, pos.y - handleY);
+                    if (dist <= 40) {
+                        return id;
+                    }
+                }
+            }
+            return null;
         }
 
         function hitTestDeco(pos) {
@@ -1422,9 +1531,29 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
 
         const startCanvasDrag = (e) => {
             const pos = getCanvasMousePos(e);
+            
+            // 1. Check if clicking on bottom-right resize handle first
+            const resizeHit = hitTestResizeHandle(pos);
+            if (resizeHit) {
+                activeDraggedId = resizeHit;
+                dragMode = 'resize';
+                selectedItemId = resizeHit;
+                dragStartMouseX = pos.x;
+                dragStartMouseY = pos.y;
+                const itm = templateItems.find(item => item.id === resizeHit);
+                dragInitialW = itm ? (parseInt(itm.width) || parseInt(itm.size) || 300) : 300;
+                dragInitialH = itm ? (parseInt(itm.height) || parseInt(itm.size) || 300) : 300;
+                canvas.style.cursor = 'nwse-resize';
+                selectItemForDrag(resizeHit);
+                if (e.cancelable) e.preventDefault();
+                return;
+            }
+
+            // 2. Check if clicking inside item body for moving (drag)
             const hit = hitTestDeco(pos);
             if (hit) {
                 activeDraggedId = hit;
+                dragMode = 'move';
                 selectedItemId = hit;
                 dragStartMouseX = pos.x;
                 dragStartMouseY = pos.y;
@@ -1440,14 +1569,38 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
         const onCanvasDragMove = (e) => {
             const pos = getCanvasMousePos(e);
             if (activeDraggedId) {
-                const deltaX = Math.round(pos.x - dragStartMouseX);
-                const deltaY = Math.round(pos.y - dragStartMouseY);
-                
-                const newX = dragInitialX + deltaX;
-                const newY = dragInitialY + deltaY;
-
                 const itm = templateItems.find(item => item.id === activeDraggedId);
-                if (itm) {
+                if (!itm) return;
+
+                if (dragMode === 'resize') {
+                    // Resizing width & height
+                    const deltaW = Math.round(pos.x - dragStartMouseX);
+                    const deltaH = Math.round(pos.y - dragStartMouseY);
+                    
+                    const newW = Math.max(40, dragInitialW + deltaW);
+                    const newH = Math.max(40, dragInitialH + deltaH);
+                    
+                    itm.width = newW;
+                    itm.height = newH;
+                    itm.size = Math.max(newW, newH);
+
+                    const inputW = document.getElementById('item_w_' + activeDraggedId);
+                    const inputH = document.getElementById('item_h_' + activeDraggedId);
+                    if (inputW) inputW.value = newW;
+                    if (inputH) inputH.value = newH;
+
+                    const statusEl = document.getElementById('drag-coord-status');
+                    if (statusEl) {
+                        statusEl.textContent = `${(itm.name || 'ITEM').toUpperCase()} UKURAN: ${newW}x${newH}px`;
+                    }
+                } else if (dragMode === 'move') {
+                    // Moving item position
+                    const deltaX = Math.round(pos.x - dragStartMouseX);
+                    const deltaY = Math.round(pos.y - dragStartMouseY);
+                    
+                    const newX = dragInitialX + deltaX;
+                    const newY = dragInitialY + deltaY;
+
                     itm.x = newX;
                     itm.y = newY;
 
@@ -1465,11 +1618,21 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 updateLivePreview();
                 if (e.cancelable) e.preventDefault();
             } else {
-                const hit = hitTestDeco(pos);
-                if (hit !== hoveredItemId) {
-                    hoveredItemId = hit;
-                    canvas.style.cursor = hit ? 'grab' : 'default';
-                    updateLivePreview();
+                // Hover states
+                const resizeHit = hitTestResizeHandle(pos);
+                if (resizeHit) {
+                    canvas.style.cursor = 'nwse-resize';
+                    if (hoveredItemId !== resizeHit) {
+                        hoveredItemId = resizeHit;
+                        updateLivePreview();
+                    }
+                } else {
+                    const hit = hitTestDeco(pos);
+                    if (hit !== hoveredItemId) {
+                        hoveredItemId = hit;
+                        canvas.style.cursor = hit ? 'grab' : 'default';
+                        updateLivePreview();
+                    }
                 }
             }
         };
@@ -1477,7 +1640,9 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
         const endCanvasDrag = () => {
             if (activeDraggedId) {
                 activeDraggedId = null;
+                dragMode = null;
                 canvas.style.cursor = hoveredItemId ? 'grab' : 'default';
+                renderTemplateItems(); // Re-render badge labels with updated sizes
                 updateLivePreview();
             }
         };
@@ -1522,6 +1687,7 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 const isA5 = t.sizeType === 'a5' || is6 || t.sizeType === '4r';
                 const isActive = t.active !== false;
                 const thumbSrc = t.outer || t.ketupat || t.lampu || t.rama || '';
+                const itemCount = (t.items && Array.isArray(t.items)) ? t.items.length : 3;
 
                 return `
                 <div class="bg-white rounded-3xl overflow-hidden shadow-sm border ${isActive ? 'border-emerald-200 ring-1 ring-emerald-400/30' : 'border-gray-200 opacity-75'} p-4 transition-all hover:shadow-md flex flex-col justify-between">
@@ -1537,6 +1703,9 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                                     <span class="px-2 py-0.5 ${t.overlayMode ? 'bg-emerald-500/80 text-white' : 'bg-slate-700/80 text-slate-200'} rounded-full text-[9px] font-bold">
                                         ${t.overlayMode ? '✓ OVERLAY' : 'BACKGROUND'}
                                     </span>
+                                    <span class="px-2 py-0.5 bg-purple-500/80 text-white rounded-full text-[9px] font-bold">
+                                        ${itemCount} Item
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -1550,12 +1719,61 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                         </label>
                     </div>
 
-                    <button onclick="deleteTemplate('${t.id}')" class="mt-3 w-full py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer">
-                        <span>🗑️</span> Hapus Template
-                    </button>
+                    <div class="grid grid-cols-2 gap-2 mt-3">
+                        <button onclick="loadTemplateToEditor('${t.id}')" class="py-2 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-1 active:scale-95 cursor-pointer">
+                            <span>✏️</span> Edit / Sesuaikan
+                        </button>
+                        <button onclick="deleteTemplate('${t.id}')" class="py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-1 active:scale-95 cursor-pointer">
+                            <span>🗑️</span> Hapus
+                        </button>
+                    </div>
                 </div>
             `}).join('');
         }
+
+        window.loadTemplateToEditor = function(id) {
+            const t = loadedTemplatesList.find(item => item.id === id);
+            if (!t) return;
+
+            // Populate form fields
+            form.name.value = t.name || '';
+            if (form.sizeType) form.sizeType.value = t.sizeType || 'a5_6grid';
+            if (form.overlayMode) form.overlayMode.checked = !!t.overlayMode;
+
+            // Populate items array
+            if (t.items && Array.isArray(t.items) && t.items.length > 0) {
+                templateItems = t.items.map((itm, idx) => ({
+                    id: itm.id || ('item_' + (idx + 1)),
+                    name: itm.name || ('Item ' + (idx + 1)),
+                    src: itm.src || '',
+                    width: parseInt(itm.width) || parseInt(itm.size) || 300,
+                    height: parseInt(itm.height) || parseInt(itm.size) || 300,
+                    size: parseInt(itm.size) || 300,
+                    x: parseInt(itm.x) || 0,
+                    y: parseInt(itm.y) || 0,
+                    slot: parseInt(itm.slot) || 0
+                }));
+            }
+
+            // Load outer image preview if exists
+            if (t.outer) {
+                const img = new Image();
+                img.onload = () => {
+                    outerPreviewImage = img;
+                    updateLivePreview();
+                };
+                img.src = t.outer;
+            } else {
+                outerPreviewImage = null;
+            }
+
+            selectedItemId = templateItems[0] ? templateItems[0].id : null;
+            renderTemplateItems();
+            updateLivePreview();
+
+            // Scroll to editor
+            form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
 
         window.toggleTemplateActive = async function(id, active) {
             try {
@@ -1582,12 +1800,14 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             const formData = new FormData(form);
             if (form.overlayMode.checked) formData.set('overlayMode', 'true');
             
-            // Serialize items metadata
+            // Serialize items metadata with width, height, size, x, y, slot
             const serializedItems = templateItems.map((itm, idx) => ({
                 id: itm.id,
                 name: itm.name || ('Item ' + (idx + 1)),
                 src: (itm.src && !itm.src.startsWith('data:')) ? itm.src : '',
-                size: itm.size || 300,
+                width: itm.width || itm.size || 300,
+                height: itm.height || itm.size || 300,
+                size: itm.size || Math.max(itm.width || 300, itm.height || 300),
                 x: itm.x || 0,
                 y: itm.y || 0,
                 slot: itm.slot || 0
@@ -1605,17 +1825,17 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             if (templateItems[0]) {
                 formData.set('ketupat_x', templateItems[0].x || 120);
                 formData.set('ketupat_y', templateItems[0].y || 150);
-                formData.set('ketupat_size', templateItems[0].size || 350);
+                formData.set('ketupat_size', templateItems[0].width || templateItems[0].size || 350);
             }
             if (templateItems[1]) {
                 formData.set('lampu_x', templateItems[1].x || -100);
                 formData.set('lampu_y', templateItems[1].y || 140);
-                formData.set('lampu_size', templateItems[1].size || 300);
+                formData.set('lampu_size', templateItems[1].width || templateItems[1].size || 300);
             }
             if (templateItems[2]) {
                 formData.set('rama_x', templateItems[2].x || 150);
                 formData.set('rama_y', templateItems[2].y || 300);
-                formData.set('rama_size', templateItems[2].size || 550);
+                formData.set('rama_size', templateItems[2].width || templateItems[2].size || 550);
             }
 
             const btn = form.querySelector('button[type="submit"]');

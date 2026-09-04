@@ -954,15 +954,16 @@ async function renderStripCanvas(stripCanvas) {
                 if (!itm || !itm.src) continue;
                 const itmImg = await loadCachedImage(itm.src);
                 if (itmImg) {
-                    const iSize = parseInt(itm.size) || 300;
+                    const itmW = parseInt(itm.width) || parseInt(itm.size) || 300;
+                    const itmH = parseInt(itm.height) || parseInt(itm.size) || 300;
                     const slot = parseInt(itm.slot) || 0;
                     const col = slot % 2;
                     const row = Math.floor(slot / 2);
                     const slotX = paddingX + col * (imgWidth + gapX);
                     const slotY = topY + row * (imgHeight + gapY);
-                    const x = slotX + imgWidth - iSize + (parseInt(itm.x) || 0);
-                    const y = slotY + imgHeight - iSize + (parseInt(itm.y) || 0);
-                    ctx.drawImage(itmImg, x, y, iSize, iSize);
+                    const x = slotX + imgWidth - itmW + (parseInt(itm.x) || 0);
+                    const y = slotY + imgHeight - itmH + (parseInt(itm.y) || 0);
+                    ctx.drawImage(itmImg, x, y, itmW, itmH);
                 }
             }
         } else {
@@ -1100,12 +1101,13 @@ async function renderStripCanvas(stripCanvas) {
             if (!itm || !itm.src) continue;
             const itmImg = await loadCachedImage(itm.src);
             if (itmImg) {
-                const iSize = parseInt(itm.size) || 300;
+                const itmW = parseInt(itm.width) || parseInt(itm.size) || 300;
+                const itmH = parseInt(itm.height) || parseInt(itm.size) || 300;
                 const slot = Math.min(2, Math.max(0, parseInt(itm.slot) || 0));
                 const yPos = padding + headerHeight + (slot * (imgHeight + gap));
-                const x = padding + imgWidth - iSize + (parseInt(itm.x) || 0);
-                const y = yPos + imgHeight - iSize + (parseInt(itm.y) || 0);
-                ctx.drawImage(itmImg, x, y, iSize, iSize);
+                const x = padding + imgWidth - itmW + (parseInt(itm.x) || 0);
+                const y = yPos + imgHeight - itmH + (parseInt(itm.y) || 0);
+                ctx.drawImage(itmImg, x, y, itmW, itmH);
             }
         }
     } else {

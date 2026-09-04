@@ -136,7 +136,9 @@ if ($action === 'upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 $itemName = trim($itemData['name'] ?? ('Item ' . ($idx + 1)));
                 $itemSrc = $itemData['src'] ?? '';
                 $itemSlot = (int)($itemData['slot'] ?? 0);
-                $itemSize = (int)($itemData['size'] ?? 300);
+                $itemWidth = (int)($itemData['width'] ?? $itemData['size'] ?? 300);
+                $itemHeight = (int)($itemData['height'] ?? $itemData['size'] ?? 300);
+                $itemSize = (int)($itemData['size'] ?? max($itemWidth, $itemHeight));
                 $itemX = (int)($itemData['x'] ?? 0);
                 $itemY = (int)($itemData['y'] ?? 0);
 
@@ -156,6 +158,8 @@ if ($action === 'upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
                         'name' => $itemName,
                         'src' => $itemSrc,
                         'slot' => $itemSlot,
+                        'width' => $itemWidth,
+                        'height' => $itemHeight,
                         'size' => $itemSize,
                         'x' => $itemX,
                         'y' => $itemY
