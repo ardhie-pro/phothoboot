@@ -125,27 +125,80 @@ if ($action === 'upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (isset($_FILES['ketupat']) && $_FILES['ketupat']['name'] !== '') {
-        if ($_FILES['ketupat']['error'] === UPLOAD_ERR_OK) {
-            $ext = pathinfo($_FILES['ketupat']['name'], PATHINFO_EXTENSION) ?: 'png';
-            $ketupatPath = 'uploads/templates/' . $id . '/ketupat.' . $ext;
-            move_uploaded_file($_FILES['ketupat']['tmp_name'], __DIR__ . '/' . $ketupatPath);
+    // Process Dynamic Items List
+    $items = [];
+    $rawItemsJson = $_POST['items_json'] ?? '';
+    if (!empty($rawItemsJson)) {
+        $parsedItems = json_decode($rawItemsJson, true);
+        if (is_array($parsedItems)) {
+            foreach ($parsedItems as $idx => $itemData) {
+                $itemId = !empty($itemData['id']) ? preg_replace('/[^a-zA-Z0-9_-]/', '', $itemData['id']) : ('item_' . ($idx + 1) . '_' . uniqid());
+                $itemName = trim($itemData['name'] ?? ('Item ' . ($idx + 1)));
+                $itemSrc = $itemData['src'] ?? '';
+                $itemSlot = (int)($itemData['slot'] ?? 0);
+                $itemSize = (int)($itemData['size'] ?? 300);
+                $itemX = (int)($itemData['x'] ?? 0);
+                $itemY = (int)($itemData['y'] ?? 0);
+
+                // Check if new file was uploaded for this item
+                $fileKey = 'item_file_' . $idx;
+                if (isset($_FILES[$fileKey]) && $_FILES[$fileKey]['error'] === UPLOAD_ERR_OK) {
+                    $ext = pathinfo($_FILES[$fileKey]['name'], PATHINFO_EXTENSION) ?: 'png';
+                    $newPath = 'uploads/templates/' . $id . '/' . $itemId . '.' . $ext;
+                    if (move_uploaded_file($_FILES[$fileKey]['tmp_name'], __DIR__ . '/' . $newPath)) {
+                        $itemSrc = $newPath;
+                    }
+                }
+
+                if (!empty($itemSrc)) {
+                    $items[] = [
+                        'id' => $itemId,
+                        'name' => $itemName,
+                        'src' => $itemSrc,
+                        'slot' => $itemSlot,
+                        'size' => $itemSize,
+                        'x' => $itemX,
+                        'y' => $itemY
+                    ];
+                }
+            }
         }
     }
 
-    if (isset($_FILES['lampu']) && $_FILES['lampu']['name'] !== '') {
-        if ($_FILES['lampu']['error'] === UPLOAD_ERR_OK) {
-            $ext = pathinfo($_FILES['lampu']['name'], PATHINFO_EXTENSION) ?: 'png';
-            $lampuPath = 'uploads/templates/' . $id . '/lampu.' . $ext;
-            move_uploaded_file($_FILES['lampu']['tmp_name'], __DIR__ . '/' . $lampuPath);
+    // Fallback if items array was not provided (legacy compatibility)
+    if (empty($items)) {
+        if (!empty($ketupatPath)) {
+            $items[] = [
+                'id' => 'ketupat',
+                'name' => 'Item 1 / Ketupat',
+                'src' => $ketupatPath,
+                'slot' => 1,
+                'size' => (int)($_POST['ketupat_size'] ?? 350),
+                'x' => (int)($_POST['ketupat_x'] ?? 120),
+                'y' => (int)($_POST['ketupat_y'] ?? 150)
+            ];
         }
-    }
-
-    if (isset($_FILES['rama']) && $_FILES['rama']['name'] !== '') {
-        if ($_FILES['rama']['error'] === UPLOAD_ERR_OK) {
-            $ext = pathinfo($_FILES['rama']['name'], PATHINFO_EXTENSION) ?: 'png';
-            $ramaPath = 'uploads/templates/' . $id . '/rama.' . $ext;
-            move_uploaded_file($_FILES['rama']['tmp_name'], __DIR__ . '/' . $ramaPath);
+        if (!empty($lampuPath)) {
+            $items[] = [
+                'id' => 'lampu',
+                'name' => 'Item 2 / Lampu',
+                'src' => $lampuPath,
+                'slot' => 2,
+                'size' => (int)($_POST['lampu_size'] ?? 300),
+                'x' => (int)($_POST['lampu_x'] ?? -100),
+                'y' => (int)($_POST['lampu_y'] ?? 140)
+            ];
+        }
+        if (!empty($ramaPath)) {
+            $items[] = [
+                'id' => 'rama',
+                'name' => 'Item 3 / Stiker',
+                'src' => $ramaPath,
+                'slot' => 5,
+                'size' => (int)($_POST['rama_size'] ?? 550),
+                'x' => (int)($_POST['rama_x'] ?? 150),
+                'y' => (int)($_POST['rama_y'] ?? 300)
+            ];
         }
     }
     
@@ -154,26 +207,27 @@ if ($action === 'upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         'name' => $name,
         'sizeType' => $_POST['sizeType'] ?? 'a5_6grid',
         'outer' => $outerPath,
-        'ketupat' => $ketupatPath,
-        'lampu' => $lampuPath,
-        'rama' => $ramaPath,
+        'items' => $items,
+        'ketupat' => $items[0]['src'] ?? $ketupatPath,
+        'lampu' => $items[1]['src'] ?? $lampuPath,
+        'rama' => $items[2]['src'] ?? $ramaPath,
         'overlayMode' => $overlayMode,
         'active' => $isEdit && isset($existingTemplate['active']) ? (bool)$existingTemplate['active'] : $active,
         'layout' => [
             'ketupat' => [
-                'x' => (int)($_POST['ketupat_x'] ?? 120),
-                'y' => (int)($_POST['ketupat_y'] ?? 150),
-                'size' => (int)($_POST['ketupat_size'] ?? 350)
+                'x' => (int)($items[0]['x'] ?? $_POST['ketupat_x'] ?? 120),
+                'y' => (int)($items[0]['y'] ?? $_POST['ketupat_y'] ?? 150),
+                'size' => (int)($items[0]['size'] ?? $_POST['ketupat_size'] ?? 350)
             ],
             'lampu' => [
-                'x' => (int)($_POST['lampu_x'] ?? -100),
-                'y' => (int)($_POST['lampu_y'] ?? 140),
-                'size' => (int)($_POST['lampu_size'] ?? 300)
+                'x' => (int)($items[1]['x'] ?? $_POST['lampu_x'] ?? -100),
+                'y' => (int)($items[1]['y'] ?? $_POST['lampu_y'] ?? 140),
+                'size' => (int)($items[1]['size'] ?? $_POST['lampu_size'] ?? 300)
             ],
             'rama' => [
-                'x' => (int)($_POST['rama_x'] ?? 150),
-                'y' => (int)($_POST['rama_y'] ?? 300),
-                'size' => (int)($_POST['rama_size'] ?? 550)
+                'x' => (int)($items[2]['x'] ?? $_POST['rama_x'] ?? 150),
+                'y' => (int)($items[2]['y'] ?? $_POST['rama_y'] ?? 300),
+                'size' => (int)($items[2]['size'] ?? $_POST['rama_size'] ?? 550)
             ]
         ]
     ];

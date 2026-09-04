@@ -353,89 +353,31 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                                 </div>
                             </div>
 
-                            <div class="space-y-6">
-                                <!-- Item 1 Settings -->
-                                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                                    <h3 class="font-bold text-sm text-[#2D6A4F] mb-3 flex items-center gap-2">
-                                        <div class="w-2 h-2 bg-emerald-500 rounded-full"></div> Item 1 / Hiasan 1 (Optional)
-                                    </h3>
-                                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
-                                        <div>
-                                            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">File Gambar (PNG)</label>
-                                            <input type="file" name="ketupat" accept="image/*" class="w-full text-xs">
-                                        </div>
-                                        <div>
-                                            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Ukuran (px)</label>
-                                            <input type="number" name="ketupat_size" placeholder="350" value="350" class="w-full px-3 py-1.5 rounded-lg border border-gray-200 text-sm deco-input">
-                                        </div>
-                                        <div>
-                                            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Geser X (px)</label>
-                                            <input type="number" name="ketupat_x" placeholder="120" value="120" class="w-full px-3 py-1.5 rounded-lg border border-gray-200 text-sm deco-input">
-                                        </div>
-                                        <div>
-                                            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Geser Y (px)</label>
-                                            <input type="number" name="ketupat_y" placeholder="150" value="150" class="w-full px-3 py-1.5 rounded-lg border border-gray-200 text-sm deco-input">
-                                        </div>
+                            <!-- DYNAMIC MULTI-ITEM ORNAMENTS CONTAINER -->
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between pb-2 border-b border-gray-100">
+                                    <div>
+                                        <h3 class="font-bold text-sm text-[#2D6A4F] flex items-center gap-2">
+                                            <span>✨</span> Daftar Item / Stiker / Hiasan Template
+                                        </h3>
+                                        <p class="text-[11px] text-gray-400">Tambah stiker atau hiasan sebanyak yang Anda inginkan (bisa upload lebih dari 1). Semua item bisa digeser langsung di monitor!</p>
                                     </div>
+                                    <button type="button" onclick="addNewTemplateItem()" class="py-2 px-3.5 bg-emerald-100 text-emerald-900 hover:bg-emerald-200 border border-emerald-300 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer">
+                                        <span class="text-base font-black">+</span> Tambah Item Baru
+                                    </button>
                                 </div>
 
-                                <!-- Item 2 Settings -->
-                                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                                    <h3 class="font-bold text-sm text-[#2D6A4F] mb-3 flex items-center gap-2">
-                                        <div class="w-2 h-2 bg-amber-500 rounded-full"></div> Item 2 / Hiasan 2 (Optional)
-                                    </h3>
-                                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
-                                        <div>
-                                            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">File Gambar (PNG)</label>
-                                            <input type="file" name="lampu" accept="image/*" class="w-full text-xs">
-                                        </div>
-                                        <div>
-                                            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Ukuran (px)</label>
-                                            <input type="number" name="lampu_size" placeholder="300" value="300" class="w-full px-3 py-1.5 rounded-lg border border-gray-200 text-sm deco-input">
-                                        </div>
-                                        <div>
-                                            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Geser X (px)</label>
-                                            <input type="number" name="lampu_x" placeholder="-100" value="-100" class="w-full px-3 py-1.5 rounded-lg border border-gray-200 text-sm deco-input">
-                                        </div>
-                                        <div>
-                                            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Geser Y (px)</label>
-                                            <input type="number" name="lampu_y" placeholder="140" value="140" class="w-full px-3 py-1.5 rounded-lg border border-gray-200 text-sm deco-input">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Item 3 Settings -->
-                                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                                    <h3 class="font-bold text-sm text-[#2D6A4F] mb-3 flex items-center gap-2">
-                                        <div class="w-2 h-2 bg-indigo-500 rounded-full"></div> Item 3 / Hiasan 3 (Optional)
-                                    </h3>
-                                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
-                                        <div>
-                                            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">File Gambar (PNG)</label>
-                                            <input type="file" name="rama" accept="image/*" class="w-full text-xs">
-                                        </div>
-                                        <div>
-                                            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Ukuran (px)</label>
-                                            <input type="number" name="rama_size" placeholder="550" value="550" class="w-full px-3 py-1.5 rounded-lg border border-gray-200 text-sm deco-input">
-                                        </div>
-                                        <div>
-                                            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Geser X (px)</label>
-                                            <input type="number" name="rama_x" placeholder="150" value="150" class="w-full px-3 py-1.5 rounded-lg border border-gray-200 text-sm deco-input">
-                                        </div>
-                                        <div>
-                                            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Geser Y (px)</label>
-                                            <input type="number" name="rama_y" placeholder="300" value="300" class="w-full px-3 py-1.5 rounded-lg border border-gray-200 text-sm deco-input">
-                                        </div>
-                                    </div>
+                                <div id="dynamic-items-container" class="space-y-4">
+                                    <!-- Dynamic items rendered dynamically by JS -->
                                 </div>
                             </div>
 
                             <div class="pt-4 border-t">
                                 <label id="outer-label" class="block text-sm font-semibold mb-2">Tema Luar Utama (A5: 1748x2480 px) <span class="text-red-500">*</span></label>
-                                <input type="file" name="outerImage" id="outer-input" accept="image/*" required class="w-full text-sm">
+                                <input type="file" name="outerImage" id="outer-input" accept="image/*" class="w-full text-sm">
                             </div>
 
-                            <button type="submit" class="w-full px-8 py-4 bg-[#2D6A4F] text-white rounded-2xl font-bold hover:scale-[1.01] transition-all shadow-lg active:scale-95">
+                            <button type="submit" class="w-full px-8 py-4 bg-[#2D6A4F] text-white rounded-2xl font-bold hover:scale-[1.01] transition-all shadow-lg active:scale-95 cursor-pointer">
                                 Upload Template & Save Layout
                             </button>
                         </form>
@@ -463,16 +405,8 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                     </div>
 
                     <!-- Interactive Item Selector Badges -->
-                    <div class="flex items-center gap-2 overflow-x-auto pb-1">
-                        <button type="button" onclick="selectDecoForDrag('ketupat')" id="btn-select-ketupat" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 hover:bg-emerald-200 transition-all flex items-center gap-1.5 shrink-0 shadow-sm">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Item 1 (Ketupat)
-                        </button>
-                        <button type="button" onclick="selectDecoForDrag('lampu')" id="btn-select-lampu" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200 transition-all flex items-center gap-1.5 shrink-0 shadow-sm">
-                            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Item 2 (Lampu)
-                        </button>
-                        <button type="button" onclick="selectDecoForDrag('rama')" id="btn-select-rama" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-100 text-indigo-900 border border-indigo-300 hover:bg-indigo-200 transition-all flex items-center gap-1.5 shrink-0 shadow-sm">
-                            <span class="w-2 h-2 rounded-full bg-indigo-500"></span> Item 3 (Stiker)
-                        </button>
+                    <div id="preview-item-buttons" class="flex items-center gap-2 overflow-x-auto pb-1">
+                        <!-- Rendered by JS -->
                     </div>
 
                     <div class="relative bg-white rounded-[3rem] p-4 shadow-2xl border-8 border-gray-100 overflow-hidden aspect-[9/16] w-full max-w-[350px] mx-auto select-none touch-none">
@@ -1064,15 +998,233 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             default_rama: new Image()
         };
 
-        const loadDefault = (key, src) => {
-            previewImages[key] = new Image();
-            previewImages[key].onload = updateLivePreview;
-            previewImages[key].src = src;
-        };
-        
-        loadDefault('default_ketupat', './gambar/ketupat.webp');
-        loadDefault('default_lampu', './gambar/lampu.webp');
-        loadDefault('default_rama', './gambar/rama.png');
+        // ================= DYNAMIC MULTI-ITEM TEMPLATE LOGIC =================
+        const form = document.getElementById('upload-form');
+        const list = document.getElementById('template-list');
+        const canvas = document.getElementById('preview-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Dynamic items array
+        let templateItems = [
+            { id: 'item_1', name: 'Item 1 (Ketupat)', src: './gambar/ketupat.webp', size: 350, x: 120, y: 150, slot: 1 },
+            { id: 'item_2', name: 'Item 2 (Lampu)', src: './gambar/lampu.webp', size: 300, x: -100, y: 140, slot: 2 },
+            { id: 'item_3', name: 'Item 3 (Stiker)', src: './gambar/rama.png', size: 550, x: 150, y: 300, slot: 5 }
+        ];
+
+        // Cached Image elements for dynamic items
+        const itemImageCache = {};
+
+        function getItemImage(src) {
+            if (!src) return null;
+            if (!itemImageCache[src]) {
+                const img = new Image();
+                img.onload = () => updateLivePreview();
+                img.src = src;
+                itemImageCache[src] = img;
+            }
+            return itemImageCache[src];
+        }
+
+        // Preview Outer background image
+        let outerPreviewImage = null;
+
+        // Drag State Variables
+        let itemBounds = {};
+        let activeDraggedId = null;
+        let selectedItemId = null;
+        let hoveredItemId = null;
+        let dragStartMouseX = 0;
+        let dragStartMouseY = 0;
+        let dragInitialX = 0;
+        let dragInitialY = 0;
+
+        // Render Dynamic Item Cards in Form
+        function renderTemplateItems() {
+            const container = document.getElementById('dynamic-items-container');
+            const buttonsContainer = document.getElementById('preview-item-buttons');
+            if (!container) return;
+
+            if (templateItems.length === 0) {
+                container.innerHTML = `
+                    <div class="p-6 bg-stone-50 rounded-2xl border-2 border-dashed border-stone-200 text-center text-stone-400 text-xs">
+                        <p class="font-bold">Belum ada item / stiker tambahan.</p>
+                        <button type="button" onclick="addNewTemplateItem()" class="mt-2 text-emerald-700 font-bold hover:underline">+ Tambah Item Pertama</button>
+                    </div>
+                `;
+                if (buttonsContainer) buttonsContainer.innerHTML = '<span class="text-xs text-stone-400 italic">Tidak ada item</span>';
+                return;
+            }
+
+            container.innerHTML = templateItems.map((itm, idx) => {
+                const isSelected = selectedItemId === itm.id;
+                const colors = ['bg-emerald-500', 'bg-amber-500', 'bg-indigo-500', 'bg-purple-500', 'bg-rose-500', 'bg-blue-500'];
+                const dotColor = colors[idx % colors.length];
+
+                return `
+                    <div id="card-item-${itm.id}" class="p-4 bg-gray-50 rounded-2xl border transition-all ${isSelected ? 'border-amber-400 ring-2 ring-amber-400/40 bg-amber-50/20' : 'border-gray-200'}">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2.5 h-2.5 ${dotColor} rounded-full"></div>
+                                <input type="text" value="${itm.name || 'Item ' + (idx + 1)}" onchange="updateItemProp('${itm.id}', 'name', this.value)" class="text-xs font-bold text-slate-800 bg-transparent border-b border-gray-300 focus:border-emerald-600 outline-none px-1 py-0.5" placeholder="Nama Item">
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="selectItemForDrag('${itm.id}')" class="text-[11px] font-bold px-2 py-0.5 rounded-lg ${isSelected ? 'bg-amber-500 text-stone-900 font-black' : 'bg-stone-200 text-stone-700 hover:bg-stone-300'}">
+                                    ${isSelected ? '🎯 Terpilih' : 'Pilih'}
+                                </button>
+                                <button type="button" onclick="removeTemplateItem('${itm.id}')" class="text-xs text-rose-500 hover:text-rose-700 font-bold p-1 hover:bg-rose-50 rounded-lg" title="Hapus Item">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 items-end">
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Gambar / Upload</label>
+                                <div class="flex items-center gap-2">
+                                    <img src="${itm.src || './gambar/ketupat.webp'}" id="thumb-${itm.id}" class="w-9 h-9 object-contain bg-white rounded-lg border border-gray-200 p-0.5 shrink-0">
+                                    <input type="file" accept="image/*" onchange="handleItemFileUpload('${itm.id}', this)" class="w-full text-[10px] text-slate-500 file:mr-1.5 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[9px] file:font-bold file:bg-emerald-50 file:text-emerald-800">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Patokan Slot</label>
+                                <select onchange="updateItemProp('${itm.id}', 'slot', parseInt(this.value))" class="w-full px-2 py-1.5 rounded-lg border border-gray-200 text-xs bg-white font-medium">
+                                    <option value="0" ${itm.slot === 0 ? 'selected' : ''}>Slot #1 (Atas Kiri)</option>
+                                    <option value="1" ${itm.slot === 1 ? 'selected' : ''}>Slot #2 (Atas Kanan)</option>
+                                    <option value="2" ${itm.slot === 2 ? 'selected' : ''}>Slot #3 (Tengah Kiri)</option>
+                                    <option value="3" ${itm.slot === 3 ? 'selected' : ''}>Slot #4 (Tengah Kanan)</option>
+                                    <option value="4" ${itm.slot === 4 ? 'selected' : ''}>Slot #5 (Bawah Kiri)</option>
+                                    <option value="5" ${itm.slot === 5 ? 'selected' : ''}>Slot #6 (Bawah Kanan)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Ukuran (px)</label>
+                                <input type="number" id="item_size_${itm.id}" value="${itm.size || 300}" oninput="updateItemProp('${itm.id}', 'size', parseInt(this.value)||0)" class="w-full px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold">
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Geser X (px)</label>
+                                <input type="number" id="item_x_${itm.id}" value="${itm.x || 0}" oninput="updateItemProp('${itm.id}', 'x', parseInt(this.value)||0)" class="w-full px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold">
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Geser Y (px)</label>
+                                <input type="number" id="item_y_${itm.id}" value="${itm.y || 0}" oninput="updateItemProp('${itm.id}', 'y', parseInt(this.value)||0)" class="w-full px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Render buttons above the canvas monitor
+            if (buttonsContainer) {
+                buttonsContainer.innerHTML = templateItems.map((itm, idx) => {
+                    const isSelected = selectedItemId === itm.id;
+                    return `
+                        <button type="button" onclick="selectItemForDrag('${itm.id}')" id="btn-select-${itm.id}" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 shadow-sm ${isSelected ? 'bg-amber-500 text-stone-950 font-black border-2 border-amber-600 scale-105' : 'bg-stone-100 text-stone-700 border border-stone-200 hover:bg-stone-200'}">
+                            <span class="w-2 h-2 rounded-full ${isSelected ? 'bg-stone-900' : 'bg-emerald-500'}"></span>
+                            <span>${itm.name || 'Item ' + (idx + 1)}</span>
+                        </button>
+                    `;
+                }).join('');
+            }
+        }
+
+        function addNewTemplateItem() {
+            const nextIdx = templateItems.length + 1;
+            const defaultImages = ['./gambar/ketupat.webp', './gambar/lampu.webp', './gambar/rama.png'];
+            const defaultImg = defaultImages[(nextIdx - 1) % defaultImages.length];
+
+            const newItem = {
+                id: 'item_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+                name: 'Item ' + nextIdx + ' (Stiker)',
+                src: defaultImg,
+                size: 320,
+                x: 0,
+                y: 0,
+                slot: (nextIdx - 1) % 6
+            };
+
+            templateItems.push(newItem);
+            renderTemplateItems();
+            selectItemForDrag(newItem.id);
+        }
+
+        function removeTemplateItem(id) {
+            templateItems = templateItems.filter(item => item.id !== id);
+            if (selectedItemId === id) selectedItemId = templateItems[0] ? templateItems[0].id : null;
+            renderTemplateItems();
+            updateLivePreview();
+        }
+
+        function updateItemProp(id, prop, val) {
+            const itm = templateItems.find(item => item.id === id);
+            if (itm) {
+                itm[prop] = val;
+                updateLivePreview();
+            }
+        }
+
+        function handleItemFileUpload(id, input) {
+            const file = input.files && input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const itm = templateItems.find(item => item.id === id);
+                if (itm) {
+                    itm.src = e.target.result;
+                    itm.file = file;
+                    const thumb = document.getElementById('thumb-' + id);
+                    if (thumb) thumb.src = e.target.result;
+                    // Preload into cache
+                    const img = new Image();
+                    img.onload = () => updateLivePreview();
+                    img.src = e.target.result;
+                    itemImageCache[e.target.result] = img;
+                    updateLivePreview();
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function selectItemForDrag(id) {
+            selectedItemId = id;
+            renderTemplateItems();
+
+            const itm = templateItems.find(item => item.id === id);
+            if (itm) {
+                const card = document.getElementById('card-item-' + id);
+                if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                const statusEl = document.getElementById('drag-coord-status');
+                if (statusEl) {
+                    statusEl.textContent = `${(itm.name || 'ITEM').toUpperCase()} X:${itm.x} Y:${itm.y}`;
+                }
+            }
+            updateLivePreview();
+        }
+
+        // Handle Outer Background Image Upload
+        const outerInput = document.getElementById('outer-input');
+        if (outerInput) {
+            outerInput.addEventListener('change', (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (re) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            outerPreviewImage = img;
+                            updateLivePreview();
+                        };
+                        img.src = re.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
 
         function updateLivePreview() {
             const sizeType = form.sizeType ? form.sizeType.value : 'a5_6grid';
@@ -1096,8 +1248,8 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
 
             const isOverlay = form.overlayMode.checked;
 
-            if (!isOverlay && previewImages.outer && previewImages.outer.complete) {
-                ctx.drawImage(previewImages.outer, 0, 0, canvas.width, canvas.height);
+            if (!isOverlay && outerPreviewImage && outerPreviewImage.complete) {
+                ctx.drawImage(outerPreviewImage, 0, 0, canvas.width, canvas.height);
             }
 
             if (is6Grid) {
@@ -1127,45 +1279,34 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                     ctx.stroke();
                 }
 
-                // Draw Ornaments for 6 Grid
-                const drawDeco6 = (type, slotIdx, label) => {
-                    const img = previewImages[type] || previewImages[`default_${type}`];
+                // Draw all dynamic items for 6 Grid
+                templateItems.forEach(itm => {
+                    const img = getItemImage(itm.src);
                     if (!img || !img.complete) return;
 
-                    const size = parseInt(form[`${type}_size`].value) || 0;
-                    const xOff = parseInt(form[`${type}_x`].value) || 0;
-                    const yOff = parseInt(form[`${type}_y`].value) || 0;
-
-                    const col = slotIdx % 2;
-                    const row = Math.floor(slotIdx / 2);
+                    const size = parseInt(itm.size) || 300;
+                    const slot = parseInt(itm.slot) || 0;
+                    const col = slot % 2;
+                    const row = Math.floor(slot / 2);
                     const slotX = paddingX + col * (imgW + gapX);
                     const slotY = topY + row * (imgH + gapY);
 
-                    let x, y;
-                    if (type === 'lampu') {
-                        x = slotX + xOff;
-                    } else {
-                        x = slotX + imgW - size + xOff;
-                    }
-                    y = slotY + imgH - size + yOff;
+                    const x = slotX + imgW - size + (parseInt(itm.x) || 0);
+                    const y = slotY + imgH - size + (parseInt(itm.y) || 0);
 
-                    itemBounds[type] = {
-                        type,
-                        label,
-                        x,
-                        y,
+                    itemBounds[itm.id] = {
+                        id: itm.id,
+                        name: itm.name || 'Item',
+                        x: x,
+                        y: y,
                         width: size,
                         height: size,
-                        xOff,
-                        yOff
+                        xOff: itm.x || 0,
+                        yOff: itm.y || 0
                     };
 
                     ctx.drawImage(img, x, y, size, size);
-                };
-
-                drawDeco6('ketupat', 1, 'Item 1 / Ketupat'); // Slot #2 Kanan Atas
-                drawDeco6('lampu', 2, 'Item 2 / Lampu');   // Slot #3 Kiri Tengah
-                drawDeco6('rama', 5, 'Item 3 / Stiker');    // Slot #6 Kanan Bawah
+                });
 
             } else {
                 let imgWidth, imgHeight, padding, headerHeight, gap;
@@ -1195,59 +1336,49 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                     ctx.fill();
                 }
 
-                const drawDeco = (type, index, label) => {
-                    const img = previewImages[type] || previewImages[`default_${type}`];
+                // Draw all dynamic items for 3 Strip
+                templateItems.forEach(itm => {
+                    const img = getItemImage(itm.src);
                     if (!img || !img.complete) return;
 
-                    const size = parseInt(form[`${type}_size`].value) || 0;
-                    const xOff = parseInt(form[`${type}_x`].value) || 0;
-                    const yOff = parseInt(form[`${type}_y`].value) || 0;
-                    
-                    const yPos = padding + headerHeight + (index * (imgHeight + gap));
-                    
-                    let x, y;
-                    if (type === 'lampu') {
-                        x = padding + xOff;
-                    } else {
-                        x = padding + imgWidth - size + xOff;
-                    }
-                    y = yPos + imgHeight - size + yOff;
+                    const size = parseInt(itm.size) || 300;
+                    const slot = Math.min(2, Math.max(0, parseInt(itm.slot) || 0));
+                    const yPos = padding + headerHeight + (slot * (imgHeight + gap));
 
-                    itemBounds[type] = {
-                        type,
-                        label,
-                        x,
-                        y,
+                    const x = padding + imgWidth - size + (parseInt(itm.x) || 0);
+                    const y = yPos + imgHeight - size + (parseInt(itm.y) || 0);
+
+                    itemBounds[itm.id] = {
+                        id: itm.id,
+                        name: itm.name || 'Item',
+                        x: x,
+                        y: y,
                         width: size,
                         height: size,
-                        xOff,
-                        yOff
+                        xOff: itm.x || 0,
+                        yOff: itm.y || 0
                     };
 
                     ctx.drawImage(img, x, y, size, size);
-                };
-
-                drawDeco('ketupat', 0, 'Item 1 / Ketupat');
-                drawDeco('lampu', 1, 'Item 2 / Lampu');
-                drawDeco('rama', 2, 'Item 3 / Stiker');
+                });
             }
 
-            if (isOverlay && previewImages.outer && previewImages.outer.complete) {
-                ctx.drawImage(previewImages.outer, 0, 0, canvas.width, canvas.height);
+            if (isOverlay && outerPreviewImage && outerPreviewImage.complete) {
+                ctx.drawImage(outerPreviewImage, 0, 0, canvas.width, canvas.height);
             }
 
             // Draw Interactive Highlight Selection Boxes for Active / Hovered Items
-            const targetHighlight = activeDraggedItem || hoveredDeco || selectedDeco;
+            const targetHighlight = activeDraggedId || hoveredItemId || selectedItemId;
             if (targetHighlight && itemBounds[targetHighlight]) {
                 const b = itemBounds[targetHighlight];
                 ctx.save();
-                ctx.strokeStyle = activeDraggedItem ? '#22C55E' : '#D4AF37';
+                ctx.strokeStyle = activeDraggedId ? '#22C55E' : '#D4AF37';
                 ctx.lineWidth = 5;
                 ctx.setLineDash([16, 10]);
                 ctx.strokeRect(b.x, b.y, b.width, b.height);
 
                 // Corner handles
-                ctx.fillStyle = activeDraggedItem ? '#22C55E' : '#1B4332';
+                ctx.fillStyle = activeDraggedId ? '#22C55E' : '#1B4332';
                 ctx.strokeStyle = '#FFFFFF';
                 ctx.lineWidth = 4;
                 ctx.setLineDash([]);
@@ -1265,7 +1396,7 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 });
 
                 // Pill label badge
-                const tagText = `${b.label} (X: ${b.xOff}, Y: ${b.yOff})`;
+                const tagText = `${b.name} (X: ${b.xOff}, Y: ${b.yOff})`;
                 ctx.font = 'bold 26px sans-serif';
                 const tagWidth = ctx.measureText(tagText).width + 36;
                 const tagHeight = 46;
@@ -1278,7 +1409,7 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 else ctx.rect(tagX, tagY - tagHeight, tagWidth, tagHeight);
                 ctx.fill();
 
-                ctx.strokeStyle = activeDraggedItem ? '#22C55E' : '#D4AF37';
+                ctx.strokeStyle = activeDraggedId ? '#22C55E' : '#D4AF37';
                 ctx.lineWidth = 3;
                 ctx.stroke();
 
@@ -1302,83 +1433,65 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
         }
 
         function hitTestDeco(pos) {
-            const types = ['rama', 'lampu', 'ketupat']; // Top to bottom hit test
-            for (const type of types) {
-                const b = itemBounds[type];
+            // Check in reverse order so topmost item gets hit first
+            const ids = Object.keys(itemBounds).reverse();
+            for (const id of ids) {
+                const b = itemBounds[id];
                 if (b && pos.x >= b.x && pos.x <= (b.x + b.width) && pos.y >= b.y && pos.y <= (b.y + b.height)) {
-                    return type;
+                    return id;
                 }
             }
             return null;
-        }
-
-        function selectDecoForDrag(type) {
-            selectedDeco = type;
-            ['ketupat', 'lampu', 'rama'].forEach(t => {
-                const btn = document.getElementById('btn-select-' + t);
-                if (btn) {
-                    if (t === type) {
-                        btn.className = 'px-3 py-1.5 rounded-xl text-xs font-black bg-amber-500 text-stone-950 border-2 border-amber-600 shadow-md scale-105 flex items-center gap-1.5 shrink-0 transition-all';
-                    } else {
-                        btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-stone-100 text-stone-700 border border-stone-200 hover:bg-stone-200 flex items-center gap-1.5 shrink-0 transition-all';
-                    }
-                }
-            });
-
-            // Focus on input
-            const inputX = form[type + '_x'];
-            if (inputX) {
-                inputX.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                inputX.focus();
-            }
-
-            const statusEl = document.getElementById('drag-coord-status');
-            if (statusEl && form[type + '_x'] && form[type + '_y']) {
-                statusEl.textContent = `${type.toUpperCase()} X:${form[type + '_x'].value} Y:${form[type + '_y'].value}`;
-            }
-
-            updateLivePreview();
         }
 
         const startCanvasDrag = (e) => {
             const pos = getCanvasMousePos(e);
             const hit = hitTestDeco(pos);
             if (hit) {
-                activeDraggedItem = hit;
-                selectedDeco = hit;
+                activeDraggedId = hit;
+                selectedItemId = hit;
                 dragStartMouseX = pos.x;
                 dragStartMouseY = pos.y;
-                dragInitialXOff = parseInt(form[hit + '_x'].value) || 0;
-                dragInitialYOff = parseInt(form[hit + '_y'].value) || 0;
+                const itm = templateItems.find(item => item.id === hit);
+                dragInitialX = itm ? (parseInt(itm.x) || 0) : 0;
+                dragInitialY = itm ? (parseInt(itm.y) || 0) : 0;
                 canvas.style.cursor = 'grabbing';
-                selectDecoForDrag(hit);
+                selectItemForDrag(hit);
                 if (e.cancelable) e.preventDefault();
             }
         };
 
         const onCanvasDragMove = (e) => {
             const pos = getCanvasMousePos(e);
-            if (activeDraggedItem) {
+            if (activeDraggedId) {
                 const deltaX = Math.round(pos.x - dragStartMouseX);
                 const deltaY = Math.round(pos.y - dragStartMouseY);
                 
-                const newX = dragInitialXOff + deltaX;
-                const newY = dragInitialYOff + deltaY;
+                const newX = dragInitialX + deltaX;
+                const newY = dragInitialY + deltaY;
 
-                form[activeDraggedItem + '_x'].value = newX;
-                form[activeDraggedItem + '_y'].value = newY;
+                const itm = templateItems.find(item => item.id === activeDraggedId);
+                if (itm) {
+                    itm.x = newX;
+                    itm.y = newY;
 
-                const statusEl = document.getElementById('drag-coord-status');
-                if (statusEl) {
-                    statusEl.textContent = `${activeDraggedItem.toUpperCase()} X:${newX} Y:${newY}`;
+                    const inputX = document.getElementById('item_x_' + activeDraggedId);
+                    const inputY = document.getElementById('item_y_' + activeDraggedId);
+                    if (inputX) inputX.value = newX;
+                    if (inputY) inputY.value = newY;
+
+                    const statusEl = document.getElementById('drag-coord-status');
+                    if (statusEl) {
+                        statusEl.textContent = `${(itm.name || 'ITEM').toUpperCase()} X:${newX} Y:${newY}`;
+                    }
                 }
 
                 updateLivePreview();
                 if (e.cancelable) e.preventDefault();
             } else {
                 const hit = hitTestDeco(pos);
-                if (hit !== hoveredDeco) {
-                    hoveredDeco = hit;
+                if (hit !== hoveredItemId) {
+                    hoveredItemId = hit;
                     canvas.style.cursor = hit ? 'grab' : 'default';
                     updateLivePreview();
                 }
@@ -1386,9 +1499,9 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
         };
 
         const endCanvasDrag = () => {
-            if (activeDraggedItem) {
-                activeDraggedItem = null;
-                canvas.style.cursor = hoveredDeco ? 'grab' : 'default';
+            if (activeDraggedId) {
+                activeDraggedId = null;
+                canvas.style.cursor = hoveredItemId ? 'grab' : 'default';
                 updateLivePreview();
             }
         };
@@ -1402,38 +1515,12 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
         window.addEventListener('touchend', endCanvasDrag);
         window.addEventListener('touchcancel', endCanvasDrag);
 
-        document.querySelectorAll('.deco-input, #form-overlay, #form-size-type').forEach(el => {
-            el.addEventListener('input', () => {
-                const statusEl = document.getElementById('drag-coord-status');
-                if (statusEl && selectedDeco && form[selectedDeco + '_x'] && form[selectedDeco + '_y']) {
-                    statusEl.textContent = `${selectedDeco.toUpperCase()} X:${form[selectedDeco + '_x'].value} Y:${form[selectedDeco + '_y'].value}`;
-                }
-                updateLivePreview();
-            });
+        document.querySelectorAll('#form-overlay, #form-size-type').forEach(el => {
             el.addEventListener('change', updateLivePreview);
         });
 
-        const handleFileInput = (inputName, previewKey) => {
-            const el = form[inputName];
-            el.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (re) => {
-                        const img = new Image();
-                        img.onload = updateLivePreview;
-                        img.src = re.target.result;
-                        previewImages[previewKey] = img;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        };
-
-        handleFileInput('outerImage', 'outer');
-        handleFileInput('ketupat', 'ketupat');
-        handleFileInput('lampu', 'lampu');
-        handleFileInput('rama', 'rama');
+        // Initialize dynamic template items
+        renderTemplateItems();
 
         let loadedTemplatesList = [];
 
@@ -1519,20 +1606,55 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             const formData = new FormData(form);
             if (form.overlayMode.checked) formData.set('overlayMode', 'true');
             
+            // Serialize items metadata
+            const serializedItems = templateItems.map((itm, idx) => ({
+                id: itm.id,
+                name: itm.name || ('Item ' + (idx + 1)),
+                src: (itm.src && !itm.src.startsWith('data:')) ? itm.src : '',
+                size: itm.size || 300,
+                x: itm.x || 0,
+                y: itm.y || 0,
+                slot: itm.slot || 0
+            }));
+            formData.set('items_json', JSON.stringify(serializedItems));
+
+            // Append each item's file
+            templateItems.forEach((itm, idx) => {
+                if (itm.file) {
+                    formData.append('item_file_' + idx, itm.file);
+                }
+            });
+
+            // Also set legacy fields for backward compatibility
+            if (templateItems[0]) {
+                formData.set('ketupat_x', templateItems[0].x || 120);
+                formData.set('ketupat_y', templateItems[0].y || 150);
+                formData.set('ketupat_size', templateItems[0].size || 350);
+            }
+            if (templateItems[1]) {
+                formData.set('lampu_x', templateItems[1].x || -100);
+                formData.set('lampu_y', templateItems[1].y || 140);
+                formData.set('lampu_size', templateItems[1].size || 300);
+            }
+            if (templateItems[2]) {
+                formData.set('rama_x', templateItems[2].x || 150);
+                formData.set('rama_y', templateItems[2].y || 300);
+                formData.set('rama_size', templateItems[2].size || 550);
+            }
+
             const btn = form.querySelector('button[type="submit"]');
             const originalText = btn.innerText;
             btn.disabled = true;
             btn.innerText = 'Mengunggah & Menyimpan...';
 
             uploadWithProgress('manage_templates.php?action=upload', formData, {
-                title: 'Mengunggah File Template & Background...',
+                title: 'Mengunggah Template & Semua Item...',
                 onSuccess: (result) => {
                     btn.disabled = false;
                     btn.innerText = originalText;
                     if (result.success) {
-                        alert('Template & Layout berhasil disimpan!');
+                        alert('Template & semua item berhasil disimpan!');
                         fetchTemplates();
-                        form.reset();
                     } else {
                         alert('Gagal: ' + (result.error || 'Terjadi kesalahan'));
                     }

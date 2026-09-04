@@ -948,44 +948,63 @@ async function renderStripCanvas(stripCanvas) {
             }
         }
 
-        // Ornaments for 6-Grid
-        // 1. Ketupat (Slot #2 Kanan Atas)
-        let ketupatSource = (template && template.ketupat) ? template.ketupat : './gambar/ketupat.webp';
-        const ketupatImg = await loadCachedImage(ketupatSource);
-        if (ketupatImg) {
-            const layout = (template && template.layout && template.layout.ketupat) ? template.layout.ketupat : { size: 350, x: 120, y: 150 };
-            const kSize = layout.size;
-            const slotX = paddingX + imgWidth + gapX;
-            const slotY = topY;
-            const x = slotX + imgWidth - kSize + layout.x;
-            const y = slotY + imgHeight - kSize + layout.y;
-            ctx.drawImage(ketupatImg, x, y, kSize, kSize);
-        }
+        // Draw Dynamic Ornaments / Items for 6-Grid
+        if (template && template.items && Array.isArray(template.items) && template.items.length > 0) {
+            for (const itm of template.items) {
+                if (!itm || !itm.src) continue;
+                const itmImg = await loadCachedImage(itm.src);
+                if (itmImg) {
+                    const iSize = parseInt(itm.size) || 300;
+                    const slot = parseInt(itm.slot) || 0;
+                    const col = slot % 2;
+                    const row = Math.floor(slot / 2);
+                    const slotX = paddingX + col * (imgWidth + gapX);
+                    const slotY = topY + row * (imgHeight + gapY);
+                    const x = slotX + imgWidth - iSize + (parseInt(itm.x) || 0);
+                    const y = slotY + imgHeight - iSize + (parseInt(itm.y) || 0);
+                    ctx.drawImage(itmImg, x, y, iSize, iSize);
+                }
+            }
+        } else {
+            // Fallback Legacy Ornaments for 6-Grid
+            // 1. Ketupat (Slot #2 Kanan Atas)
+            let ketupatSource = (template && template.ketupat) ? template.ketupat : './gambar/ketupat.webp';
+            const ketupatImg = await loadCachedImage(ketupatSource);
+            if (ketupatImg) {
+                const layout = (template && template.layout && template.layout.ketupat) ? template.layout.ketupat : { size: 350, x: 120, y: 150 };
+                const kSize = layout.size;
+                const slotX = paddingX + imgWidth + gapX;
+                const slotY = topY;
+                const x = slotX + imgWidth - kSize + layout.x;
+                const y = slotY + imgHeight - kSize + layout.y;
+                ctx.drawImage(ketupatImg, x, y, kSize, kSize);
+            }
 
-        // 2. Lampu (Slot #3 Kiri Tengah)
-        let lampuSource = (template && template.lampu) ? template.lampu : './gambar/lampu.webp';
-        const lampuImg = await loadCachedImage(lampuSource);
-        if (lampuImg) {
-            const layout = (template && template.layout && template.layout.lampu) ? template.layout.lampu : { size: 300, x: -100, y: 140 };
-            const lSize = layout.size;
-            const slotX = paddingX;
-            const slotY = topY + imgHeight + gapY;
-            const x = slotX + layout.x;
-            const y = slotY + imgHeight - lSize + layout.y;
-            ctx.drawImage(lampuImg, x, y, lSize, lSize);
-        }
+            // 2. Lampu (Slot #3 Kiri Tengah)
+            let lampuSource = (template && template.lampu) ? template.lampu : './gambar/lampu.webp';
+            const lampuImg = await loadCachedImage(lampuSource);
+            if (lampuImg) {
+                const layout = (template && template.layout && template.layout.lampu) ? template.layout.lampu : { size: 300, x: -100, y: 140 };
+                const lSize = layout.size;
+                const slotX = paddingX;
+                const slotY = topY + imgHeight + gapY;
+                const x = slotX + layout.x;
+                const y = slotY + imgHeight - lSize + layout.y;
+                ctx.drawImage(lampuImg, x, y, lSize, lSize);
+            }
 
-        // 3. Rama (Slot #6 Kanan Bawah)
-        let ramaSource = (template && template.rama) ? template.rama : './gambar/rama.png';
-        const ramaImg = await loadCachedImage(ramaSource);
-        if (ramaImg) {
-            const layout = (template && template.layout && template.layout.rama) ? template.layout.rama : { size: 550, x: 150, y: 300 };
-            const rSize = layout.size;
-            const slotX = paddingX + imgWidth + gapX;
-            const slotY = topY + (2 * (imgHeight + gapY));
-            const x = slotX + imgWidth - rSize + layout.x;
-            const y = slotY + imgHeight - rSize + layout.y;
-            ctx.drawImage(ramaImg, x, y, rSize, rSize);
+            // 3. Rama (Slot #6 Kanan Bawah)
+            let ramaSource = (template && template.rama) ? template.rama : './gambar/rama.png';
+            const ramaImg = await loadCachedImage(ramaSource);
+            if (ramaImg) {
+                const layout = (template && template.layout && template.layout.rama) ? template.layout.rama : { size: 550, x: 150, y: 300 };
+                const rSize = layout.size;
+                const slotX = paddingX + imgWidth + gapX;
+                const slotY = topY + (2 * (imgHeight + gapY));
+                const x = slotX + imgWidth - rSize + layout.x;
+                const y = slotY + imgHeight - rSize + layout.y;
+                ctx.drawImage(ramaImg, x, y, rSize, rSize);
+            }
         }
 
         // Overlay Theme (if overlayMode)
@@ -1072,45 +1091,56 @@ async function renderStripCanvas(stripCanvas) {
             if (innerFrameImg) {
                 ctx.drawImage(innerFrameImg, padding - 10, yPos - 10, imgWidth + 20, imgHeight + 20);
             }
+        }
+    }
 
-            // Ketupat on index 0
-            if (index === 0) {
-                let ketupatSource = (template && template.ketupat) ? template.ketupat : './gambar/ketupat.webp';
-                const ketupatImg = await loadCachedImage(ketupatSource);
-                if (ketupatImg) {
-                    const layout = (template && template.layout && template.layout.ketupat) ? template.layout.ketupat : { size: 350, x: 120, y: 150 };
-                    const kSize = layout.size;
-                    const x = padding + imgWidth - kSize + layout.x;
-                    const y = yPos + imgHeight - kSize + layout.y;
-                    ctx.drawImage(ketupatImg, x, y, kSize, kSize);
-                }
+    // Draw Dynamic Items for 3-Strip
+    if (template && template.items && Array.isArray(template.items) && template.items.length > 0) {
+        for (const itm of template.items) {
+            if (!itm || !itm.src) continue;
+            const itmImg = await loadCachedImage(itm.src);
+            if (itmImg) {
+                const iSize = parseInt(itm.size) || 300;
+                const slot = Math.min(2, Math.max(0, parseInt(itm.slot) || 0));
+                const yPos = padding + headerHeight + (slot * (imgHeight + gap));
+                const x = padding + imgWidth - iSize + (parseInt(itm.x) || 0);
+                const y = yPos + imgHeight - iSize + (parseInt(itm.y) || 0);
+                ctx.drawImage(itmImg, x, y, iSize, iSize);
             }
+        }
+    } else {
+        // Fallback Legacy Items for 3-Strip
+        // Ketupat on index 0
+        let ketupatSource = (template && template.ketupat) ? template.ketupat : './gambar/ketupat.webp';
+        const ketupatImg = await loadCachedImage(ketupatSource);
+        if (ketupatImg) {
+            const layout = (template && template.layout && template.layout.ketupat) ? template.layout.ketupat : { size: 350, x: 120, y: 150 };
+            const kSize = layout.size;
+            const x = padding + imgWidth - kSize + layout.x;
+            const y = padding + headerHeight + (0 * (imgHeight + gap)) + imgHeight - kSize + layout.y;
+            ctx.drawImage(ketupatImg, x, y, kSize, kSize);
+        }
 
-            // Lampu on index 1
-            if (index === 1) {
-                let lampuSource = (template && template.lampu) ? template.lampu : './gambar/lampu.webp';
-                const lampuImg = await loadCachedImage(lampuSource);
-                if (lampuImg) {
-                    const layout = (template && template.layout && template.layout.lampu) ? template.layout.lampu : { size: 300, x: -100, y: 140 };
-                    const lSize = layout.size;
-                    const x = padding + layout.x;
-                    const y = yPos + imgHeight - lSize + layout.y;
-                    ctx.drawImage(lampuImg, x, y, lSize, lSize);
-                }
-            }
+        // Lampu on index 1
+        let lampuSource = (template && template.lampu) ? template.lampu : './gambar/lampu.webp';
+        const lampuImg = await loadCachedImage(lampuSource);
+        if (lampuImg) {
+            const layout = (template && template.layout && template.layout.lampu) ? template.layout.lampu : { size: 300, x: -100, y: 140 };
+            const lSize = layout.size;
+            const x = padding + layout.x;
+            const y = padding + headerHeight + (1 * (imgHeight + gap)) + imgHeight - lSize + layout.y;
+            ctx.drawImage(lampuImg, x, y, lSize, lSize);
+        }
 
-            // Rama on index 2
-            if (index === 2) {
-                let ramaSource = (template && template.rama) ? template.rama : './gambar/rama.png';
-                const ramaImg = await loadCachedImage(ramaSource);
-                if (ramaImg) {
-                    const layout = (template && template.layout && template.layout.rama) ? template.layout.rama : { size: 550, x: 150, y: 300 };
-                    const rSize = layout.size;
-                    const x = padding + imgWidth - rSize + layout.x;
-                    const y = yPos + imgHeight - rSize + layout.y;
-                    ctx.drawImage(ramaImg, x, y, rSize, rSize);
-                }
-            }
+        // Rama on index 2
+        let ramaSource = (template && template.rama) ? template.rama : './gambar/rama.png';
+        const ramaImg = await loadCachedImage(ramaSource);
+        if (ramaImg) {
+            const layout = (template && template.layout && template.layout.rama) ? template.layout.rama : { size: 550, x: 150, y: 300 };
+            const rSize = layout.size;
+            const x = padding + imgWidth - rSize + layout.x;
+            const y = padding + headerHeight + (2 * (imgHeight + gap)) + imgHeight - rSize + layout.y;
+            ctx.drawImage(ramaImg, x, y, rSize, rSize);
         }
     }
 

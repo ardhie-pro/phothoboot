@@ -699,9 +699,26 @@ $totalSessions = count($sessions);
                     ctx.drawImage(img, x, y, size, size);
                 };
 
-                await drawOrn('ketupat', 1);
-                await drawOrn('lampu', 2);
-                await drawOrn('rama', 5);
+                if (t && t.items && Array.isArray(t.items) && t.items.length > 0) {
+                    for (const itm of t.items) {
+                        if (!itm || !itm.src) continue;
+                        const img = await loadImg(itm.src);
+                        if (!img) continue;
+                        const size = parseInt(itm.size) || 300;
+                        const slot = parseInt(itm.slot) || 0;
+                        const col = slot % 2;
+                        const row = Math.floor(slot / 2);
+                        const slotX = paddingX + col * (imgW + gapX);
+                        const slotY = topY + row * (imgH + gapY);
+                        const x = slotX + imgW - size + (parseInt(itm.x) || 0);
+                        const y = slotY + imgH - size + (parseInt(itm.y) || 0);
+                        ctx.drawImage(img, x, y, size, size);
+                    }
+                } else {
+                    await drawOrn('ketupat', 1);
+                    await drawOrn('lampu', 2);
+                    await drawOrn('rama', 5);
+                }
 
             } else {
                 // 3-Strip Vertical on A5
@@ -735,26 +752,40 @@ $totalSessions = count($sessions);
                 }
 
                 // Ornaments for 3-Strip
-                const drawOrn3 = async (type, index) => {
-                    const src = (t && t[type]) ? t[type] : `./gambar/${type === 'rama' ? 'rama.png' : type + '.webp'}`;
-                    const img = await loadImg(src);
-                    if (!img) return;
-                    const layout = (t && t.layout && t.layout[type]) ? t.layout[type] : { size: 350, x: 0, y: 0 };
-                    const size = parseInt(layout.size) || 0;
-                    if (size <= 0) return;
+                if (t && t.items && Array.isArray(t.items) && t.items.length > 0) {
+                    for (const itm of t.items) {
+                        if (!itm || !itm.src) continue;
+                        const img = await loadImg(itm.src);
+                        if (!img) continue;
+                        const size = parseInt(itm.size) || 300;
+                        const slot = Math.min(2, Math.max(0, parseInt(itm.slot) || 0));
+                        const yPos = padding + headerH + (slot * (imgH + gap));
+                        const x = padding + imgW - size + (parseInt(itm.x) || 0);
+                        const y = yPos + imgH - size + (parseInt(itm.y) || 0);
+                        ctx.drawImage(img, x, y, size, size);
+                    }
+                } else {
+                    const drawOrn3 = async (type, index) => {
+                        const src = (t && t[type]) ? t[type] : `./gambar/${type === 'rama' ? 'rama.png' : type + '.webp'}`;
+                        const img = await loadImg(src);
+                        if (!img) return;
+                        const layout = (t && t.layout && t.layout[type]) ? t.layout[type] : { size: 350, x: 0, y: 0 };
+                        const size = parseInt(layout.size) || 0;
+                        if (size <= 0) return;
 
-                    const yPos = padding + headerH + (index * (imgH + gap));
-                    let x, y;
-                    if (type === 'lampu') x = padding + parseInt(layout.x || 0);
-                    else x = padding + imgW - size + parseInt(layout.x || 0);
-                    y = yPos + imgH - size + parseInt(layout.y || 0);
+                        const yPos = padding + headerH + (index * (imgH + gap));
+                        let x, y;
+                        if (type === 'lampu') x = padding + parseInt(layout.x || 0);
+                        else x = padding + imgW - size + parseInt(layout.x || 0);
+                        y = yPos + imgH - size + parseInt(layout.y || 0);
 
-                    ctx.drawImage(img, x, y, size, size);
-                };
+                        ctx.drawImage(img, x, y, size, size);
+                    };
 
-                await drawOrn3('ketupat', 0);
-                await drawOrn3('lampu', 1);
-                await drawOrn3('rama', 2);
+                    await drawOrn3('ketupat', 0);
+                    await drawOrn3('lampu', 1);
+                    await drawOrn3('rama', 2);
+                }
             }
 
             // Overlay mode draw
