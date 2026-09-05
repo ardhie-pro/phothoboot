@@ -222,8 +222,9 @@ $totalSessions = count($sessions);
             </div>
         <?php else: ?>
             <div id="session-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <?php foreach ($sessions as $s): ?>
-                    <div class="session-card glass-card rounded-3xl overflow-hidden flex flex-col justify-between border-2 border-amber-500/25 hover:border-amber-500/60 transition-all hover:shadow-2xl group" data-id="<?= htmlspecialchars($s['id']) ?>" data-date="<?= htmlspecialchars($s['date_str']) ?>">
+                <?php foreach ($sessions as $index => $s): ?>
+                    <?php $isInitiallyHidden = $index >= 8; ?>
+                    <div class="session-card glass-card rounded-3xl overflow-hidden flex flex-col justify-between border-2 border-amber-500/25 hover:border-amber-500/60 transition-all hover:shadow-2xl group <?= $isInitiallyHidden ? 'hidden-session hidden' : '' ?>" data-id="<?= htmlspecialchars($s['id']) ?>" data-date="<?= htmlspecialchars($s['date_str']) ?>" data-index="<?= $index ?>">
                         <!-- Card Header -->
                         <div class="p-4 border-b border-amber-900/10 flex items-center justify-between">
                             <span class="text-[11px] font-bold text-amber-900 bg-amber-400/20 border border-amber-400/40 px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
@@ -238,7 +239,7 @@ $totalSessions = count($sessions);
                         <div class="p-4 flex flex-col items-center justify-center">
                             <div class="relative w-full aspect-[3/4] rounded-2xl bg-black/10 overflow-hidden flex items-center justify-center border-2 border-amber-500/30 group-hover:scale-[1.02] transition-transform p-1.5 shadow-inner">
                                 <?php if (!empty($s['thumbnail'])): ?>
-                                    <img src="<?= htmlspecialchars($s['thumbnail']) ?>" alt="Strip Preview" class="w-full h-full object-contain rounded-xl" loading="lazy">
+                                    <img src="<?= htmlspecialchars($s['thumbnail']) ?>" alt="Strip Preview" class="w-full h-full object-contain rounded-xl" loading="lazy" decoding="async">
                                 <?php else: ?>
                                     <span class="text-3xl text-stone-400">🖼️</span>
                                 <?php endif; ?>
@@ -266,6 +267,14 @@ $totalSessions = count($sessions);
                     </div>
                 <?php endforeach; ?>
             </div>
+
+            <?php if (count($sessions) > 8): ?>
+                <div id="load-more-container" class="mt-8 text-center">
+                    <button id="load-more-btn" onclick="loadMoreSessions()" class="px-8 py-3.5 btn-gold rounded-2xl text-sm font-bold shadow-lg hover:scale-[1.02] active:scale-95 transition-all inline-flex items-center gap-2 cursor-pointer">
+                        <span>📥</span> Muat Lebih Banyak Sesi Foto (<span id="remaining-session-count"><?= count($sessions) - 8 ?></span> sesi lagi)
+                    </button>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 
@@ -418,20 +427,63 @@ $totalSessions = count($sessions);
             }, 3500);
         }
 
+        // Incremental Load More
+        let currentlyShownSessions = 8;
+        const totalSessions = <?= count($sessions) ?>;
+
+        window.loadMoreSessions = function() {
+            const hiddenSessions = document.querySelectorAll('.session-card.hidden-session');
+            let newlyShown = 0;
+            
+            hiddenSessions.forEach((card, idx) => {
+                if (idx < 8) {
+                    card.classList.remove('hidden-session', 'hidden');
+                    newlyShown++;
+                }
+            });
+
+            currentlyShownSessions += newlyShown;
+            const remaining = totalSessions - currentlyShownSessions;
+            const remainingEl = document.getElementById('remaining-session-count');
+            if (remainingEl) remainingEl.innerText = Math.max(0, remaining);
+
+            if (remaining <= 0) {
+                const container = document.getElementById('load-more-container');
+                if (container) container.classList.add('hidden');
+            }
+        };
+
         // Search Filter
         const searchInput = document.getElementById('search-input');
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
                 const q = e.target.value.toLowerCase().trim();
-                document.querySelectorAll('.session-card').forEach(card => {
-                    const id = card.getAttribute('data-id').toLowerCase();
-                    const date = card.getAttribute('data-date').toLowerCase();
-                    if (id.includes(q) || date.includes(q)) {
-                        card.classList.remove('hidden');
-                    } else {
-                        card.classList.add('hidden');
+                const loadMoreContainer = document.getElementById('load-more-container');
+
+                if (q !== '') {
+                    if (loadMoreContainer) loadMoreContainer.classList.add('hidden');
+                    document.querySelectorAll('.session-card').forEach(card => {
+                        const id = card.getAttribute('data-id').toLowerCase();
+                        const date = card.getAttribute('data-date').toLowerCase();
+                        if (id.includes(q) || date.includes(q)) {
+                            card.classList.remove('hidden');
+                        } else {
+                            card.classList.add('hidden');
+                        }
+                    });
+                } else {
+                    // Reset to incremental state
+                    if (loadMoreContainer && (totalSessions - currentlyShownSessions) > 0) {
+                        loadMoreContainer.classList.remove('hidden');
                     }
-                });
+                    document.querySelectorAll('.session-card').forEach(card => {
+                        if (card.classList.contains('hidden-session')) {
+                            card.classList.add('hidden');
+                        } else {
+                            card.classList.remove('hidden');
+                        }
+                    });
+                }
             });
         }
 

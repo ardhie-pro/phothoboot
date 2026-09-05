@@ -426,7 +426,14 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
 
                     <!-- Template List -->
                     <section>
-                        <h2 class="text-xl font-bold mb-4 text-[#2D6A4F]">Daftar Template</h2>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                            <h2 class="text-xl font-bold text-[#2D6A4F] flex items-center gap-2">
+                                <span>📁</span> Daftar Template
+                            </h2>
+                            <a href="auto_compress.php" target="_blank" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-black shadow-md flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer">
+                                <span>⚡</span> Kompres & Ringankan Semua Template di Server
+                            </a>
+                        </div>
                         <div id="template-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <p class="text-gray-500 italic">Memuat daftar template...</p>
                         </div>

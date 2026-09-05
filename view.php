@@ -95,7 +95,6 @@ $totalRounds = count($rounds);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📸 <?= htmlspecialchars($boothTitle) ?> - Kenangan Foto</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
@@ -253,6 +252,8 @@ $totalRounds = count($rounds);
                                 <div class="relative group rounded-2xl overflow-hidden border-2 border-amber-500/30 bg-black/10 shadow-lg p-1.5">
                                     <img src="<?= $round['strip'] ?>" 
                                          alt="Strip Sesi <?= $roundNum ?>" 
+                                         loading="lazy"
+                                         decoding="async"
                                          class="w-full h-auto object-contain max-h-[480px] mx-auto rounded-xl cursor-pointer hover:scale-[1.01] transition-transform"
                                          onclick="openModal('<?= $round['strip'] ?>', 'Sesi_<?= $roundNum ?>_Strip', 'Sesi <?= $roundNum ?> - Photo Strip')">
                                     
@@ -292,6 +293,8 @@ $totalRounds = count($rounds);
                                         <div class="relative group rounded-xl overflow-hidden border border-amber-600/30 bg-black/10 aspect-[8/5]">
                                             <img src="<?= $photo ?>" 
                                                  alt="Pose <?= $i + 1 ?>" 
+                                                 loading="lazy"
+                                                 decoding="async"
                                                  class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-all duration-300"
                                                  onclick="openModal('<?= $photo ?>', 'Sesi_<?= $roundNum ?>_Foto_<?= $i + 1 ?>', 'Sesi <?= $roundNum ?> - Pose <?= $i + 1 ?>')">
                                             
@@ -480,47 +483,72 @@ $totalRounds = count($rounds);
             return 'h' + Math.abs(hash);
         }
 
-        // Poll session queue status to update UI badges
+        // Poll session queue status to update UI badges with robust matching
+        let pollCount = 0;
+        let pollInterval = null;
+
         async function pollSessionPrintStatus() {
+            pollCount++;
+            // Stop polling after 40 polls (approx 3.5 minutes) to save server resources
+            if (pollCount > 40 && pollInterval) {
+                clearInterval(pollInterval);
+                return;
+            }
+
             try {
-                const res = await fetch(`print_action.php?action=get_session_queue&session_id=${sessionId}`);
+                const res = await fetch(`print_action.php?action=get_session_queue&session_id=${sessionId}&_t=${Date.now()}`);
                 const data = await res.json();
-                if (!data.success || !data.items) return;
+                if (!data.success || !data.items || data.items.length === 0) return;
+
+                let allCompleted = true;
 
                 data.items.forEach(item => {
-                    // Update badges if elements exist
-                    const photoUrls = document.querySelectorAll(`img[src="${item.photo_url}"]`);
-                    photoUrls.forEach(img => {
-                        const parent = img.closest('.relative');
-                        if (parent) {
-                            let badge = parent.querySelector('.print-status-badge');
-                            if (!badge) {
-                                badge = document.createElement('div');
-                                badge.className = 'print-status-badge absolute top-3 right-3 z-10 px-2.5 py-1 rounded-full text-[11px] font-bold shadow-lg flex items-center gap-1.5 backdrop-blur-md';
-                                parent.appendChild(badge);
-                            }
+                    if (item.status !== 'completed' && item.status !== 'cancelled') {
+                        allCompleted = false;
+                    }
 
-                            if (item.status === 'pending') {
-                                badge.className = 'print-status-badge absolute top-3 right-3 z-10 px-2.5 py-1 rounded-full text-[11px] font-bold shadow-lg flex items-center gap-1.5 backdrop-blur-md bg-amber-500/90 text-slate-900 animate-pulse-ring';
-                                badge.innerHTML = `<span>⏳</span><span>Menunggu Cetak</span>`;
-                            } else if (item.status === 'printing') {
-                                badge.className = 'print-status-badge absolute top-3 right-3 z-10 px-2.5 py-1 rounded-full text-[11px] font-bold shadow-lg flex items-center gap-1.5 backdrop-blur-md bg-blue-500/90 text-white animate-pulse';
-                                badge.innerHTML = `<span>🖨️</span><span>Sedang Dicetak</span>`;
-                            } else if (item.status === 'completed') {
-                                badge.className = 'print-status-badge absolute top-3 right-3 z-10 px-2.5 py-1 rounded-full text-[11px] font-bold shadow-lg flex items-center gap-1.5 backdrop-blur-md bg-emerald-500/90 text-white';
-                                badge.innerHTML = `<span>✅</span><span>Selesai Dicetak</span>`;
+                    // Robust matching: match exact URL or filename substring
+                    const itemFilename = item.photo_url.split('/').pop();
+                    const imgs = document.querySelectorAll('img');
+                    
+                    imgs.forEach(img => {
+                        const src = img.getAttribute('src') || '';
+                        if (src === item.photo_url || src.endsWith('/' + itemFilename) || (itemFilename && src.includes(itemFilename))) {
+                            const parent = img.closest('.relative');
+                            if (parent) {
+                                let badge = parent.querySelector('.print-status-badge');
+                                if (!badge) {
+                                    badge = document.createElement('div');
+                                    parent.appendChild(badge);
+                                }
+
+                                if (item.status === 'pending') {
+                                    badge.className = 'print-status-badge absolute top-3 right-3 z-10 px-2.5 py-1 rounded-full text-[11px] font-bold shadow-lg flex items-center gap-1.5 backdrop-blur-md bg-amber-500/90 text-slate-900 animate-pulse-ring';
+                                    badge.innerHTML = `<span>⏳</span><span>Menunggu Cetak</span>`;
+                                } else if (item.status === 'printing') {
+                                    badge.className = 'print-status-badge absolute top-3 right-3 z-10 px-2.5 py-1 rounded-full text-[11px] font-bold shadow-lg flex items-center gap-1.5 backdrop-blur-md bg-blue-500/90 text-white animate-pulse';
+                                    badge.innerHTML = `<span>🖨️</span><span>Sedang Dicetak</span>`;
+                                } else if (item.status === 'completed') {
+                                    badge.className = 'print-status-badge absolute top-3 right-3 z-10 px-2.5 py-1 rounded-full text-[11px] font-bold shadow-lg flex items-center gap-1.5 backdrop-blur-md bg-emerald-500/90 text-white';
+                                    badge.innerHTML = `<span>✅</span><span>Selesai Dicetak</span>`;
+                                }
                             }
                         }
                     });
                 });
+
+                // If all printed, stop polling to avoid unnecessary server load
+                if (allCompleted && data.items.length > 0 && pollInterval) {
+                    clearInterval(pollInterval);
+                }
             } catch (err) {
                 // silent
             }
         }
 
-        // Initial poll and recurring poll every 5s
+        // Initial poll and smart polling every 5s
         pollSessionPrintStatus();
-        setInterval(pollSessionPrintStatus, 5000);
+        pollInterval = setInterval(pollSessionPrintStatus, 5000);
     </script>
 </body>
 </html>

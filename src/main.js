@@ -201,21 +201,30 @@ function renderStudioThemeGallery() {
 
 // Image asset cache to make studio live preview and final generation instantaneous
 const imageAssetCache = new Map();
-function loadCachedImage(src) {
+function loadCachedImage(src, retries = 3) {
     if (!src) return Promise.resolve(null);
     if (imageAssetCache.has(src)) {
         const cached = imageAssetCache.get(src);
         if (cached && (cached.complete || cached.naturalWidth > 0)) return Promise.resolve(cached);
     }
     return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-            imageAssetCache.set(src, img);
-            resolve(img);
+        const attemptLoad = (attemptsLeft) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                imageAssetCache.set(src, img);
+                resolve(img);
+            };
+            img.onerror = () => {
+                if (attemptsLeft > 1) {
+                    setTimeout(() => attemptLoad(attemptsLeft - 1), 150);
+                } else {
+                    resolve(null);
+                }
+            };
+            img.src = src;
         };
-        img.onerror = () => resolve(null);
-        img.src = src;
+        attemptLoad(retries);
     });
 }
 
@@ -1272,9 +1281,8 @@ async function renderStripCanvas(stripCanvas) {
     await drawDecorations(ctx, stripCanvas.width, stripCanvas.height);
 }
 
-// Live preview renderer for Studio View
-let isLivePreviewRendering = false;
-let pendingLivePreview = false;
+// Lightweight Offscreen Canvas for Ultra-Fast Studio Live Preview
+const previewOffscreenCanvas = document.createElement('canvas');
 
 async function updateStudioLivePreview() {
     if (isLivePreviewRendering) {
@@ -1291,8 +1299,9 @@ async function updateStudioLivePreview() {
     }, 60);
 
     try {
-        await renderStripCanvas(canvas);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.90);
+        // Fast render using lightweight offscreen canvas
+        await renderStripCanvas(previewOffscreenCanvas);
+        const dataUrl = previewOffscreenCanvas.toDataURL('image/jpeg', 0.85);
         if (liveImg) {
             liveImg.src = dataUrl;
         }
@@ -1411,7 +1420,7 @@ async function saveAndRequestPrint(buttonTrigger = null) {
     if (processingOverlay) processingOverlay.classList.remove('hidden');
 
     try {
-        // 1. Render final strip on canvas
+        // 1. Render final strip on full-resolution canvas
         await renderStripCanvas(canvas);
         const stripDataUrl = canvas.toDataURL('image/jpeg', 0.92);
         const validPhotos = capturedPhotos.filter(Boolean);
@@ -1439,10 +1448,8 @@ async function saveAndRequestPrint(buttonTrigger = null) {
         if (saveCountBadge) saveCountBadge.innerText = saveCount;
         if (selesaiContainer) selesaiContainer.classList.remove('hidden');
 
-        // Determine strip filename from saved_files
-        const savedFiles = data.saved_files || [];
-        const stripFile = savedFiles.find(f => f.includes('strip')) || savedFiles[savedFiles.length - 1] || 'round_1_strip.jpeg';
-        const photoUrl = `uploads/${data.session_id}/${stripFile}`;
+        // Determine strip filename accurately from server response
+        const photoUrl = data.strip_url || (data.files && data.files.find(f => f.includes('strip')) ? `uploads/${data.session_id}/${data.files.find(f => f.includes('strip'))}` : `uploads/${data.session_id}/round_${data.round || 1}_strip.jpeg`);
 
         // 3. Send Print Request to print_action.php
         const template = availableTemplates.find(t => t.id === selectedTemplateId);

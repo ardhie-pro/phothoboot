@@ -175,13 +175,26 @@ if ($hostName === 'localhost' || $hostName === '127.0.0.1' || $hostName === '::1
 
 $basePath = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), "", $_SERVER['PHP_SELF']), '/');
 
-$viewUrl = $protocol . "://" . $host . $basePath . '/view.php?s=' . $sessionId;
+$stripFilename = '';
+foreach ($savedFiles as $sf) {
+    if (stripos($sf, 'strip') !== false) {
+        $stripFilename = $sf;
+        break;
+    }
+}
+if (empty($stripFilename) && !empty($savedFiles)) {
+    $stripFilename = end($savedFiles);
+}
+$stripUrl = 'uploads/' . $sessionId . '/' . $stripFilename;
 
 echo json_encode([
     'success' => true,
     'session_id' => $sessionId,
     'round' => $nextRound,
     'view_url' => $viewUrl,
-    'files' => $savedFiles
+    'files' => $savedFiles,
+    'saved_files' => $savedFiles,
+    'strip_filename' => $stripFilename,
+    'strip_url' => $stripUrl
 ]);
 ?>

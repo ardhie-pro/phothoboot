@@ -106,14 +106,19 @@ if ($action === 'upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $lampuPath = $existingTemplate['lampu'] ?? '';
     $ramaPath = $existingTemplate['rama'] ?? '';
     
+    require_once __DIR__ . '/compress_helper.php';
+
     if (isset($_FILES['outerImage']) && $_FILES['outerImage']['name'] !== '') {
         if ($_FILES['outerImage']['error'] === UPLOAD_ERR_OK) {
             $ext = pathinfo($_FILES['outerImage']['name'], PATHINFO_EXTENSION) ?: 'png';
             $outerPath = 'uploads/templates/' . $id . '/outer.' . $ext;
-            if (!move_uploaded_file($_FILES['outerImage']['tmp_name'], __DIR__ . '/' . $outerPath)) {
+            $fullOuterPath = __DIR__ . '/' . $outerPath;
+            if (!move_uploaded_file($_FILES['outerImage']['tmp_name'], $fullOuterPath)) {
                 echo json_encode(['success' => false, 'error' => 'Gagal menyimpan file background luar/frame. Periksa izin tulis (chmod 777) folder uploads/templates.']);
                 exit();
             }
+            // Auto compress outer image to keep booth lightweight & responsive
+            compressImageFile($fullOuterPath, 2480, 88, 6);
         } else {
             $errCode = $_FILES['outerImage']['error'];
             $errMsg = 'Gagal upload background luar/frame (Error code ' . $errCode . '). ';
@@ -127,6 +132,15 @@ if ($action === 'upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Process Dynamic Items List
     $items = [];
+    $existingItemsMap = [];
+    if ($isEdit && !empty($existingTemplate['items']) && is_array($existingTemplate['items'])) {
+        foreach ($existingTemplate['items'] as $eItm) {
+            if (!empty($eItm['id'])) {
+                $existingItemsMap[$eItm['id']] = $eItm;
+            }
+        }
+    }
+
     $rawItemsJson = $_POST['items_json'] ?? '';
     if (!empty($rawItemsJson)) {
         $parsedItems = json_decode($rawItemsJson, true);
@@ -135,6 +149,12 @@ if ($action === 'upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 $itemId = !empty($itemData['id']) ? preg_replace('/[^a-zA-Z0-9_-]/', '', $itemData['id']) : ('item_' . ($idx + 1) . '_' . uniqid());
                 $itemName = trim($itemData['name'] ?? ('Item ' . ($idx + 1)));
                 $itemSrc = $itemData['src'] ?? '';
+
+                // If src was empty in posted data but exists in previous template version, preserve it
+                if (empty($itemSrc) && isset($existingItemsMap[$itemId]['src'])) {
+                    $itemSrc = $existingItemsMap[$itemId]['src'];
+                }
+
                 $itemSlot = (int)($itemData['slot'] ?? 0);
                 $itemWidth = (int)($itemData['width'] ?? $itemData['size'] ?? 300);
                 $itemHeight = (int)($itemData['height'] ?? $itemData['size'] ?? 300);
@@ -147,8 +167,10 @@ if ($action === 'upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (isset($_FILES[$fileKey]) && $_FILES[$fileKey]['error'] === UPLOAD_ERR_OK) {
                     $ext = pathinfo($_FILES[$fileKey]['name'], PATHINFO_EXTENSION) ?: 'png';
                     $newPath = 'uploads/templates/' . $id . '/' . $itemId . '.' . $ext;
-                    if (move_uploaded_file($_FILES[$fileKey]['tmp_name'], __DIR__ . '/' . $newPath)) {
+                    $fullItemPath = __DIR__ . '/' . $newPath;
+                    if (move_uploaded_file($_FILES[$fileKey]['tmp_name'], $fullItemPath)) {
                         $itemSrc = $newPath;
+                        compressImageFile($fullItemPath, 2000, 88, 6);
                     }
                 }
 
