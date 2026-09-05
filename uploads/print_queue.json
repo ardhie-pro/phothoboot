@@ -1,53 +1,173 @@
 [
     {
-        "id": "pr_6a9c1321c0345",
-        "session_id": "20260905_130319_55ad0f3b",
-        "photo_url": "uploads\/20260905_130319_55ad0f3b\/round_2_strip.jpeg",
-        "label": "percobaan template (A5 6-Grid)",
-        "copies": 1,
-        "status": "pending",
-        "created_at": "2026-09-05 13:03:29",
-        "updated_at": "2026-09-05 13:03:29"
-    },
-    {
-        "id": "pr_6a9c1318f028c",
-        "session_id": "20260905_130319_55ad0f3b",
-        "photo_url": "uploads\/20260905_130319_55ad0f3b\/round_1_strip.jpeg",
-        "label": "percobaan template (A5 6-Grid)",
-        "copies": 1,
-        "status": "pending",
-        "created_at": "2026-09-05 13:03:20",
-        "updated_at": "2026-09-05 13:03:20"
-    },
-    {
-        "id": "pr_6a9ad458ac40c",
-        "session_id": "20260904_142319_e4b43522",
-        "photo_url": "uploads\/20260904_142319_e4b43522\/round_1_strip.jpeg",
-        "label": "ITS boys (A5 6-Grid)",
-        "copies": 1,
-        "status": "printing",
-        "created_at": "2026-09-04 14:23:20",
-        "updated_at": "2026-09-04 14:36:26"
-    },
-    {
-        "id": "pr_6a99719e65956",
-        "session_id": "20260903_130949_ce935c34",
-        "photo_url": "uploads\/20260903_130949_ce935c34\/round_1_strip.jpeg",
-        "label": "Template Basket 1 (4R 6-Grid)",
-        "copies": 1,
-        "status": "completed",
-        "created_at": "2026-09-03 13:09:50",
-        "updated_at": "2026-09-04 14:41:41"
-    },
-    {
-        "id": "pr_6a9961581dca6",
-        "session_id": "20260903_115910_079c5236",
-        "photo_url": "uploads\/20260903_115910_079c5236\/round_1_strip.jpeg",
+        "id": "pr_6a9c08a0b0f44",
+        "session_id": "20260905_113845_bd1a0091",
+        "photo_url": "uploads\/20260905_113845_bd1a0091\/round_1_strip.jpeg",
         "label": "Sesi 1 - Photo Strip",
         "copies": 1,
         "status": "pending",
-        "created_at": "2026-09-03 12:00:24",
-        "updated_at": "2026-09-03 12:00:24"
+        "created_at": "2026-09-05 12:18:40",
+        "updated_at": "2026-09-05 12:18:40"
+    },
+    {
+        "id": "pr_6a9c06ab43494",
+        "session_id": "20260905_121019_03b341dd",
+        "photo_url": "uploads\/20260905_121019_03b341dd\/round_1_strip.jpeg",
+        "label": "ITS boys (A5 6-Grid)",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-05 12:10:19",
+        "updated_at": "2026-09-05 12:10:19"
+    },
+    {
+        "id": "pr_6a9c0522e6d95",
+        "session_id": "20260905_120346_81da077d",
+        "photo_url": "uploads\/20260905_120346_81da077d\/round_1_strip.jpeg",
+        "label": "bunga bunga (A5 6-Grid)",
+        "copies": 1,
+        "status": "completed",
+        "created_at": "2026-09-05 12:03:46",
+        "updated_at": "2026-09-05 12:04:23"
+    },
+    {
+        "id": "pr_6a9c04fc10d88",
+        "session_id": "20260905_120307_388fa854",
+        "photo_url": "uploads\/20260905_120307_388fa854\/round_1_strip.jpeg",
+        "label": "bunga bunga (A5 6-Grid)",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-05 12:03:08",
+        "updated_at": "2026-09-05 12:03:08"
+    },
+    {
+        "id": "pr_6a9bff4526be7",
+        "session_id": "20260905_113845_bd1a0091",
+        "photo_url": "uploads\/20260905_113845_bd1a0091\/round_1_strip.jpeg",
+        "label": "bunga bunga (A5 6-Grid)",
+        "copies": 1,
+        "status": "completed",
+        "created_at": "2026-09-05 11:38:45",
+        "updated_at": "2026-09-05 11:59:13"
+    },
+    {
+        "id": "pr_6a9bfd7c76a46",
+        "session_id": "20260905_113108_6715033a",
+        "photo_url": "uploads\/20260905_113108_6715033a\/round_1_strip.jpeg",
+        "label": "bunga bunga (A5 6-Grid)",
+        "copies": 1,
+        "status": "completed",
+        "created_at": "2026-09-05 11:31:08",
+        "updated_at": "2026-09-05 11:34:18"
+    },
+    {
+        "id": "pr_6a9bf7992d1a2",
+        "session_id": "20260905_110601_a2a9cce1",
+        "photo_url": "uploads\/20260905_110601_a2a9cce1\/round_1_strip.jpeg",
+        "label": "keranjang (A5 6-Grid)",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-05 11:06:01",
+        "updated_at": "2026-09-05 11:06:01"
+    },
+    {
+        "id": "pr_6a9bf3277b8b1",
+        "session_id": "20260905_104703_13b09234",
+        "photo_url": "uploads\/20260905_104703_13b09234\/round_1_strip.jpeg",
+        "label": "Template Basket 1 (A5 6-Grid)",
+        "copies": 1,
+        "status": "completed",
+        "created_at": "2026-09-05 10:47:03",
+        "updated_at": "2026-09-05 11:01:11"
+    },
+    {
+        "id": "pr_6a9bf12d1d156",
+        "session_id": "20260905_103837_cc9c7b3c",
+        "photo_url": "uploads\/20260905_103837_cc9c7b3c\/round_1_strip.jpeg",
+        "label": "ITS boys (A5 6-Grid)",
+        "copies": 1,
+        "status": "completed",
+        "created_at": "2026-09-05 10:38:37",
+        "updated_at": "2026-09-05 12:11:53"
+    },
+    {
+        "id": "pr_6a9bf04f5c6a5",
+        "session_id": "20260905_103455_5240d578",
+        "photo_url": "uploads\/20260905_103455_5240d578\/round_1_strip.jpeg",
+        "label": "ITS boys (A5 6-Grid)",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-05 10:34:55",
+        "updated_at": "2026-09-05 10:34:55"
+    },
+    {
+        "id": "pr_6a9bebc581fb1",
+        "session_id": "20260905_101533_556a9d87",
+        "photo_url": "uploads\/20260905_101533_556a9d87\/round_1_strip.jpeg",
+        "label": "bunga bunga (A5 6-Grid)",
+        "copies": 1,
+        "status": "completed",
+        "created_at": "2026-09-05 10:15:33",
+        "updated_at": "2026-09-05 11:01:54"
+    },
+    {
+        "id": "pr_6a9b1d5ccd1c9",
+        "session_id": "20260903_145752_e149fc3d",
+        "photo_url": "uploads\/20260903_145752_e149fc3d\/round_1_strip.jpeg",
+        "label": "Cetak Ulang dari History",
+        "copies": 1,
+        "status": "completed",
+        "created_at": "2026-09-04 19:34:52",
+        "updated_at": "2026-09-04 19:54:24"
+    },
+    {
+        "id": "pr_6a9b029d42ae7",
+        "session_id": "20260904_174045_fe745d83",
+        "photo_url": "uploads\/20260904_174045_fe745d83\/round_1_strip.jpeg",
+        "label": "keranjang (A5 6-Grid)",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-04 17:40:45",
+        "updated_at": "2026-09-04 17:40:45"
+    },
+    {
+        "id": "pr_6a9af0231aa10",
+        "session_id": "20260904_162155_dd7d4cc7",
+        "photo_url": "uploads\/20260904_162155_dd7d4cc7\/round_1_strip.jpeg",
+        "label": "ITS boys (A5 6-Grid)",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-04 16:21:55",
+        "updated_at": "2026-09-04 16:21:55"
+    },
+    {
+        "id": "pr_6a9a678a87a21",
+        "session_id": "20260903_124851_91e0a385",
+        "photo_url": "uploads\/20260903_124851_91e0a385\/round_1_strip.jpeg",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-04 06:39:06",
+        "updated_at": "2026-09-04 06:39:06"
+    },
+    {
+        "id": "pr_6a9a58f019f79",
+        "session_id": "20260903_133802_948d6a26",
+        "photo_url": "uploads\/20260903_133802_948d6a26\/round_1_strip.jpeg",
+        "label": "Cetak Ulang dari History",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-04 05:36:48",
+        "updated_at": "2026-09-04 05:36:48"
+    },
+    {
+        "id": "pr_6a9999b0ef88a",
+        "session_id": "20260903_124548_af6efd22",
+        "photo_url": "uploads\/20260903_124548_af6efd22\/round_1_strip.jpeg",
+        "label": "Cetak Ulang dari History",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-03 16:00:48",
+        "updated_at": "2026-09-03 16:00:48"
     },
     {
         "id": "pr_6a98b1370c26f",
@@ -75,9 +195,9 @@
         "photo_url": "uploads\/20260902_131803_eede1e5e\/round_1_strip.jpeg",
         "label": "Sesi 1 - Photo Strip",
         "copies": 1,
-        "status": "printing",
+        "status": "completed",
         "created_at": "2026-09-02 13:18:19",
-        "updated_at": "2026-09-03 11:26:49"
+        "updated_at": "2026-09-04 17:10:28"
     },
     {
         "id": "pr_6a98053d2f075",

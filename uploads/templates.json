@@ -2,8 +2,8 @@
     {
         "id": "6a97cf800a032",
         "name": "test",
-        "sizeType": "4r_6grid",
-        "outer": "uploads\/templates\/6a97cf800a032\/outer.jpeg",
+        "sizeType": "a5_6grid",
+        "outer": "uploads\/templates\/6a97cf800a032\/outer.png",
         "ketupat": "uploads\/templates\/6a97cf800a032\/ketupat.png",
         "lampu": "uploads\/templates\/6a97cf800a032\/lampu.png",
         "rama": "uploads\/templates\/6a97cf800a032\/rama.png",
@@ -24,7 +24,8 @@
                 "y": 300,
                 "size": 550
             }
-        }
+        },
+        "active": false
     },
     {
         "id": "6a9821c5abc33",
@@ -54,118 +55,6 @@
         }
     },
     {
-        "id": "6a982908de97b",
-        "name": "Template basket 2 ",
-        "sizeType": "a5_6grid",
-        "outer": "",
-        "ketupat": "",
-        "lampu": "uploads\/templates\/6a982908de97b\/lampu.png",
-        "rama": "uploads\/templates\/6a982908de97b\/rama.png",
-        "overlayMode": false,
-        "layout": {
-            "ketupat": {
-                "x": 120,
-                "y": 150,
-                "size": 0
-            },
-            "lampu": {
-                "x": -330,
-                "y": 970,
-                "size": 2200
-            },
-            "rama": {
-                "x": 125,
-                "y": 550,
-                "size": 2175
-            }
-        },
-        "active": false
-    },
-    {
-        "id": "6a982afbca9ec",
-        "name": "Template basket 2 test",
-        "sizeType": "a5_6grid",
-        "outer": "",
-        "ketupat": "",
-        "lampu": "uploads\/templates\/6a982afbca9ec\/lampu.png",
-        "rama": "uploads\/templates\/6a982afbca9ec\/rama.png",
-        "overlayMode": false,
-        "layout": {
-            "ketupat": {
-                "x": 120,
-                "y": 150,
-                "size": 0
-            },
-            "lampu": {
-                "x": -330,
-                "y": 1000,
-                "size": 2200
-            },
-            "rama": {
-                "x": 130,
-                "y": 575,
-                "size": 2200
-            }
-        },
-        "active": false
-    },
-    {
-        "id": "6a98ff3f88617",
-        "name": "Unnamed Template",
-        "sizeType": "a5",
-        "outer": "",
-        "ketupat": "",
-        "lampu": "",
-        "rama": "",
-        "overlayMode": false,
-        "layout": {
-            "ketupat": {
-                "x": 120,
-                "y": 150,
-                "size": 350
-            },
-            "lampu": {
-                "x": -100,
-                "y": 140,
-                "size": 300
-            },
-            "rama": {
-                "x": 150,
-                "y": 300,
-                "size": 550
-            }
-        },
-        "active": false
-    },
-    {
-        "id": "6a9919b49daf0",
-        "name": "Unnamed Template",
-        "sizeType": "a5",
-        "outer": "",
-        "ketupat": "",
-        "lampu": "",
-        "rama": "",
-        "overlayMode": false,
-        "layout": {
-            "ketupat": {
-                "x": 120,
-                "y": 150,
-                "size": 350
-            },
-            "lampu": {
-                "x": -100,
-                "y": 140,
-                "size": 300
-            },
-            "rama": {
-                "x": 150,
-                "y": 300,
-                "size": 550
-            }
-        },
-        "active": false
-    },
-    {
         "id": "6a99424bc0770",
         "name": "ITS boys",
         "sizeType": "a5_6grid",
@@ -190,202 +79,784 @@
                 "y": 300,
                 "size": 0
             }
-        }
-    },
-    {
-        "id": "6a994bc0da8af",
-        "name": "welpar UKM basket",
-        "sizeType": "a5_6grid",
-        "outer": "",
-        "ketupat": "uploads\/templates\/6a994bc0da8af\/ketupat.png",
-        "lampu": "uploads\/templates\/6a994bc0da8af\/lampu.png",
-        "rama": "",
-        "overlayMode": false,
-        "layout": {
-            "ketupat": {
-                "x": 140,
-                "y": 1000,
-                "size": 1800
-            },
-            "lampu": {
-                "x": -120,
-                "y": 840,
-                "size": 1800
-            },
-            "rama": {
-                "x": 150,
-                "y": 290,
-                "size": 0
-            }
         },
         "active": false
     },
     {
-        "id": "6a9977f21d8b0",
-        "name": "test",
+        "id": "6a9b023096de7",
+        "name": "keranjang",
         "sizeType": "a5_6grid",
-        "outer": "uploads\/templates\/6a9977f21d8b0\/outer.png",
-        "ketupat": "",
-        "lampu": "",
-        "rama": "uploads\/templates\/6a9977f21d8b0\/rama.png",
-        "overlayMode": false,
-        "layout": {
-            "ketupat": {
-                "x": 120,
-                "y": 150,
-                "size": 0
-            },
-            "lampu": {
-                "x": -100,
-                "y": 140,
-                "size": 0
-            },
-            "rama": {
-                "x": 310,
-                "y": 450,
-                "size": 1600
-            }
-        },
-        "active": false
-    },
-    {
-        "id": "6a99794f2aac0",
-        "name": "oyy",
-        "sizeType": "4r_6grid",
-        "outer": "uploads\/templates\/6a99794f2aac0\/outer.png",
-        "ketupat": "uploads\/templates\/6a99794f2aac0\/ketupat.png",
-        "lampu": "uploads\/templates\/6a99794f2aac0\/lampu.png",
-        "rama": "uploads\/templates\/6a99794f2aac0\/rama.png",
-        "overlayMode": false,
-        "layout": {
-            "ketupat": {
-                "x": 120,
-                "y": 150,
-                "size": 350
-            },
-            "lampu": {
-                "x": -100,
-                "y": 140,
-                "size": 300
-            },
-            "rama": {
-                "x": 150,
-                "y": 300,
-                "size": 550
-            }
-        },
-        "active": false
-    },
-    {
-        "id": "6a997ad47fa48",
-        "name": "its",
-        "sizeType": "a5_6grid",
-        "outer": "uploads\/templates\/6a997ad47fa48\/outer.png",
-        "ketupat": "uploads\/templates\/6a997ad47fa48\/ketupat.png",
-        "lampu": "uploads\/templates\/6a997ad47fa48\/lampu.png",
-        "rama": "uploads\/templates\/6a997ad47fa48\/rama.png",
-        "overlayMode": false,
-        "layout": {
-            "ketupat": {
-                "x": 120,
-                "y": 150,
-                "size": 350
-            },
-            "lampu": {
-                "x": -100,
-                "y": 140,
-                "size": 300
-            },
-            "rama": {
-                "x": 150,
-                "y": 300,
-                "size": 550
-            }
-        },
-        "active": false
-    },
-    {
-        "id": "6a9ad6ced9ce7",
-        "name": "percobaan template",
-        "sizeType": "a5_6grid",
-        "outer": "uploads\/templates\/6a9ad6ced9ce7\/outer.png",
-        "ketupat": "uploads\/templates\/6a9ad6ced9ce7\/ketupat.png",
-        "lampu": "uploads\/templates\/6a9ad6ced9ce7\/lampu.png",
-        "rama": "uploads\/templates\/6a9ad6ced9ce7\/rama.png",
-        "overlayMode": false,
-        "active": true,
-        "layout": {
-            "ketupat": {
-                "x": 120,
-                "y": 150,
-                "size": 350
-            },
-            "lampu": {
-                "x": -100,
-                "y": 140,
-                "size": 300
-            },
-            "rama": {
-                "x": 150,
-                "y": 300,
-                "size": 550
-            }
-        }
-    },
-    {
-        "id": "6a9ae51890992",
-        "name": "bambang",
-        "sizeType": "a5_6grid",
-        "outer": "uploads\/templates\/6a9ae51890992\/outer.png",
+        "outer": "uploads\/templates\/6a9b023096de7\/outer.png",
         "items": [
             {
                 "id": "item_1",
                 "name": "Item 1 (Ketupat)",
-                "src": "uploads\/templates\/6a9ae51890992\/item_1.png",
+                "src": "uploads\/templates\/6a9b023096de7\/item_1.png",
                 "slot": 1,
-                "size": 350,
-                "x": 120,
-                "y": 150
+                "width": 1900,
+                "height": 2100,
+                "size": 2100,
+                "x": 155,
+                "y": 2338
             },
             {
-                "id": "item_2",
-                "name": "Item 2 (Lampu)",
-                "src": "./gambar/lampu.webp",
-                "slot": 2,
-                "size": 300,
-                "x": -100,
-                "y": 140
+                "id": "item_1788541597125_72",
+                "name": "Item 2 (Stiker)",
+                "src": "uploads\/templates\/6a9b023096de7\/item_1788541597125_72.png",
+                "slot": 1,
+                "width": 1800,
+                "height": 2420,
+                "size": 2420,
+                "x": 65,
+                "y": 2700
             },
             {
-                "id": "item_3",
+                "id": "item_1788541825196_789",
                 "name": "Item 3 (Stiker)",
-                "src": "./gambar/rama.png",
+                "src": "uploads\/templates\/6a9b023096de7\/item_1788541825196_789.png",
+                "slot": 2,
+                "width": 2000,
+                "height": 2260,
+                "size": 2260,
+                "x": 978,
+                "y": 2085
+            },
+            {
+                "id": "item_1788542115324_521",
+                "name": "Item 4 (Stiker)",
+                "src": "uploads\/templates\/6a9b023096de7\/item_1788542115324_521.png",
+                "slot": 3,
+                "width": 2200,
+                "height": 2360,
+                "size": 2360,
+                "x": 162,
+                "y": 2263
+            },
+            {
+                "id": "item_1788542390588_72",
+                "name": "Item 5 (Stiker)",
+                "src": "uploads\/templates\/6a9b023096de7\/item_1788542390588_72.png",
+                "slot": 4,
+                "width": 2050,
+                "height": 2900,
+                "size": 2900,
+                "x": 901,
+                "y": 1062
+            },
+            {
+                "id": "item_1788542594560_810",
+                "name": "Item 6 (Stiker)",
+                "src": "uploads\/templates\/6a9b023096de7\/item_1788542594560_810.png",
                 "slot": 5,
-                "size": 550,
-                "x": 127,
-                "y": 235
+                "width": 2300,
+                "height": 2900,
+                "size": 2900,
+                "x": 300,
+                "y": 1100
+            },
+            {
+                "id": "item_1788542778757_442",
+                "name": "Item 7 (Stiker)",
+                "src": "uploads\/templates\/6a9b023096de7\/item_1788542778757_442.png",
+                "slot": 0,
+                "width": 2100,
+                "height": 2900,
+                "size": 2900,
+                "x": 920,
+                "y": 1920
+            },
+            {
+                "id": "item_1788543029066_566",
+                "name": "Item 8 (Stiker)",
+                "src": "uploads\/templates\/6a9b023096de7\/item_1788543029066_566.png",
+                "slot": 1,
+                "width": 1800,
+                "height": 2900,
+                "size": 2900,
+                "x": -104,
+                "y": 1876
             }
         ],
-        "ketupat": "uploads/templates/6a9ae51890992/item_1.png",
-        "lampu": "./gambar/lampu.webp",
-        "rama": "./gambar/rama.png",
+        "ketupat": "uploads\/templates\/6a9b023096de7\/item_1.png",
+        "lampu": "uploads\/templates\/6a9b023096de7\/item_1788541597125_72.png",
+        "rama": "uploads\/templates\/6a9b023096de7\/item_1788541825196_789.png",
         "overlayMode": false,
         "active": true,
         "layout": {
             "ketupat": {
-                "x": 120,
-                "y": 150,
-                "size": 350
+                "x": 155,
+                "y": 2338,
+                "size": 2100
             },
             "lampu": {
-                "x": -100,
-                "y": 140,
-                "size": 300
+                "x": 65,
+                "y": 2700,
+                "size": 2420
             },
             "rama": {
-                "x": 127,
-                "y": 235,
-                "size": 550
+                "x": 978,
+                "y": 2085,
+                "size": 2260
+            }
+        }
+    },
+    {
+        "id": "6a9b1b1bc6cad",
+        "name": "ITS boys",
+        "sizeType": "a5_6grid",
+        "outer": "uploads\/templates\/6a9b1b1bc6cad\/outer.png",
+        "items": [
+            {
+                "id": "item_1788547356830_948",
+                "name": "Item 1 (Stiker)",
+                "src": "uploads\/templates\/6a9b1b1bc6cad\/item_1788547356830_948.png",
+                "slot": 0,
+                "width": 1700,
+                "height": 1700,
+                "size": 1700,
+                "x": 2118,
+                "y": 1110
+            },
+            {
+                "id": "item_1788547451715_222",
+                "name": "Item 2 (Stiker)",
+                "src": "uploads\/templates\/6a9b1b1bc6cad\/item_1788547451715_222.png",
+                "slot": 1,
+                "width": 860,
+                "height": 860,
+                "size": 860,
+                "x": 607,
+                "y": 751
+            },
+            {
+                "id": "item_1788547719498_603",
+                "name": "Item 3 (Stiker)",
+                "src": "uploads\/templates\/6a9b1b1bc6cad\/item_1788547719498_603.png",
+                "slot": 2,
+                "width": 1780,
+                "height": 1780,
+                "size": 1780,
+                "x": 2274,
+                "y": 1645
+            },
+            {
+                "id": "item_1788548143147_240",
+                "name": "Item 4 (Stiker)",
+                "src": "uploads\/templates\/6a9b1b1bc6cad\/item_1788548143147_240.png",
+                "slot": 3,
+                "width": 1880,
+                "height": 1880,
+                "size": 1880,
+                "x": 52,
+                "y": 902
+            },
+            {
+                "id": "item_1788548444810_555",
+                "name": "Item 5 (Stiker)",
+                "src": "uploads\/templates\/6a9b1b1bc6cad\/item_1788548444810_555.png",
+                "slot": 4,
+                "width": 1440,
+                "height": 1440,
+                "size": 1440,
+                "x": 587,
+                "y": 339
+            },
+            {
+                "id": "item_1788549382807_589",
+                "name": "Item 6 (Stiker)",
+                "src": "uploads\/templates\/6a9b1b1bc6cad\/item_1788549382807_589.png",
+                "slot": 5,
+                "width": 1340,
+                "height": 1340,
+                "size": 1340,
+                "x": -439,
+                "y": 829
+            }
+        ],
+        "ketupat": "uploads\/templates\/6a9b1b1bc6cad\/item_1788547356830_948.png",
+        "lampu": "uploads\/templates\/6a9b1b1bc6cad\/item_1788547451715_222.png",
+        "rama": "uploads\/templates\/6a9b1b1bc6cad\/item_1788547719498_603.png",
+        "overlayMode": false,
+        "active": true,
+        "layout": {
+            "ketupat": {
+                "x": 2118,
+                "y": 1110,
+                "size": 1700
+            },
+            "lampu": {
+                "x": 607,
+                "y": 751,
+                "size": 860
+            },
+            "rama": {
+                "x": 2274,
+                "y": 1645,
+                "size": 1780
+            }
+        }
+    },
+    {
+        "id": "6a9baa1d33c2e",
+        "name": "bunga bunga",
+        "sizeType": "a5_6grid",
+        "outer": "uploads\/templates\/6a9baa1d33c2e\/outer.png",
+        "photoSlots": [
+            {
+                "id": "slot_1",
+                "name": "Foto #1",
+                "x": 94,
+                "y": 637,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_2",
+                "name": "Foto #2",
+                "x": 894,
+                "y": 637,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_3",
+                "name": "Foto #3",
+                "x": 94,
+                "y": 1054,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_4",
+                "name": "Foto #4",
+                "x": 894,
+                "y": 1054,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_5",
+                "name": "Foto #5",
+                "x": 94,
+                "y": 1471,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_6",
+                "name": "Foto #6",
+                "x": 894,
+                "y": 1471,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            }
+        ],
+        "items": [
+            {
+                "id": "item_1",
+                "name": "Item 1 (Ketupat)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_1.png",
+                "slot": 1,
+                "width": 1900,
+                "height": 2500,
+                "size": 2500,
+                "x": 222,
+                "y": 2770
+            },
+            {
+                "id": "item_2",
+                "name": "Item 2 (Lampu)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_2.png",
+                "slot": 2,
+                "width": 1800,
+                "height": 2500,
+                "size": 2500,
+                "x": 1016,
+                "y": 1228
+            },
+            {
+                "id": "item_3",
+                "name": "Item 3 (Stiker)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_3.png",
+                "slot": 5,
+                "width": 1820,
+                "height": 2560,
+                "size": 2560,
+                "x": 260,
+                "y": 800
+            },
+            {
+                "id": "item_1788584687487_925",
+                "name": "Item 4 (Stiker)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_1788584687487_925.png",
+                "slot": 3,
+                "width": 1900,
+                "height": 2400,
+                "size": 2400,
+                "x": 192,
+                "y": 2200
+            },
+            {
+                "id": "item_1788584793183_32",
+                "name": "Item 5 (Stiker)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_1788584793183_32.png",
+                "slot": 4,
+                "width": 2000,
+                "height": 2600,
+                "size": 2600,
+                "x": 880,
+                "y": 897
+            }
+        ],
+        "ketupat": "uploads\/templates\/6a9ba8c8a3621\/item_1.png",
+        "lampu": "uploads\/templates\/6a9ba8c8a3621\/item_2.png",
+        "rama": "uploads\/templates\/6a9ba8c8a3621\/item_3.png",
+        "overlayMode": false,
+        "active": true,
+        "layout": {
+            "ketupat": {
+                "x": 222,
+                "y": 2770,
+                "size": 2500
+            },
+            "lampu": {
+                "x": 1016,
+                "y": 1228,
+                "size": 2500
+            },
+            "rama": {
+                "x": 260,
+                "y": 800,
+                "size": 2560
+            }
+        }
+    },
+    {
+        "id": "6a9bfe2b911e0",
+        "name": "bunga bunga",
+        "sizeType": "a5_6grid",
+        "outer": "",
+        "photoSlots": [
+            {
+                "id": "slot_1",
+                "name": "Foto #1",
+                "x": 94,
+                "y": 637,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_2",
+                "name": "Foto #2",
+                "x": 894,
+                "y": 637,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_3",
+                "name": "Foto #3",
+                "x": 94,
+                "y": 1054,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_4",
+                "name": "Foto #4",
+                "x": 894,
+                "y": 1054,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_5",
+                "name": "Foto #5",
+                "x": 94,
+                "y": 1471,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_6",
+                "name": "Foto #6",
+                "x": 894,
+                "y": 1471,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            }
+        ],
+        "items": [
+            {
+                "id": "item_1",
+                "name": "Item 1 (Ketupat)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_1.png",
+                "slot": 1,
+                "width": 1900,
+                "height": 2500,
+                "size": 2500,
+                "x": 222,
+                "y": 2770
+            },
+            {
+                "id": "item_2",
+                "name": "Item 2 (Lampu)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_2.png",
+                "slot": 2,
+                "width": 1800,
+                "height": 2500,
+                "size": 2500,
+                "x": 1016,
+                "y": 1228
+            },
+            {
+                "id": "item_3",
+                "name": "Item 3 (Stiker)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_3.png",
+                "slot": 5,
+                "width": 1820,
+                "height": 2560,
+                "size": 2560,
+                "x": 260,
+                "y": 800
+            },
+            {
+                "id": "item_1788584687487_925",
+                "name": "Item 4 (Stiker)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_1788584687487_925.png",
+                "slot": 3,
+                "width": 1900,
+                "height": 2400,
+                "size": 2400,
+                "x": 192,
+                "y": 2200
+            },
+            {
+                "id": "item_1788584793183_32",
+                "name": "Item 5 (Stiker)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_1788584793183_32.png",
+                "slot": 4,
+                "width": 2000,
+                "height": 2600,
+                "size": 2600,
+                "x": 880,
+                "y": 897
+            }
+        ],
+        "ketupat": "uploads\/templates\/6a9ba8c8a3621\/item_1.png",
+        "lampu": "uploads\/templates\/6a9ba8c8a3621\/item_2.png",
+        "rama": "uploads\/templates\/6a9ba8c8a3621\/item_3.png",
+        "overlayMode": false,
+        "active": false,
+        "layout": {
+            "ketupat": {
+                "x": 222,
+                "y": 2770,
+                "size": 2500
+            },
+            "lampu": {
+                "x": 1016,
+                "y": 1228,
+                "size": 2500
+            },
+            "rama": {
+                "x": 260,
+                "y": 800,
+                "size": 2560
+            }
+        }
+    },
+    {
+        "id": "6a9c0a9d1cf30",
+        "name": "bunga bunga",
+        "sizeType": "a5_6grid",
+        "outer": "",
+        "photoSlots": [
+            {
+                "id": "slot_1",
+                "name": "Foto #1",
+                "x": 94,
+                "y": 637,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_2",
+                "name": "Foto #2",
+                "x": 894,
+                "y": 637,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_3",
+                "name": "Foto #3",
+                "x": 94,
+                "y": 1054,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_4",
+                "name": "Foto #4",
+                "x": 894,
+                "y": 1054,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_5",
+                "name": "Foto #5",
+                "x": 94,
+                "y": 1471,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_6",
+                "name": "Foto #6",
+                "x": 894,
+                "y": 1471,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            }
+        ],
+        "items": [
+            {
+                "id": "item_1",
+                "name": "Item 1 (Ketupat)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_1.png",
+                "slot": 1,
+                "width": 1900,
+                "height": 2500,
+                "size": 2500,
+                "x": 222,
+                "y": 2770
+            },
+            {
+                "id": "item_2",
+                "name": "Item 2 (Lampu)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_2.png",
+                "slot": 2,
+                "width": 1800,
+                "height": 2500,
+                "size": 2500,
+                "x": 1016,
+                "y": 1228
+            },
+            {
+                "id": "item_3",
+                "name": "Item 3 (Stiker)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_3.png",
+                "slot": 5,
+                "width": 1820,
+                "height": 2560,
+                "size": 2560,
+                "x": 260,
+                "y": 800
+            },
+            {
+                "id": "item_1788584687487_925",
+                "name": "Item 4 (Stiker)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_1788584687487_925.png",
+                "slot": 3,
+                "width": 1900,
+                "height": 2400,
+                "size": 2400,
+                "x": 192,
+                "y": 2200
+            },
+            {
+                "id": "item_1788584793183_32",
+                "name": "Item 5 (Stiker)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_1788584793183_32.png",
+                "slot": 4,
+                "width": 2000,
+                "height": 2600,
+                "size": 2600,
+                "x": 880,
+                "y": 897
+            }
+        ],
+        "ketupat": "uploads\/templates\/6a9ba8c8a3621\/item_1.png",
+        "lampu": "uploads\/templates\/6a9ba8c8a3621\/item_2.png",
+        "rama": "uploads\/templates\/6a9ba8c8a3621\/item_3.png",
+        "overlayMode": false,
+        "active": true,
+        "layout": {
+            "ketupat": {
+                "x": 222,
+                "y": 2770,
+                "size": 2500
+            },
+            "lampu": {
+                "x": 1016,
+                "y": 1228,
+                "size": 2500
+            },
+            "rama": {
+                "x": 260,
+                "y": 800,
+                "size": 2560
+            }
+        }
+    },
+    {
+        "id": "6a9c0aa1bae3b",
+        "name": "bunga bunga",
+        "sizeType": "a5_6grid",
+        "outer": "",
+        "photoSlots": [
+            {
+                "id": "slot_1",
+                "name": "Foto #1",
+                "x": 94,
+                "y": 637,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_2",
+                "name": "Foto #2",
+                "x": 894,
+                "y": 637,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_3",
+                "name": "Foto #3",
+                "x": 94,
+                "y": 1054,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_4",
+                "name": "Foto #4",
+                "x": 894,
+                "y": 1054,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_5",
+                "name": "Foto #5",
+                "x": 94,
+                "y": 1471,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            },
+            {
+                "id": "slot_6",
+                "name": "Foto #6",
+                "x": 894,
+                "y": 1471,
+                "width": 760,
+                "height": 372,
+                "radius": 20
+            }
+        ],
+        "items": [
+            {
+                "id": "item_1",
+                "name": "Item 1 (Ketupat)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_1.png",
+                "slot": 1,
+                "width": 1900,
+                "height": 2500,
+                "size": 2500,
+                "x": 222,
+                "y": 2770
+            },
+            {
+                "id": "item_2",
+                "name": "Item 2 (Lampu)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_2.png",
+                "slot": 2,
+                "width": 1800,
+                "height": 2500,
+                "size": 2500,
+                "x": 1016,
+                "y": 1228
+            },
+            {
+                "id": "item_3",
+                "name": "Item 3 (Stiker)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_3.png",
+                "slot": 5,
+                "width": 1820,
+                "height": 2560,
+                "size": 2560,
+                "x": 260,
+                "y": 800
+            },
+            {
+                "id": "item_1788584687487_925",
+                "name": "Item 4 (Stiker)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_1788584687487_925.png",
+                "slot": 3,
+                "width": 1900,
+                "height": 2400,
+                "size": 2400,
+                "x": 192,
+                "y": 2200
+            },
+            {
+                "id": "item_1788584793183_32",
+                "name": "Item 5 (Stiker)",
+                "src": "uploads\/templates\/6a9ba8c8a3621\/item_1788584793183_32.png",
+                "slot": 4,
+                "width": 2000,
+                "height": 2600,
+                "size": 2600,
+                "x": 880,
+                "y": 897
+            }
+        ],
+        "ketupat": "uploads\/templates\/6a9ba8c8a3621\/item_1.png",
+        "lampu": "uploads\/templates\/6a9ba8c8a3621\/item_2.png",
+        "rama": "uploads\/templates\/6a9ba8c8a3621\/item_3.png",
+        "overlayMode": false,
+        "active": true,
+        "layout": {
+            "ketupat": {
+                "x": 222,
+                "y": 2770,
+                "size": 2500
+            },
+            "lampu": {
+                "x": 1016,
+                "y": 1228,
+                "size": 2500
+            },
+            "rama": {
+                "x": 260,
+                "y": 800,
+                "size": 2560
             }
         }
     }
