@@ -883,7 +883,121 @@ async function renderStripCanvas(stripCanvas) {
     const ctx = stripCanvas.getContext('2d');
     const template = availableTemplates.find(t => t.id === selectedTemplateId);
     
-    // Check if 6 Photos Grid Mode on A5
+    // Check if template has custom rectangular Photo Slots defined
+    if (template && template.photoSlots && Array.isArray(template.photoSlots) && template.photoSlots.length > 0) {
+        const isA5 = (template.sizeType || 'a5').includes('a5') || (template.sizeType || '').includes('4r');
+        stripCanvas.width = isA5 ? 1748 : 1080;
+        stripCanvas.height = isA5 ? 2480 : 1920;
+
+        // 1. Draw Background (if not overlay mode)
+        if (!overlayMode) {
+            let bgSource = './gambar/background.png';
+            if (template && template.outer) bgSource = template.outer;
+            const bgImg = await loadCachedImage(bgSource);
+            if (bgImg) {
+                ctx.drawImage(bgImg, 0, 0, stripCanvas.width, stripCanvas.height);
+            } else {
+                ctx.fillStyle = '#FFFDF5';
+                ctx.fillRect(0, 0, stripCanvas.width, stripCanvas.height);
+            }
+        } else {
+            ctx.fillStyle = '#FFFDF5';
+            ctx.fillRect(0, 0, stripCanvas.width, stripCanvas.height);
+        }
+
+        // 2. Draw user photos in each custom rectangular photo slot
+        const validCaptured = capturedPhotos.filter(Boolean);
+        for (let sIdx = 0; sIdx < template.photoSlots.length; sIdx++) {
+            const slot = template.photoSlots[sIdx];
+            if (!slot) continue;
+
+            const chosenPoolIdx = (studioLayoutMode === '6-grid' ? selected6Photos[sIdx] : selectedStripPhotos[sIdx]);
+            let photoUrl = capturedPhotos[chosenPoolIdx];
+            if (!photoUrl && validCaptured.length > 0) {
+                photoUrl = validCaptured[sIdx % validCaptured.length];
+            }
+
+            if (photoUrl) {
+                const img = await loadCachedImage(photoUrl);
+                if (img) {
+                    const sx = parseInt(slot.x) || 0;
+                    const sy = parseInt(slot.y) || 0;
+                    const sw = parseInt(slot.width) || 760;
+                    const sh = parseInt(slot.height) || 372;
+                    const sRadius = parseInt(slot.radius !== undefined ? slot.radius : 20);
+
+                    ctx.save();
+                    ctx.beginPath();
+                    if (ctx.roundRect) ctx.roundRect(sx, sy, sw, sh, sRadius);
+                    else ctx.rect(sx, sy, sw, sh);
+                    ctx.clip();
+                    
+                    // Cover-fit the captured photo into the rectangular slot
+                    const imgAspect = img.width / img.height;
+                    const slotAspect = sw / sh;
+                    let drawW = sw;
+                    let drawH = sh;
+                    let drawX = sx;
+                    let drawY = sy;
+
+                    if (imgAspect > slotAspect) {
+                        drawW = sh * imgAspect;
+                        drawX = sx - (drawW - sw) / 2;
+                    } else {
+                        drawH = sw / imgAspect;
+                        drawY = sy - (drawH - sh) / 2;
+                    }
+
+                    ctx.drawImage(img, drawX, drawY, drawW, drawH);
+                    ctx.restore();
+
+                    // Golden frame border
+                    ctx.strokeStyle = '#D4AF37';
+                    ctx.lineWidth = 6;
+                    ctx.beginPath();
+                    if (ctx.roundRect) ctx.roundRect(sx, sy, sw, sh, sRadius);
+                    else ctx.rect(sx, sy, sw, sh);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // 3. Draw Dynamic Sticker Items
+        if (template.items && Array.isArray(template.items) && template.items.length > 0) {
+            for (const itm of template.items) {
+                if (!itm || !itm.src) continue;
+                const itmImg = await loadCachedImage(itm.src);
+                if (itmImg) {
+                    const itmW = parseInt(itm.width) || parseInt(itm.size) || 300;
+                    const itmH = parseInt(itm.height) || parseInt(itm.size) || 300;
+                    const refSlotIdx = parseInt(itm.slot) || 0;
+                    const refSlot = template.photoSlots[refSlotIdx] || template.photoSlots[0];
+                    let baseX = refSlot ? refSlot.x : 0;
+                    let baseY = refSlot ? refSlot.y : 0;
+                    let baseW = refSlot ? refSlot.width : stripCanvas.width;
+                    let baseH = refSlot ? refSlot.height : stripCanvas.height;
+
+                    const x = baseX + baseW - itmW + (parseInt(itm.x) || 0);
+                    const y = baseY + baseH - itmH + (parseInt(itm.y) || 0);
+                    ctx.drawImage(itmImg, x, y, itmW, itmH);
+                }
+            }
+        }
+
+        // 4. Draw Overlay Theme (if overlayMode)
+        if (overlayMode && template.outer) {
+            const overlayImg = await loadCachedImage(template.outer);
+            if (overlayImg) {
+                ctx.drawImage(overlayImg, 0, 0, stripCanvas.width, stripCanvas.height);
+            }
+        }
+
+        // 5. Corner Decoration
+        await drawDecorations(ctx, stripCanvas.width, stripCanvas.height);
+        return;
+    }
+
+    // Fallback: Check if 6 Photos Grid Mode on A5
     if (studioLayoutMode === '6-grid') {
         // A5 Resolution (1748 x 2480 at 300 DPI)
         stripCanvas.width = 1748;

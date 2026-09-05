@@ -206,11 +206,45 @@ if ($action === 'upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
+    // Process Dynamic Photo Slots List (Tempat Foto Persegi Panjang)
+    $photoSlots = [];
+    $rawSlotsJson = $_POST['photo_slots_json'] ?? '';
+    if (!empty($rawSlotsJson)) {
+        $parsedSlots = json_decode($rawSlotsJson, true);
+        if (is_array($parsedSlots)) {
+            foreach ($parsedSlots as $sIdx => $slotData) {
+                $slotId = !empty($slotData['id']) ? preg_replace('/[^a-zA-Z0-9_-]/', '', $slotData['id']) : ('slot_' . ($sIdx + 1) . '_' . uniqid());
+                $slotName = trim($slotData['name'] ?? ('Foto #' . ($sIdx + 1)));
+                $slotX = (int)($slotData['x'] ?? 0);
+                $slotY = (int)($slotData['y'] ?? 0);
+                $slotW = max(50, (int)($slotData['width'] ?? 760));
+                $slotH = max(50, (int)($slotData['height'] ?? 372));
+                
+                // Enforce rectangular rule: Width != Height
+                if ($slotW === $slotH) {
+                    $slotH = (int)round($slotW * 0.55); // Default to landscape rectangle if square was sent
+                }
+                $slotRadius = (int)($slotData['radius'] ?? 20);
+
+                $photoSlots[] = [
+                    'id' => $slotId,
+                    'name' => $slotName,
+                    'x' => $slotX,
+                    'y' => $slotY,
+                    'width' => $slotW,
+                    'height' => $slotH,
+                    'radius' => $slotRadius
+                ];
+            }
+        }
+    }
+
     $newTemplate = [
         'id' => $id,
         'name' => $name,
         'sizeType' => $_POST['sizeType'] ?? 'a5_6grid',
         'outer' => $outerPath,
+        'photoSlots' => $photoSlots,
         'items' => $items,
         'ketupat' => $items[0]['src'] ?? $ketupatPath,
         'lampu' => $items[1]['src'] ?? $lampuPath,

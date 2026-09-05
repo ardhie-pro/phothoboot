@@ -353,6 +353,47 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                                 </div>
                             </div>
 
+                            <!-- DYNAMIC PHOTO SLOTS CONTAINER (TEMPAT FOTO PERSEGI PANJANG) -->
+                            <div class="space-y-4 bg-amber-50/40 p-5 rounded-3xl border border-amber-200/80 shadow-sm">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-amber-200/60">
+                                    <div>
+                                        <h3 class="font-bold text-sm text-[#1B4332] flex items-center gap-2">
+                                            <span>📸</span> Daftar Tempat / Slot Foto (Wajib Persegi Panjang)
+                                        </h3>
+                                        <p class="text-[11px] text-amber-900/70">Bisa ditambah 1, 2, 3, 4, 6, atau lebih banyak slot foto. Tiap tempat foto <strong>wajib berbentuk persegi panjang</strong> (panjang &ne; lebar) dan bisa digeser/diatur langsung di monitor!</p>
+                                    </div>
+                                    <div class="flex items-center gap-2 shrink-0">
+                                        <button type="button" onclick="addNewPhotoSlot()" class="py-2 px-3.5 bg-amber-500 hover:bg-amber-400 text-stone-950 font-black rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer">
+                                            <span class="text-base leading-none">+</span> Tambah Tempat Foto
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Quick Presets Toolbar for Photo Slots -->
+                                <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+                                    <span class="text-[10px] font-bold text-amber-900/80 uppercase tracking-wider shrink-0 mr-1">📐 Preset Cepat:</span>
+                                    <button type="button" onclick="applySlotPreset('a5_6grid')" class="px-2.5 py-1 bg-white hover:bg-amber-100 text-amber-900 font-bold rounded-lg border border-amber-300 transition-all shrink-0 active:scale-95 text-[11px]">
+                                        📸 6 Foto Grid (2x3)
+                                    </button>
+                                    <button type="button" onclick="applySlotPreset('a5_3strip')" class="px-2.5 py-1 bg-white hover:bg-amber-100 text-amber-900 font-bold rounded-lg border border-amber-300 transition-all shrink-0 active:scale-95 text-[11px]">
+                                        📄 3 Foto Strip
+                                    </button>
+                                    <button type="button" onclick="applySlotPreset('a5_4grid')" class="px-2.5 py-1 bg-white hover:bg-amber-100 text-amber-900 font-bold rounded-lg border border-amber-300 transition-all shrink-0 active:scale-95 text-[11px]">
+                                        🖼️ 4 Foto Grid (2x2)
+                                    </button>
+                                    <button type="button" onclick="applySlotPreset('a5_2landscape')" class="px-2.5 py-1 bg-white hover:bg-amber-100 text-amber-900 font-bold rounded-lg border border-amber-300 transition-all shrink-0 active:scale-95 text-[11px]">
+                                        🎞️ 2 Foto Landscape
+                                    </button>
+                                    <button type="button" onclick="applySlotPreset('a5_1single')" class="px-2.5 py-1 bg-white hover:bg-amber-100 text-amber-900 font-bold rounded-lg border border-amber-300 transition-all shrink-0 active:scale-95 text-[11px]">
+                                        🌟 1 Foto Besar
+                                    </button>
+                                </div>
+
+                                <div id="dynamic-slots-container" class="space-y-4">
+                                    <!-- Dynamic Photo Slots rendered dynamically by JS -->
+                                </div>
+                            </div>
+
                             <!-- DYNAMIC MULTI-ITEM ORNAMENTS CONTAINER -->
                             <div class="space-y-4">
                                 <div class="flex items-center justify-between pb-2 border-b border-gray-100">
@@ -409,18 +450,83 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                         <!-- Rendered by JS -->
                     </div>
 
-                    <div class="relative bg-white rounded-[3rem] p-4 shadow-2xl border-8 border-gray-100 overflow-hidden aspect-[9/16] w-full max-w-[350px] mx-auto select-none touch-none">
+                    <!-- Multi-Selection & Productivity Quick Toolbar (Undo/Redo/Copy/Paste/Nudge) -->
+                    <div class="space-y-1.5 p-2.5 bg-amber-500/10 rounded-2xl border border-amber-300/40 text-xs shadow-sm">
+                        <!-- Row 1: Undo, Redo, Copy, Paste, Duplicate, Delete -->
+                        <div class="flex flex-wrap items-center justify-between gap-1.5 pb-1.5 border-b border-amber-300/30">
+                            <div class="flex items-center gap-1">
+                                <button type="button" id="btn-undo" onclick="undo()" class="px-2 py-1 bg-white hover:bg-amber-100 text-stone-800 font-bold rounded-lg border border-amber-300 shadow-sm text-[11px] transition-all active:scale-95 flex items-center gap-1" title="Undo / Kembalikan (Ctrl+Z)">
+                                    <span>↩️</span> Undo
+                                </button>
+                                <button type="button" id="btn-redo" onclick="redo()" class="px-2 py-1 bg-white hover:bg-amber-100 text-stone-800 font-bold rounded-lg border border-amber-300 shadow-sm text-[11px] transition-all active:scale-95 flex items-center gap-1" title="Redo / Ulangi (Ctrl+Y)">
+                                    <span>↪️</span> Redo
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <button type="button" onclick="copySelected()" class="px-2 py-1 bg-white hover:bg-amber-100 text-stone-800 font-bold rounded-lg border border-amber-300 shadow-sm text-[11px] transition-all active:scale-95" title="Copy Objek Terpilih (Ctrl+C)">
+                                    📋 Copy
+                                </button>
+                                <button type="button" onclick="pasteCopied()" class="px-2 py-1 bg-white hover:bg-amber-100 text-stone-800 font-bold rounded-lg border border-amber-300 shadow-sm text-[11px] transition-all active:scale-95" title="Paste / Tempel Objek (Ctrl+V)">
+                                    📥 Paste
+                                </button>
+                                <button type="button" onclick="duplicateSelected()" class="px-2 py-1 bg-amber-400 hover:bg-amber-300 text-stone-950 font-black rounded-lg border border-amber-500 shadow-sm text-[11px] transition-all active:scale-95" title="Duplikat Cepat (Ctrl+D)">
+                                    📑 Duplikat
+                                </button>
+                                <button type="button" onclick="deleteSelected()" class="px-2 py-1 bg-rose-100 hover:bg-rose-200 text-rose-800 font-bold rounded-lg border border-rose-300 shadow-sm text-[11px] transition-all active:scale-95" title="Hapus Objek Terpilih (Delete)">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Select All, Clear, & Nudge Arrows -->
+                        <div class="flex flex-wrap items-center justify-between gap-1.5 pt-0.5">
+                            <div class="flex items-center gap-1">
+                                <button type="button" onclick="selectAllTargets()" class="px-2 py-1 bg-white hover:bg-amber-100 text-stone-900 font-bold rounded-lg border border-amber-300 shadow-sm text-[11px] transition-all active:scale-95 flex items-center gap-1" title="Pilih Semua (Ctrl+A)">
+                                    <span>🎯</span> Semua
+                                </button>
+                                <button type="button" onclick="clearSelection()" class="px-2 py-1 bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold rounded-lg text-[11px] transition-all" title="Batal Seleksi (Esc)">
+                                    🧹 Batal
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="text-[10px] font-bold text-amber-900/80 mr-0.5">Geser:</span>
+                                <button type="button" onclick="nudgeSelectedTargets(0, -30)" class="px-2 py-1 bg-white hover:bg-amber-100 text-stone-800 font-bold rounded-lg border border-amber-300 shadow-sm text-[11px] active:scale-95" title="Geser ke Atas (↑)">⬆️</button>
+                                <button type="button" onclick="nudgeSelectedTargets(0, 30)" class="px-2 py-1 bg-white hover:bg-amber-100 text-stone-800 font-bold rounded-lg border border-amber-300 shadow-sm text-[11px] active:scale-95" title="Geser ke Bawah (↓)">⬇️</button>
+                                <button type="button" onclick="nudgeSelectedTargets(-30, 0)" class="px-2 py-1 bg-white hover:bg-amber-100 text-stone-800 font-bold rounded-lg border border-amber-300 shadow-sm text-[11px] active:scale-95" title="Geser ke Kiri (←)">⬅️</button>
+                                <button type="button" onclick="nudgeSelectedTargets(30, 0)" class="px-2 py-1 bg-white hover:bg-amber-100 text-stone-800 font-bold rounded-lg border border-amber-300 shadow-sm text-[11px] active:scale-95" title="Geser ke Kanan (→)">➡️</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="canvas-dropzone-container" class="relative bg-white rounded-[3rem] p-4 shadow-2xl border-8 border-gray-100 overflow-hidden aspect-[9/16] w-full max-w-[350px] mx-auto select-none touch-none transition-all">
                         <canvas id="preview-canvas" width="1080" height="1920" class="w-full h-full object-contain rounded-[2rem] bg-[#FFFDF5] cursor-grab"></canvas>
                         <div class="absolute inset-0 pointer-events-none border-[12px] border-white/50 rounded-[2.5rem]"></div>
+                        
+                        <!-- Drag and Drop Overlay Indicator -->
+                        <div id="canvas-drop-overlay" class="absolute inset-3 bg-emerald-950/90 backdrop-blur-md rounded-[2.2rem] border-4 border-dashed border-emerald-400 flex flex-col items-center justify-center text-center p-6 transition-all duration-200 opacity-0 pointer-events-none z-30 scale-95 shadow-2xl">
+                            <div class="w-16 h-16 rounded-3xl bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 flex items-center justify-center text-3xl mb-3 animate-bounce shadow-lg">
+                                📥
+                            </div>
+                            <h4 class="text-white font-extrabold text-sm md:text-base tracking-wide">Lepaskan Gambar di Sini</h4>
+                            <p class="text-emerald-200 text-xs mt-1 max-w-[220px]">Item / Stiker baru akan otomatis diletakkan tepat di posisi kursor drop!</p>
+                            <span class="mt-3 px-3 py-1 bg-emerald-400 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider shadow">
+                                ✨ Rasio Asli Terjaga
+                            </span>
+                        </div>
                     </div>
 
                     <div class="bg-[#1B4332] text-[#FFFDF5] p-4 rounded-2xl text-xs space-y-1.5 shadow-md">
                         <div class="flex items-center justify-between border-b border-white/20 pb-1.5 mb-1.5 font-bold">
-                            <span>🖐️ CARA GESER &amp; UBAH UKURAN</span>
+                            <span>⌨️ SHORTCUT DESAIN LENGKAP</span>
                             <span id="drag-coord-status" class="font-mono text-[11px] text-amber-300">Siap</span>
                         </div>
-                        <p>• <strong>Geser Posisi</strong>: Klik / sentuh tengah item lalu geser ke posisi yang diinginkan.</p>
-                        <p>• <strong>Ubah Ukuran (Lebar &amp; Panjang)</strong>: Tarik <strong>titik sudut kanan-bawah</strong> kotak item di monitor, atau isi angka <strong>Lebar</strong> &amp; <strong>Panjang</strong> pada form di sebelah kiri.</p>
+                        <p>• <strong>📥 Drag &amp; Drop File</strong> : Tarik file gambar (PNG/JPG/WEBP) dari laptop/PC langsung ke monitor untuk tambah item otomatis!</p>
+                        <p>• <strong>Ctrl + Z</strong> / <strong>Ctrl + Y</strong> : Undo &amp; Redo riwayat perubahan.</p>
+                        <p>• <strong>Ctrl + C</strong> / <strong>Ctrl + V</strong> : Salin (Copy) &amp; Tempel (Paste) objek terpilih.</p>
+                        <p>• <strong>Ctrl + D</strong> : Duplikat cepat objek terpilih di tempat.</p>
+                        <p>• <strong>Delete / Backspace</strong> : Hapus objek yang sedang dipilih.</p>
+                        <p>• <strong>Kotak Seleksi (Marquee)</strong> : Klik area kosong canvas &amp; seret kursor untuk seleksi banyak.</p>
+                        <p>• <strong>Tombol Panah (↑ ↓ ← →)</strong> : Geser presisi 10px (atau 50px jika tahan Shift).</p>
                     </div>
                 </div>
             </div>
@@ -974,13 +1080,23 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             }
         }
 
-        // ================= DYNAMIC MULTI-ITEM TEMPLATE LOGIC =================
+        // ================= DYNAMIC MULTI-SLOT (PHOTO) & MULTI-ITEM TEMPLATE LOGIC =================
         const form = document.getElementById('upload-form');
         const list = document.getElementById('template-list');
         const canvas = document.getElementById('preview-canvas');
         const ctx = canvas.getContext('2d');
 
-        // Dynamic items array with width & height (lebar & panjang)
+        // Dynamic Photo Slots (Tempat Foto Persegi Panjang)
+        let photoSlots = [
+            { id: 'slot_1', name: 'Foto #1', x: 94, y: 300, width: 760, height: 372, radius: 20 },
+            { id: 'slot_2', name: 'Foto #2', x: 894, y: 300, width: 760, height: 372, radius: 20 },
+            { id: 'slot_3', name: 'Foto #3', x: 94, y: 717, width: 760, height: 372, radius: 20 },
+            { id: 'slot_4', name: 'Foto #4', x: 894, y: 717, width: 760, height: 372, radius: 20 },
+            { id: 'slot_5', name: 'Foto #5', x: 94, y: 1134, width: 760, height: 372, radius: 20 },
+            { id: 'slot_6', name: 'Foto #6', x: 894, y: 1134, width: 760, height: 372, radius: 20 }
+        ];
+
+        // Dynamic Items array with width & height (Stiker / Hiasan)
         let templateItems = [
             { id: 'item_1', name: 'Item 1 (Ketupat)', src: './gambar/ketupat.webp', width: 350, height: 350, size: 350, x: 120, y: 150, slot: 1 },
             { id: 'item_2', name: 'Item 2 (Lampu)', src: './gambar/lampu.webp', width: 300, height: 300, size: 300, x: -100, y: 140, slot: 2 },
@@ -1004,24 +1120,740 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
         // Preview Outer background image
         let outerPreviewImage = null;
 
-        // Drag & Resize State Variables
+        // Selection & Drag State Variables (Multi-Selection + Marquee Support)
+        let selectedTargets = [{ type: 'slot', id: 'slot_1' }]; // Array of { type: 'slot'|'item', id: string }
+        let selectedTarget = { type: 'slot', id: 'slot_1' }; // Primary active target
+        let slotBounds = {};
         let itemBounds = {};
-        let activeDraggedId = null;
-        let dragMode = null; // 'move' or 'resize'
-        let selectedItemId = null;
-        let hoveredItemId = null;
-        let hoveredResize = false;
+        let activeDraggedTarget = null; // { type: 'slot'|'item', id: '...' }
+        let dragMode = null; // 'move' | 'resize' | 'marquee'
+        let hoveredTarget = null;
         let dragStartMouseX = 0;
         let dragStartMouseY = 0;
         let dragInitialX = 0;
         let dragInitialY = 0;
-        let dragInitialW = 300;
-        let dragInitialH = 300;
+        let dragInitialW = 760;
+        let dragInitialH = 372;
+        let marqueeStart = { x: 0, y: 0 };
+        let marqueeEnd = { x: 0, y: 0 };
+        let dragInitialPositions = {}; // id -> { x, y, itmXOff, itmYOff, type }
 
-        // Render Dynamic Item Cards in Form with Width & Height controls
+        // Rectangle Verification Helper: W != H
+        function isRectangle(w, h) {
+            return Math.abs(w - h) >= 10;
+        }
+
+        function getRectangleTypeLabel(w, h) {
+            if (!isRectangle(w, h)) return '⚠️ Bukan Persegi Panjang (Bujursangkar)';
+            const ratio = (w / h).toFixed(2);
+            if (w > h) {
+                return `✅ Persegi Panjang Landscape (Rasio ${ratio}:1)`;
+            } else {
+                return `✅ Persegi Panjang Portrait (Rasio 1:${(h/w).toFixed(2)})`;
+            }
+        }
+
+        function isTargetSelected(type, id) {
+            return selectedTargets.some(t => t.type === type && t.id === id);
+        }
+
+        // ================= HISTORY (UNDO / REDO) & CLIPBOARD (COPY / PASTE / DUPLICATE / CUT) =================
+        const undoStack = [];
+        const redoStack = [];
+        const MAX_HISTORY = 40;
+        let clipboard = [];
+
+        function saveHistoryState(actionLabel = 'Perubahan') {
+            try {
+                const snapshot = {
+                    photoSlots: JSON.parse(JSON.stringify(photoSlots)),
+                    templateItems: JSON.parse(JSON.stringify(templateItems)),
+                    selectedTargets: JSON.parse(JSON.stringify(selectedTargets)),
+                    actionLabel: actionLabel
+                };
+                undoStack.push(snapshot);
+                if (undoStack.length > MAX_HISTORY) undoStack.shift();
+                redoStack.length = 0; // Clear redo on fresh action
+                updateUndoRedoUI();
+            } catch (err) {
+                console.error("History snapshot error:", err);
+            }
+        }
+
+        function updateUndoRedoUI() {
+            const btnUndo = document.getElementById('btn-undo');
+            const btnRedo = document.getElementById('btn-redo');
+            if (btnUndo) {
+                btnUndo.disabled = undoStack.length === 0;
+                btnUndo.classList.toggle('opacity-40', undoStack.length === 0);
+                btnUndo.classList.toggle('cursor-not-allowed', undoStack.length === 0);
+            }
+            if (btnRedo) {
+                btnRedo.disabled = redoStack.length === 0;
+                btnRedo.classList.toggle('opacity-40', redoStack.length === 0);
+                btnRedo.classList.toggle('cursor-not-allowed', redoStack.length === 0);
+            }
+        }
+
+        function undo() {
+            if (undoStack.length === 0) return;
+            try {
+                const current = {
+                    photoSlots: JSON.parse(JSON.stringify(photoSlots)),
+                    templateItems: JSON.parse(JSON.stringify(templateItems)),
+                    selectedTargets: JSON.parse(JSON.stringify(selectedTargets)),
+                    actionLabel: 'Sebelum Undo'
+                };
+                redoStack.push(current);
+
+                const prev = undoStack.pop();
+                photoSlots = prev.photoSlots || [];
+                templateItems = prev.templateItems || [];
+                selectedTargets = prev.selectedTargets || [];
+                selectedTarget = selectedTargets[0] || { type: 'none', id: null };
+
+                renderPhotoSlots();
+                renderTemplateItems();
+                updateLivePreview();
+                updateUndoRedoUI();
+
+                const statusEl = document.getElementById('drag-coord-status');
+                if (statusEl) statusEl.textContent = `↩️ Undo: ${prev.actionLabel || 'Kembali'}`;
+            } catch (err) {
+                console.error("Undo error:", err);
+            }
+        }
+
+        function redo() {
+            if (redoStack.length === 0) return;
+            try {
+                const current = {
+                    photoSlots: JSON.parse(JSON.stringify(photoSlots)),
+                    templateItems: JSON.parse(JSON.stringify(templateItems)),
+                    selectedTargets: JSON.parse(JSON.stringify(selectedTargets)),
+                    actionLabel: 'Sebelum Redo'
+                };
+                undoStack.push(current);
+
+                const next = redoStack.pop();
+                photoSlots = next.photoSlots || [];
+                templateItems = next.templateItems || [];
+                selectedTargets = next.selectedTargets || [];
+                selectedTarget = selectedTargets[0] || { type: 'none', id: null };
+
+                renderPhotoSlots();
+                renderTemplateItems();
+                updateLivePreview();
+                updateUndoRedoUI();
+
+                const statusEl = document.getElementById('drag-coord-status');
+                if (statusEl) statusEl.textContent = `↪️ Redo: Mengulangi perubahan`;
+            } catch (err) {
+                console.error("Redo error:", err);
+            }
+        }
+
+        function copySelected() {
+            if (selectedTargets.length === 0) return;
+            clipboard = [];
+            selectedTargets.forEach(tgt => {
+                if (tgt.type === 'slot') {
+                    const slot = photoSlots.find(s => s.id === tgt.id);
+                    if (slot) clipboard.push({ type: 'slot', data: JSON.parse(JSON.stringify(slot)) });
+                } else {
+                    const itm = templateItems.find(i => i.id === tgt.id);
+                    if (itm) clipboard.push({ type: 'item', data: JSON.parse(JSON.stringify(itm)) });
+                }
+            });
+
+            const statusEl = document.getElementById('drag-coord-status');
+            if (statusEl) statusEl.textContent = `📋 ${clipboard.length} objek disalin (Ctrl+C)`;
+        }
+
+        function pasteCopied() {
+            if (clipboard.length === 0) return;
+            saveHistoryState('Paste Objek');
+
+            const newSelected = [];
+            const offset = 40;
+
+            clipboard.forEach(entry => {
+                if (entry.type === 'slot') {
+                    const nextNum = photoSlots.length + 1;
+                    const newSlot = {
+                        ...JSON.parse(JSON.stringify(entry.data)),
+                        id: 'slot_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+                        name: (entry.data.name || 'Foto') + ' (Salinan)',
+                        x: (parseInt(entry.data.x) || 0) + offset,
+                        y: (parseInt(entry.data.y) || 0) + offset
+                    };
+                    photoSlots.push(newSlot);
+                    newSelected.push({ type: 'slot', id: newSlot.id });
+                } else {
+                    const nextNum = templateItems.length + 1;
+                    const newItem = {
+                        ...JSON.parse(JSON.stringify(entry.data)),
+                        id: 'item_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+                        name: (entry.data.name || 'Item') + ' (Salinan)',
+                        x: (parseInt(entry.data.x) || 0) + offset,
+                        y: (parseInt(entry.data.y) || 0) + offset
+                    };
+                    templateItems.push(newItem);
+                    newSelected.push({ type: 'item', id: newItem.id });
+                }
+            });
+
+            selectedTargets = newSelected;
+            selectedTarget = selectedTargets[0] || { type: 'none', id: null };
+
+            renderPhotoSlots();
+            renderTemplateItems();
+            updateLivePreview();
+
+            const statusEl = document.getElementById('drag-coord-status');
+            if (statusEl) statusEl.textContent = `📋 ${newSelected.length} objek berhasil ditempel (Ctrl+V)`;
+        }
+
+        function duplicateSelected() {
+            if (selectedTargets.length === 0) return;
+            copySelected();
+            pasteCopied();
+        }
+
+        function deleteSelected() {
+            if (selectedTargets.length === 0) return;
+            saveHistoryState('Hapus Objek');
+
+            const slotIdsToDelete = new Set(selectedTargets.filter(t => t.type === 'slot').map(t => t.id));
+            const itemIdsToDelete = new Set(selectedTargets.filter(t => t.type === 'item').map(t => t.id));
+
+            photoSlots = photoSlots.filter(s => !slotIdsToDelete.has(s.id));
+            templateItems = templateItems.filter(i => !itemIdsToDelete.has(i.id));
+            
+            selectedTargets = [];
+            selectedTarget = { type: 'none', id: null };
+
+            renderPhotoSlots();
+            renderTemplateItems();
+            updateLivePreview();
+
+            const statusEl = document.getElementById('drag-coord-status');
+            if (statusEl) statusEl.textContent = `🗑️ Objek terpilih dihapus (Delete)`;
+        }
+
+        function cutSelected() {
+            if (selectedTargets.length === 0) return;
+            copySelected();
+            deleteSelected();
+            const statusEl = document.getElementById('drag-coord-status');
+            if (statusEl) statusEl.textContent = `✂️ Objek dipotong (Ctrl+X)`;
+        }
+
+        // ================= RENDER PHOTO SLOTS =================
+        function renderPhotoSlots() {
+            const container = document.getElementById('dynamic-slots-container');
+            if (!container) return;
+
+            if (photoSlots.length === 0) {
+                container.innerHTML = `
+                    <div class="p-6 bg-white rounded-2xl border-2 border-dashed border-amber-300 text-center text-amber-800 text-xs">
+                        <p class="font-bold">Belum ada tempat foto yang ditambahkan.</p>
+                        <p class="text-[11px] text-stone-500 mt-0.5">Template membutuhkan minimal 1 tempat foto (bisa ditambah 2, 3, 4, 6, dll).</p>
+                        <button type="button" onclick="addNewPhotoSlot()" class="mt-2.5 px-4 py-2 bg-amber-500 text-stone-900 font-bold rounded-xl hover:bg-amber-400 transition-all text-xs shadow-sm">+ Tambah Tempat Foto Pertama</button>
+                    </div>
+                `;
+                renderPreviewButtons();
+                return;
+            }
+
+            container.innerHTML = photoSlots.map((slot, idx) => {
+                const isSelected = isTargetSelected('slot', slot.id);
+                const isRect = isRectangle(slot.width, slot.height);
+                const rectLabel = getRectangleTypeLabel(slot.width, slot.height);
+                const isLocked = slot.lockRatio !== false;
+
+                return `
+                    <div id="card-slot-${slot.id}" class="p-4 bg-white rounded-2xl border transition-all ${isSelected ? 'border-amber-500 ring-2 ring-amber-400/50 bg-amber-50/30 shadow-md' : 'border-amber-200/90 shadow-sm'}">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-gray-100">
+                            <div class="flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-lg bg-amber-400 text-slate-900 font-black text-xs flex items-center justify-center shadow-sm">
+                                    #${idx + 1}
+                                </span>
+                                <input type="text" value="${slot.name || 'Foto #' + (idx + 1)}" onchange="updatePhotoSlotProp('${slot.id}', 'name', this.value)" class="text-xs font-bold text-slate-900 bg-transparent border-b border-gray-300 focus:border-amber-600 outline-none px-1 py-0.5" placeholder="Nama Slot Foto">
+                                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${isRect ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse'}">
+                                    ${rectLabel}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="toggleSlotLockRatio('${slot.id}')" class="text-[11px] font-bold px-2.5 py-1 rounded-xl transition-all flex items-center gap-1 ${isLocked ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-stone-100 text-stone-500 border border-stone-200'}">
+                                    <span>${isLocked ? '🔒' : '🔓'}</span>
+                                    <span>${isLocked ? 'Rasio Terkunci (Anti-Penyet)' : 'Bebas (Tidak Terkunci)'}</span>
+                                </button>
+                                <button type="button" onclick="selectSlotForDrag('${slot.id}', event.shiftKey || event.ctrlKey)" class="text-[11px] font-bold px-3 py-1 rounded-xl transition-all ${isSelected ? 'bg-amber-500 text-stone-950 font-black shadow' : 'bg-stone-100 hover:bg-stone-200 text-stone-700'}">
+                                    ${isSelected ? '🎯 Terpilih' : 'Pilih di Monitor'}
+                                </button>
+                                <button type="button" onclick="removePhotoSlot('${slot.id}')" class="text-xs text-rose-500 hover:text-rose-700 font-bold p-1 hover:bg-rose-50 rounded-lg transition-all" title="Hapus Slot Foto Ini">
+                                    🗑️ Hapus
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 items-end">
+                            <!-- 1. Preset Rasio Persegi Panjang -->
+                            <div class="col-span-2 sm:col-span-1">
+                                <label class="block text-[10px] uppercase font-bold text-amber-900 mb-1">Rasio Persegi Panjang</label>
+                                <select onchange="applySlotRatio('${slot.id}', this.value)" class="w-full px-2 py-1.5 rounded-lg border border-amber-300 text-xs bg-amber-50/50 font-bold text-slate-800 cursor-pointer">
+                                    <option value="">-- Kustom Rasio --</option>
+                                    <option value="2:1">2:1 (Landscape Lebar)</option>
+                                    <option value="16:9">16:9 (Cinema)</option>
+                                    <option value="3:2">3:2 (Foto Standar)</option>
+                                    <option value="4:3">4:3 (Klasik)</option>
+                                    <option value="3:4">3:4 (Portrait Klasik)</option>
+                                    <option value="9:16">9:16 (Story/Strip)</option>
+                                    <option value="2:3">2:3 (Portrait Standar)</option>
+                                </select>
+                            </div>
+
+                            <!-- 2. Lebar (Width) -->
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-[10px] uppercase font-bold text-gray-500">Lebar (px)</label>
+                                    <span class="text-[9px] text-amber-700 font-bold">W ${isLocked ? '🔒' : ''}</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <input type="number" id="slot_w_${slot.id}" value="${slot.width}" oninput="updatePhotoSlotDimension('${slot.id}', 'width', parseInt(this.value)||100)" class="w-full px-2 py-1.5 rounded-lg border ${!isRect ? 'border-rose-400 bg-rose-50' : 'border-gray-200'} text-xs font-semibold">
+                                    <div class="flex flex-col gap-0.5">
+                                        <button type="button" onclick="scalePhotoSlot('${slot.id}', 1.05)" class="px-1 py-0.5 bg-stone-200 hover:bg-stone-300 text-[9px] font-bold rounded leading-none" title="Besarkan 5% Skala Proporsional">+</button>
+                                        <button type="button" onclick="scalePhotoSlot('${slot.id}', 0.95)" class="px-1 py-0.5 bg-stone-200 hover:bg-stone-300 text-[9px] font-bold rounded leading-none" title="Kecilkan 5% Skala Proporsional">-</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. Panjang / Tinggi (Height) -->
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-[10px] uppercase font-bold text-gray-500">Panjang (px)</label>
+                                    <span class="text-[9px] text-amber-700 font-bold">H ${isLocked ? '🔒' : ''}</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <input type="number" id="slot_h_${slot.id}" value="${slot.height}" oninput="updatePhotoSlotDimension('${slot.id}', 'height', parseInt(this.value)||100)" class="w-full px-2 py-1.5 rounded-lg border ${!isRect ? 'border-rose-400 bg-rose-50' : 'border-gray-200'} text-xs font-semibold">
+                                    <div class="flex flex-col gap-0.5">
+                                        <button type="button" onclick="scalePhotoSlot('${slot.id}', 1.05)" class="px-1 py-0.5 bg-stone-200 hover:bg-stone-300 text-[9px] font-bold rounded leading-none" title="Besarkan 5% Skala Proporsional">+</button>
+                                        <button type="button" onclick="scalePhotoSlot('${slot.id}', 0.95)" class="px-1 py-0.5 bg-stone-200 hover:bg-stone-300 text-[9px] font-bold rounded leading-none" title="Kecilkan 5% Skala Proporsional">-</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 4. Skala Kelipatan Proporsional -->
+                            <div>
+                                <label class="block text-[10px] uppercase font-bold text-amber-900 mb-1">Skala Kelipatan</label>
+                                <div class="flex items-center gap-1">
+                                    <button type="button" onclick="scalePhotoSlot('${slot.id}', 0.85)" class="flex-1 py-1 px-1 bg-amber-100 hover:bg-amber-200 text-amber-950 font-black rounded-lg text-[10px] transition-all" title="Kecilkan 15%">
+                                        -15%
+                                    </button>
+                                    <button type="button" onclick="scalePhotoSlot('${slot.id}', 1.15)" class="flex-1 py-1 px-1 bg-amber-400 hover:bg-amber-300 text-stone-950 font-black rounded-lg text-[10px] transition-all" title="Besarkan 15%">
+                                        +15%
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 5. Posisi X -->
+                            <div>
+                                <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">Posisi X (px)</label>
+                                <input type="number" id="slot_x_${slot.id}" value="${slot.x || 0}" oninput="updatePhotoSlotProp('${slot.id}', 'x', parseInt(this.value)||0)" class="w-full px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold">
+                            </div>
+
+                            <!-- 6. Posisi Y -->
+                            <div>
+                                <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">Posisi Y (px)</label>
+                                <input type="number" id="slot_y_${slot.id}" value="${slot.y || 0}" oninput="updatePhotoSlotProp('${slot.id}', 'y', parseInt(this.value)||0)" class="w-full px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold">
+                            </div>
+                        </div>
+
+                        ${!isRect ? `
+                        <div class="mt-2.5 p-2 bg-rose-50 border border-rose-200 rounded-xl flex items-center justify-between text-[11px] text-rose-800">
+                            <span>⚠️ <strong>Perhatian:</strong> Ukuran Lebar dan Panjang saat ini sama (${slot.width}x${slot.height}px). Tempat foto wajib berbentuk persegi panjang.</span>
+                            <button type="button" onclick="applySlotRatio('${slot.id}', '2:1')" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg shrink-0 ml-2">Ubah ke 2:1</button>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            renderPreviewButtons();
+        }
+
+        function toggleSlotLockRatio(id) {
+            const slot = photoSlots.find(s => s.id === id);
+            if (slot) {
+                slot.lockRatio = !(slot.lockRatio !== false);
+                renderPhotoSlots();
+            }
+        }
+
+        function scalePhotoSlot(id, factor) {
+            const slot = photoSlots.find(s => s.id === id);
+            if (!slot) return;
+
+            const currentW = slot.width || 760;
+            const currentH = slot.height || 372;
+            const newW = Math.max(60, Math.round(currentW * factor));
+            const newH = Math.max(40, Math.round(currentH * factor));
+
+            slot.width = newW;
+            slot.height = newH;
+            
+            // Guarantee W != H
+            if (slot.width === slot.height) {
+                slot.height = Math.round(slot.width * 0.6);
+            }
+
+            renderPhotoSlots();
+            updateLivePreview();
+        }
+
+        function addNewPhotoSlot() {
+            const nextNum = photoSlots.length + 1;
+            const is6Grid = form.sizeType && form.sizeType.value === 'a5_6grid';
+            
+            // Standard rectangular default dimensions (760x372 for A5 grid or 1540x650 for A5 strip)
+            const defaultW = is6Grid ? 760 : 1540;
+            const defaultH = is6Grid ? 372 : 650;
+            const defaultY = 250 + ((nextNum - 1) * (defaultH + 50));
+
+            const newSlot = {
+                id: 'slot_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+                name: 'Foto #' + nextNum,
+                x: 94,
+                y: Math.min(defaultY, 2000),
+                width: defaultW,
+                height: defaultH,
+                radius: 20,
+                lockRatio: true
+            };
+
+            photoSlots.push(newSlot);
+            renderPhotoSlots();
+            selectSlotForDrag(newSlot.id);
+        }
+
+        function removePhotoSlot(id) {
+            photoSlots = photoSlots.filter(s => s.id !== id);
+            selectedTargets = selectedTargets.filter(t => !(t.type === 'slot' && t.id === id));
+            if (selectedTargets.length === 0 && photoSlots.length > 0) {
+                selectedTargets = [{ type: 'slot', id: photoSlots[0].id }];
+            }
+            selectedTarget = selectedTargets[0] || { type: 'none', id: null };
+            renderPhotoSlots();
+            updateLivePreview();
+        }
+
+        function updatePhotoSlotProp(id, prop, val) {
+            const slot = photoSlots.find(s => s.id === id);
+            if (slot) {
+                slot[prop] = val;
+                updateLivePreview();
+            }
+        }
+
+        function updatePhotoSlotDimension(id, dim, val) {
+            const slot = photoSlots.find(s => s.id === id);
+            if (slot) {
+                const isLocked = slot.lockRatio !== false;
+                const prevW = slot.width || 760;
+                const prevH = slot.height || 372;
+                const ratio = prevW / prevH;
+
+                if (dim === 'width') {
+                    slot.width = Math.max(50, val);
+                    if (isLocked) {
+                        slot.height = Math.max(40, Math.round(slot.width / ratio));
+                    }
+                } else if (dim === 'height') {
+                    slot.height = Math.max(50, val);
+                    if (isLocked) {
+                        slot.width = Math.max(40, Math.round(slot.height * ratio));
+                    }
+                }
+
+                // Check if width == height, if so gently nudge to maintain rectangle
+                if (slot.width === slot.height) {
+                    if (dim === 'width') slot.height = Math.round(slot.width * 0.55);
+                    else slot.width = Math.round(slot.height * 1.8);
+                }
+
+                updateLivePreview();
+                renderPhotoSlots();
+            }
+        }
+
+        function applySlotRatio(id, ratioName) {
+            const slot = photoSlots.find(s => s.id === id);
+            if (!slot || !ratioName) return;
+
+            const w = slot.width || 760;
+            switch(ratioName) {
+                case '2:1':
+                    slot.height = Math.round(w / 2);
+                    break;
+                case '16:9':
+                    slot.height = Math.round(w * 9 / 16);
+                    break;
+                case '3:2':
+                    slot.height = Math.round(w * 2 / 3);
+                    break;
+                case '4:3':
+                    slot.height = Math.round(w * 3 / 4);
+                    break;
+                case '3:4':
+                    slot.height = Math.round(w * 4 / 3);
+                    break;
+                case '9:16':
+                    slot.height = Math.round(w * 16 / 9);
+                    break;
+                case '2:3':
+                    slot.height = Math.round(w * 3 / 2);
+                    break;
+            }
+
+            // Ensure W != H
+            if (slot.width === slot.height) {
+                slot.height = Math.round(slot.width * 0.6);
+            }
+
+            renderPhotoSlots();
+            updateLivePreview();
+        }
+
+        function applySlotPreset(presetName) {
+            const sizeType = form.sizeType ? form.sizeType.value : 'a5_6grid';
+            const isA5 = sizeType.includes('a5') || sizeType.includes('4r');
+            const cWidth = isA5 ? 1748 : 1080;
+            const cHeight = isA5 ? 2480 : 1920;
+
+            if (presetName === 'a5_6grid') {
+                const padX = 94;
+                const gapX = 40;
+                const gapY = 45;
+                const slotW = Math.round((cWidth - (2 * padX) - gapX) / 2); // 760
+                const slotH = Math.round(slotW * (450 / 920)); // 372
+                const totalH = (3 * slotH) + (2 * gapY);
+                const topY = Math.round((cHeight - totalH) / 2);
+
+                photoSlots = [];
+                for (let i = 0; i < 6; i++) {
+                    const col = i % 2;
+                    const row = Math.floor(i / 2);
+                    photoSlots.push({
+                        id: 'slot_' + (i + 1),
+                        name: 'Foto #' + (i + 1),
+                        x: padX + col * (slotW + gapX),
+                        y: topY + row * (slotH + gapY),
+                        width: slotW,
+                        height: slotH,
+                        radius: 20,
+                        lockRatio: true
+                    });
+                }
+            } else if (presetName === 'a5_3strip') {
+                const padX = isA5 ? 104 : 80;
+                const slotW = isA5 ? 1540 : 920;
+                const slotH = isA5 ? 650 : 450;
+                const headerH = isA5 ? 180 : 150;
+                const gap = isA5 ? 60 : 80;
+
+                photoSlots = [];
+                for (let i = 0; i < 3; i++) {
+                    photoSlots.push({
+                        id: 'slot_' + (i + 1),
+                        name: 'Foto #' + (i + 1),
+                        x: padX,
+                        y: padX + headerH + (i * (slotH + gap)),
+                        width: slotW,
+                        height: slotH,
+                        radius: 24,
+                        lockRatio: true
+                    });
+                }
+            } else if (presetName === 'a5_4grid') {
+                const padX = 94;
+                const gapX = 40;
+                const gapY = 50;
+                const slotW = Math.round((cWidth - (2 * padX) - gapX) / 2);
+                const slotH = Math.round(slotW * (3 / 4)); // 4:3 ratio (760x570)
+                const totalH = (2 * slotH) + gapY;
+                const topY = Math.round((cHeight - totalH) / 2);
+
+                photoSlots = [];
+                for (let i = 0; i < 4; i++) {
+                    const col = i % 2;
+                    const row = Math.floor(i / 2);
+                    photoSlots.push({
+                        id: 'slot_' + (i + 1),
+                        name: 'Foto #' + (i + 1),
+                        x: padX + col * (slotW + gapX),
+                        y: topY + row * (slotH + gapY),
+                        width: slotW,
+                        height: slotH,
+                        radius: 20,
+                        lockRatio: true
+                    });
+                }
+            } else if (presetName === 'a5_2landscape') {
+                const padX = 104;
+                const slotW = cWidth - (2 * padX); // 1540
+                const slotH = Math.round(slotW * (9 / 16)); // 16:9 ratio (866)
+                const gap = 80;
+                const totalH = (2 * slotH) + gap;
+                const topY = Math.round((cHeight - totalH) / 2);
+
+                photoSlots = [
+                    { id: 'slot_1', name: 'Foto #1 (Atas)', x: padX, y: topY, width: slotW, height: slotH, radius: 24, lockRatio: true },
+                    { id: 'slot_2', name: 'Foto #2 (Bawah)', x: padX, y: topY + slotH + gap, width: slotW, height: slotH, radius: 24, lockRatio: true }
+                ];
+            } else if (presetName === 'a5_1single') {
+                const padX = 104;
+                const slotW = cWidth - (2 * padX);
+                const slotH = Math.round(slotW * (4 / 3)); // 1540x1155 (Landscape) or 1540x1800
+                const topY = Math.round((cHeight - slotH) / 2);
+
+                photoSlots = [
+                    { id: 'slot_1', name: 'Foto Utama', x: padX, y: topY, width: slotW, height: slotH, radius: 28, lockRatio: true }
+                ];
+            }
+
+            selectedTargets = [{ type: 'slot', id: photoSlots[0] ? photoSlots[0].id : null }];
+            selectedTarget = selectedTargets[0];
+            renderPhotoSlots();
+            updateLivePreview();
+        }
+
+        function selectSlotForDrag(id, isMulti = false) {
+            if (isMulti) {
+                const idx = selectedTargets.findIndex(t => t.type === 'slot' && t.id === id);
+                if (idx >= 0) selectedTargets.splice(idx, 1);
+                else selectedTargets.push({ type: 'slot', id: id });
+            } else {
+                selectedTargets = [{ type: 'slot', id: id }];
+            }
+            selectedTarget = selectedTargets[0] || { type: 'none', id: null };
+            renderPhotoSlots();
+            renderTemplateItems();
+
+            const slot = photoSlots.find(s => s.id === id);
+            if (slot) {
+                const card = document.getElementById('card-slot-' + id);
+                if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                const statusEl = document.getElementById('drag-coord-status');
+                if (statusEl) {
+                    if (selectedTargets.length > 1) {
+                        statusEl.textContent = `🎯 ${selectedTargets.length} OBJEK TERPILIH (Tarik untuk geser bersama)`;
+                    } else {
+                        statusEl.textContent = `📸 ${slot.name.toUpperCase()} (${slot.width}x${slot.height}px) X:${slot.x} Y:${slot.y}`;
+                    }
+                }
+            }
+            updateLivePreview();
+        }
+
+        function selectItemForDrag(id, isMulti = false) {
+            if (isMulti) {
+                const idx = selectedTargets.findIndex(t => t.type === 'item' && t.id === id);
+                if (idx >= 0) selectedTargets.splice(idx, 1);
+                else selectedTargets.push({ type: 'item', id: id });
+            } else {
+                selectedTargets = [{ type: 'item', id: id }];
+            }
+            selectedTarget = selectedTargets[0] || { type: 'none', id: null };
+            renderTemplateItems();
+            renderPhotoSlots();
+
+            const itm = templateItems.find(item => item.id === id);
+            if (itm) {
+                const card = document.getElementById('card-item-' + id);
+                if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                const itmW = itm.width || itm.size || 300;
+                const itmH = itm.height || itm.size || 300;
+                const statusEl = document.getElementById('drag-coord-status');
+                if (statusEl) {
+                    if (selectedTargets.length > 1) {
+                        statusEl.textContent = `🎯 ${selectedTargets.length} OBJEK TERPILIH (Tarik untuk geser bersama)`;
+                    } else {
+                        statusEl.textContent = `✨ ${(itm.name || 'ITEM').toUpperCase()} (${itmW}x${itmH}) X:${itm.x} Y:${itm.y}`;
+                    }
+                }
+            }
+            updateLivePreview();
+        }
+
+        function selectAllTargets() {
+            selectedTargets = [
+                ...photoSlots.map(s => ({ type: 'slot', id: s.id })),
+                ...templateItems.map(i => ({ type: 'item', id: i.id }))
+            ];
+            selectedTarget = selectedTargets[0] || { type: 'none', id: null };
+            renderPhotoSlots();
+            renderTemplateItems();
+            const statusEl = document.getElementById('drag-coord-status');
+            if (statusEl) {
+                statusEl.textContent = `🎯 SEMUA OBJEK TERPILIH (${selectedTargets.length} Objek) - Tarik untuk geser bersama`;
+            }
+            updateLivePreview();
+        }
+
+        function clearSelection() {
+            selectedTargets = [];
+            selectedTarget = { type: 'none', id: null };
+            renderPhotoSlots();
+            renderTemplateItems();
+            const statusEl = document.getElementById('drag-coord-status');
+            if (statusEl) {
+                statusEl.textContent = `Pilihan dibatalkan. Klik item atau tarik kotak seleksi di monitor.`;
+            }
+            updateLivePreview();
+        }
+
+        function nudgeSelectedTargets(deltaX, deltaY) {
+            if (selectedTargets.length === 0) {
+                selectAllTargets();
+            }
+
+            selectedTargets.forEach(tgt => {
+                if (tgt.type === 'slot') {
+                    const slot = photoSlots.find(s => s.id === tgt.id);
+                    if (slot) {
+                        slot.x = (parseInt(slot.x) || 0) + deltaX;
+                        slot.y = (parseInt(slot.y) || 0) + deltaY;
+                        const inX = document.getElementById('slot_x_' + slot.id);
+                        const inY = document.getElementById('slot_y_' + slot.id);
+                        if (inX) inX.value = slot.x;
+                        if (inY) inY.value = slot.y;
+                    }
+                } else {
+                    const itm = templateItems.find(item => item.id === tgt.id);
+                    if (itm) {
+                        itm.x = (parseInt(itm.x) || 0) + deltaX;
+                        itm.y = (parseInt(itm.y) || 0) + deltaY;
+                        const inX = document.getElementById('item_x_' + itm.id);
+                        const inY = document.getElementById('item_y_' + itm.id);
+                        if (inX) inX.value = itm.x;
+                        if (inY) inY.value = itm.y;
+                    }
+                }
+            });
+
+            const statusEl = document.getElementById('drag-coord-status');
+            if (statusEl) {
+                statusEl.textContent = `🎯 ${selectedTargets.length} OBJEK DIGESER (ΔX: ${deltaX}, ΔY: ${deltaY})`;
+            }
+            updateLivePreview();
+        }
+
+        // ================= RENDER TEMPLATE ITEMS (STICKERS) =================
         function renderTemplateItems() {
             const container = document.getElementById('dynamic-items-container');
-            const buttonsContainer = document.getElementById('preview-item-buttons');
             if (!container) return;
 
             if (templateItems.length === 0) {
@@ -1031,30 +1863,30 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                         <button type="button" onclick="addNewTemplateItem()" class="mt-2 text-emerald-700 font-bold hover:underline">+ Tambah Item Pertama</button>
                     </div>
                 `;
-                if (buttonsContainer) buttonsContainer.innerHTML = '<span class="text-xs text-stone-400 italic">Tidak ada item</span>';
+                renderPreviewButtons();
                 return;
             }
 
             container.innerHTML = templateItems.map((itm, idx) => {
-                const isSelected = selectedItemId === itm.id;
+                const isSelected = isTargetSelected('item', itm.id);
                 const colors = ['bg-emerald-500', 'bg-amber-500', 'bg-indigo-500', 'bg-purple-500', 'bg-rose-500', 'bg-blue-500'];
                 const dotColor = colors[idx % colors.length];
                 const itmW = itm.width || itm.size || 300;
                 const itmH = itm.height || itm.size || 300;
 
                 return `
-                    <div id="card-item-${itm.id}" class="p-4 bg-gray-50 rounded-2xl border transition-all ${isSelected ? 'border-amber-400 ring-2 ring-amber-400/40 bg-amber-50/20' : 'border-gray-200'}">
+                    <div id="card-item-${itm.id}" class="p-4 bg-gray-50 rounded-2xl border transition-all ${isSelected ? 'border-amber-400 ring-2 ring-amber-400/40 bg-amber-50/20 shadow-md' : 'border-gray-200'}">
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center gap-2">
                                 <div class="w-2.5 h-2.5 ${dotColor} rounded-full"></div>
                                 <input type="text" value="${itm.name || 'Item ' + (idx + 1)}" onchange="updateItemProp('${itm.id}', 'name', this.value)" class="text-xs font-bold text-slate-800 bg-transparent border-b border-gray-300 focus:border-emerald-600 outline-none px-1 py-0.5" placeholder="Nama Item">
                             </div>
                             <div class="flex items-center gap-2">
-                                <button type="button" onclick="selectItemForDrag('${itm.id}')" class="text-[11px] font-bold px-2 py-0.5 rounded-lg ${isSelected ? 'bg-amber-500 text-stone-900 font-black' : 'bg-stone-200 text-stone-700 hover:bg-stone-300'}">
-                                    ${isSelected ? '🎯 Terpilih' : 'Pilih'}
+                                <button type="button" onclick="selectItemForDrag('${itm.id}', event.shiftKey || event.ctrlKey)" class="text-[11px] font-bold px-2.5 py-1 rounded-lg ${isSelected ? 'bg-amber-500 text-stone-900 font-black shadow' : 'bg-stone-200 text-stone-700 hover:bg-stone-300'}">
+                                    ${isSelected ? '🎯 Terpilih' : 'Pilih di Monitor'}
                                 </button>
                                 <button type="button" onclick="removeTemplateItem('${itm.id}')" class="text-xs text-rose-500 hover:text-rose-700 font-bold p-1 hover:bg-rose-50 rounded-lg" title="Hapus Item">
-                                    🗑️
+                                    🗑️ Hapus
                                 </button>
                             </div>
                         </div>
@@ -1069,16 +1901,16 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                                 </div>
                             </div>
 
-                            <!-- 2. Slot -->
+                            <!-- 2. Slot Patokan -->
                             <div>
                                 <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Patokan Slot</label>
                                 <select onchange="updateItemProp('${itm.id}', 'slot', parseInt(this.value))" class="w-full px-2 py-1.5 rounded-lg border border-gray-200 text-xs bg-white font-medium">
-                                    <option value="0" ${itm.slot === 0 ? 'selected' : ''}>Slot #1 (Atas Kiri)</option>
-                                    <option value="1" ${itm.slot === 1 ? 'selected' : ''}>Slot #2 (Atas Kanan)</option>
-                                    <option value="2" ${itm.slot === 2 ? 'selected' : ''}>Slot #3 (Tengah Kiri)</option>
-                                    <option value="3" ${itm.slot === 3 ? 'selected' : ''}>Slot #4 (Tengah Kanan)</option>
-                                    <option value="4" ${itm.slot === 4 ? 'selected' : ''}>Slot #5 (Bawah Kiri)</option>
-                                    <option value="5" ${itm.slot === 5 ? 'selected' : ''}>Slot #6 (Bawah Kanan)</option>
+                                    <option value="0" ${itm.slot === 0 ? 'selected' : ''}>Slot #1</option>
+                                    <option value="1" ${itm.slot === 1 ? 'selected' : ''}>Slot #2</option>
+                                    <option value="2" ${itm.slot === 2 ? 'selected' : ''}>Slot #3</option>
+                                    <option value="3" ${itm.slot === 3 ? 'selected' : ''}>Slot #4</option>
+                                    <option value="4" ${itm.slot === 4 ? 'selected' : ''}>Slot #5</option>
+                                    <option value="5" ${itm.slot === 5 ? 'selected' : ''}>Slot #6</option>
                                 </select>
                             </div>
 
@@ -1128,20 +1960,7 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 `;
             }).join('');
 
-            // Render buttons above the canvas monitor
-            if (buttonsContainer) {
-                buttonsContainer.innerHTML = templateItems.map((itm, idx) => {
-                    const isSelected = selectedItemId === itm.id;
-                    const itmW = itm.width || itm.size || 300;
-                    const itmH = itm.height || itm.size || 300;
-                    return `
-                        <button type="button" onclick="selectItemForDrag('${itm.id}')" id="btn-select-${itm.id}" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 shadow-sm ${isSelected ? 'bg-amber-500 text-stone-950 font-black border-2 border-amber-600 scale-105' : 'bg-stone-100 text-stone-700 border border-stone-200 hover:bg-stone-200'}">
-                            <span class="w-2 h-2 rounded-full ${isSelected ? 'bg-stone-900' : 'bg-emerald-500'}"></span>
-                            <span>${itm.name || 'Item ' + (idx + 1)} (${itmW}x${itmH})</span>
-                        </button>
-                    `;
-                }).join('');
-            }
+            renderPreviewButtons();
         }
 
         function addNewTemplateItem() {
@@ -1168,7 +1987,11 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
 
         function removeTemplateItem(id) {
             templateItems = templateItems.filter(item => item.id !== id);
-            if (selectedItemId === id) selectedItemId = templateItems[0] ? templateItems[0].id : null;
+            selectedTargets = selectedTargets.filter(t => !(t.type === 'item' && t.id === id));
+            if (selectedTargets.length === 0 && photoSlots.length > 0) {
+                selectedTargets = [{ type: 'slot', id: photoSlots[0].id }];
+            }
+            selectedTarget = selectedTargets[0] || { type: 'none', id: null };
             renderTemplateItems();
             updateLivePreview();
         }
@@ -1228,23 +2051,40 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             reader.readAsDataURL(file);
         }
 
-        function selectItemForDrag(id) {
-            selectedItemId = id;
-            renderTemplateItems();
+        // Render buttons above canvas for quick selection
+        function renderPreviewButtons() {
+            const buttonsContainer = document.getElementById('preview-item-buttons');
+            if (!buttonsContainer) return;
 
-            const itm = templateItems.find(item => item.id === id);
-            if (itm) {
-                const card = document.getElementById('card-item-' + id);
-                if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            let html = '';
+            
+            // Photo slots badges
+            photoSlots.forEach((slot, idx) => {
+                const isSelected = isTargetSelected('slot', slot.id);
+                html += `
+                    <button type="button" onclick="selectSlotForDrag('${slot.id}', event.shiftKey || event.ctrlKey)" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 shadow-sm ${isSelected ? 'bg-amber-500 text-stone-950 font-black border-2 border-amber-600 scale-105 shadow-md' : 'bg-white text-stone-800 border border-amber-300 hover:bg-amber-50'}">
+                        <span>📸</span>
+                        <span>${slot.name || 'Foto #' + (idx + 1)} (${slot.width}x${slot.height})</span>
+                        ${isSelected ? '<span class="text-[9px] bg-amber-950 text-white rounded-full px-1.5 py-0.2">✓</span>' : ''}
+                    </button>
+                `;
+            });
 
+            // Sticker items badges
+            templateItems.forEach((itm, idx) => {
+                const isSelected = isTargetSelected('item', itm.id);
                 const itmW = itm.width || itm.size || 300;
                 const itmH = itm.height || itm.size || 300;
-                const statusEl = document.getElementById('drag-coord-status');
-                if (statusEl) {
-                    statusEl.textContent = `${(itm.name || 'ITEM').toUpperCase()} (${itmW}x${itmH}) X:${itm.x} Y:${itm.y}`;
-                }
-            }
-            updateLivePreview();
+                html += `
+                    <button type="button" onclick="selectItemForDrag('${itm.id}', event.shiftKey || event.ctrlKey)" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 shadow-sm ${isSelected ? 'bg-emerald-600 text-white font-black border-2 border-emerald-700 scale-105 shadow-md' : 'bg-stone-100 text-stone-700 border border-stone-200 hover:bg-stone-200'}">
+                        <span>✨</span>
+                        <span>${itm.name || 'Item ' + (idx + 1)} (${itmW}x${itmH})</span>
+                        ${isSelected ? '<span class="text-[9px] bg-emerald-950 text-white rounded-full px-1.5 py-0.2">✓</span>' : ''}
+                    </button>
+                `;
+            });
+
+            buttonsContainer.innerHTML = html || '<span class="text-xs text-stone-400 italic">Belum ada slot / item</span>';
         }
 
         // Handle Outer Background Image Upload
@@ -1267,10 +2107,11 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             });
         }
 
+        // ================= LIVE PREVIEW MONITOR RENDERING =================
         function updateLivePreview() {
             const sizeType = form.sizeType ? form.sizeType.value : 'a5_6grid';
             const is6Grid = sizeType === 'a5_6grid';
-            const isA5 = sizeType === 'a5' || is6Grid;
+            const isA5 = sizeType.includes('a5') || sizeType.includes('4r');
 
             const outerLabel = document.getElementById('outer-label');
             if (outerLabel) {
@@ -1281,7 +2122,8 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
 
             canvas.width = isA5 ? 1748 : 1080;
             canvas.height = isA5 ? 2480 : 1920;
-            itemBounds = {}; // Reset bounds for hit testing & rendering
+            slotBounds = {};
+            itemBounds = {};
             
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = '#FFFDF5';
@@ -1289,205 +2131,271 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
 
             const isOverlay = form.overlayMode.checked;
 
+            // 1. Draw background image (if not overlay)
             if (!isOverlay && outerPreviewImage && outerPreviewImage.complete) {
                 ctx.drawImage(outerPreviewImage, 0, 0, canvas.width, canvas.height);
             }
 
-            if (is6Grid) {
-                // Draw 6 photo slots (2 cols x 3 rows)
-                const paddingX = 94;
-                const gapX = 40;
-                const gapY = 45;
-                const imgW = Math.round((canvas.width - (2 * paddingX) - gapX) / 2);
-                const imgH = Math.round(imgW * (450 / 920));
-                const totalGridH = (3 * imgH) + (2 * gapY);
-                const topY = Math.round((canvas.height - totalGridH) / 2);
+            // 2. Draw all Photo Slots (Tempat Foto Persegi Panjang)
+            photoSlots.forEach((slot, idx) => {
+                const sx = parseInt(slot.x) || 0;
+                const sy = parseInt(slot.y) || 0;
+                const sw = parseInt(slot.width) || 760;
+                const sh = parseInt(slot.height) || 372;
+                const sRadius = parseInt(slot.radius !== undefined ? slot.radius : 20);
 
-                ctx.fillStyle = '#E5E7EB';
-                for (let i = 0; i < 6; i++) {
-                    const col = i % 2;
-                    const row = Math.floor(i / 2);
-                    const posX = paddingX + col * (imgW + gapX);
-                    const posY = topY + row * (imgH + gapY);
+                slotBounds[slot.id] = {
+                    type: 'slot',
+                    id: slot.id,
+                    name: slot.name || ('Foto #' + (idx + 1)),
+                    x: sx,
+                    y: sy,
+                    width: sw,
+                    height: sh
+                };
 
-                    ctx.beginPath();
-                    if (ctx.roundRect) ctx.roundRect(posX, posY, imgW, imgH, 20);
-                    else ctx.rect(posX, posY, imgW, imgH);
-                    ctx.fill();
+                // Draw photo placeholder box
+                ctx.save();
+                ctx.beginPath();
+                if (ctx.roundRect) ctx.roundRect(sx, sy, sw, sh, sRadius);
+                else ctx.rect(sx, sy, sw, sh);
 
-                    ctx.strokeStyle = '#D4AF37';
-                    ctx.lineWidth = 4;
-                    ctx.stroke();
+                // Gradient / soft fill
+                const grad = ctx.createLinearGradient(sx, sy, sx + sw, sy + sh);
+                grad.addColorStop(0, '#E2E8F0');
+                grad.addColorStop(1, '#CBD5E1');
+                ctx.fillStyle = grad;
+                ctx.fill();
+
+                // Frame stroke (Gold)
+                ctx.strokeStyle = '#D4AF37';
+                ctx.lineWidth = 6;
+                ctx.stroke();
+
+                // Inner crosshair & slot label
+                ctx.strokeStyle = 'rgba(212, 175, 55, 0.3)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(sx + 30, sy + sh / 2);
+                ctx.lineTo(sx + sw - 30, sy + sh / 2);
+                ctx.moveTo(sx + sw / 2, sy + 30);
+                ctx.lineTo(sx + sw / 2, sy + sh - 30);
+                ctx.stroke();
+
+                // Camera icon & slot text
+                ctx.fillStyle = '#0F172A';
+                ctx.font = 'bold 36px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`📸 ${slot.name || 'Foto #' + (idx + 1)}`, sx + sw / 2, sy + sh / 2 - 14);
+
+                // Dimension text
+                ctx.font = 'bold 24px monospace';
+                ctx.fillStyle = '#475569';
+                ctx.fillText(`${sw} x ${sh} px (Persegi Panjang)`, sx + sw / 2, sy + sh / 2 + 26);
+
+                ctx.restore();
+            });
+
+            // 3. Draw Dynamic Sticker Items
+            templateItems.forEach(itm => {
+                const img = getItemImage(itm.src);
+                if (!img || !img.complete) return;
+
+                const width = parseInt(itm.width) || parseInt(itm.size) || 300;
+                const height = parseInt(itm.height) || parseInt(itm.size) || 300;
+                
+                // Reference slot base position if applicable
+                const refSlotIdx = parseInt(itm.slot) || 0;
+                const refSlot = photoSlots[refSlotIdx] || photoSlots[0];
+                let baseX = 0;
+                let baseY = 0;
+                let baseW = canvas.width;
+                let baseH = canvas.height;
+
+                if (refSlot) {
+                    baseX = refSlot.x;
+                    baseY = refSlot.y;
+                    baseW = refSlot.width;
+                    baseH = refSlot.height;
                 }
 
-                // Draw all dynamic items for 6 Grid
-                templateItems.forEach(itm => {
-                    const img = getItemImage(itm.src);
-                    if (!img || !img.complete) return;
+                const x = baseX + baseW - width + (parseInt(itm.x) || 0);
+                const y = baseY + baseH - height + (parseInt(itm.y) || 0);
 
-                    const width = parseInt(itm.width) || parseInt(itm.size) || 300;
-                    const height = parseInt(itm.height) || parseInt(itm.size) || 300;
-                    const slot = parseInt(itm.slot) || 0;
-                    const col = slot % 2;
-                    const row = Math.floor(slot / 2);
-                    const slotX = paddingX + col * (imgW + gapX);
-                    const slotY = topY + row * (imgH + gapY);
+                itemBounds[itm.id] = {
+                    type: 'item',
+                    id: itm.id,
+                    name: itm.name || 'Item',
+                    x: x,
+                    y: y,
+                    width: width,
+                    height: height,
+                    xOff: itm.x || 0,
+                    yOff: itm.y || 0
+                };
 
-                    const x = slotX + imgW - width + (parseInt(itm.x) || 0);
-                    const y = slotY + imgH - height + (parseInt(itm.y) || 0);
+                ctx.drawImage(img, x, y, width, height);
+            });
 
-                    itemBounds[itm.id] = {
-                        id: itm.id,
-                        name: itm.name || 'Item',
-                        x: x,
-                        y: y,
-                        width: width,
-                        height: height,
-                        xOff: itm.x || 0,
-                        yOff: itm.y || 0
-                    };
-
-                    ctx.drawImage(img, x, y, width, height);
-                });
-
-            } else {
-                let imgWidth, imgHeight, padding, headerHeight, gap;
-                if (isA5) {
-                    imgWidth = 1540;
-                    imgHeight = 650;
-                    padding = 104;
-                    headerHeight = 180;
-                    gap = 60;
-                } else {
-                    imgWidth = 920;
-                    imgHeight = 450;
-                    padding = 80;
-                    headerHeight = 150;
-                    gap = 80;
-                }
-
-                ctx.fillStyle = '#E5E7EB';
-                for(let i=0; i<3; i++) {
-                    const yPos = padding + headerHeight + (i * (imgHeight + gap));
-                    ctx.beginPath();
-                    if (ctx.roundRect) {
-                        ctx.roundRect(padding, yPos, imgWidth, imgHeight, 20);
-                    } else {
-                        ctx.rect(padding, yPos, imgWidth, imgHeight);
-                    }
-                    ctx.fill();
-                }
-
-                // Draw all dynamic items for 3 Strip
-                templateItems.forEach(itm => {
-                    const img = getItemImage(itm.src);
-                    if (!img || !img.complete) return;
-
-                    const width = parseInt(itm.width) || parseInt(itm.size) || 300;
-                    const height = parseInt(itm.height) || parseInt(itm.size) || 300;
-                    const slot = Math.min(2, Math.max(0, parseInt(itm.slot) || 0));
-                    const yPos = padding + headerHeight + (slot * (imgHeight + gap));
-
-                    const x = padding + imgWidth - width + (parseInt(itm.x) || 0);
-                    const y = yPos + imgHeight - height + (parseInt(itm.y) || 0);
-
-                    itemBounds[itm.id] = {
-                        id: itm.id,
-                        name: itm.name || 'Item',
-                        x: x,
-                        y: y,
-                        width: width,
-                        height: height,
-                        xOff: itm.x || 0,
-                        yOff: itm.y || 0
-                    };
-
-                    ctx.drawImage(img, x, y, width, height);
-                });
-            }
-
+            // 4. Draw overlay theme (if overlayMode)
             if (isOverlay && outerPreviewImage && outerPreviewImage.complete) {
                 ctx.drawImage(outerPreviewImage, 0, 0, canvas.width, canvas.height);
             }
 
-            // Draw Interactive Highlight Selection Boxes & Resize Handles for Active / Hovered Items
-            const targetHighlight = activeDraggedId || hoveredItemId || selectedItemId;
-            if (targetHighlight && itemBounds[targetHighlight]) {
-                const b = itemBounds[targetHighlight];
-                const isDraggingThis = activeDraggedId === targetHighlight;
+            // 5. Highlight All Selected Targets
+            const allBounds = { ...slotBounds, ...itemBounds };
+            let groupMinX = Infinity, groupMinY = Infinity, groupMaxX = -Infinity, groupMaxY = -Infinity;
+
+            selectedTargets.forEach(tgt => {
+                const b = allBounds[tgt.id];
+                if (!b) return;
+
+                groupMinX = Math.min(groupMinX, b.x);
+                groupMinY = Math.min(groupMinY, b.y);
+                groupMaxX = Math.max(groupMaxX, b.x + b.width);
+                groupMaxY = Math.max(groupMaxY, b.y + b.height);
+
+                const isDraggingThis = activeDraggedTarget && activeDraggedTarget.id === b.id;
+                const isSlot = b.type === 'slot';
+
                 ctx.save();
-                
-                // Border box
-                ctx.strokeStyle = isDraggingThis ? (dragMode === 'resize' ? '#3B82F6' : '#22C55E') : '#D4AF37';
-                ctx.lineWidth = 5;
+                ctx.strokeStyle = isDraggingThis ? '#3B82F6' : (isSlot ? '#F59E0B' : '#10B981');
+                ctx.lineWidth = 6;
                 ctx.setLineDash([16, 10]);
                 ctx.strokeRect(b.x, b.y, b.width, b.height);
 
-                // Corner handles
-                ctx.lineWidth = 4;
-                ctx.setLineDash([]);
-                
-                const corners = [
-                    { x: b.x, y: b.y, isResize: false },
-                    { x: b.x + b.width, y: b.y, isResize: false },
-                    { x: b.x, y: b.y + b.height, isResize: false },
-                    { x: b.x + b.width, y: b.y + b.height, isResize: true } // Bottom-right corner = Resize Handle
-                ];
+                // Single Selection corner resize handles
+                if (selectedTargets.length === 1) {
+                    ctx.lineWidth = 4;
+                    ctx.setLineDash([]);
+                    
+                    const corners = [
+                        { x: b.x, y: b.y, isResize: false },
+                        { x: b.x + b.width, y: b.y, isResize: false },
+                        { x: b.x, y: b.y + b.height, isResize: false },
+                        { x: b.x + b.width, y: b.y + b.height, isResize: true }
+                    ];
 
-                corners.forEach(c => {
-                    ctx.beginPath();
-                    if (c.isResize) {
-                        // Prominent resize handle (Amber / Blue when active)
-                        ctx.fillStyle = isDraggingThis && dragMode === 'resize' ? '#3B82F6' : '#F59E0B';
-                        ctx.strokeStyle = '#FFFFFF';
-                        ctx.arc(c.x, c.y, 18, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.stroke();
-
-                        // Draw diagonal resize arrow inside handle
-                        ctx.strokeStyle = '#FFFFFF';
-                        ctx.lineWidth = 3;
+                    corners.forEach(c => {
                         ctx.beginPath();
-                        ctx.moveTo(c.x - 7, c.y - 7);
-                        ctx.lineTo(c.x + 7, c.y + 7);
-                        ctx.moveTo(c.x + 7, c.y + 2);
-                        ctx.lineTo(c.x + 7, c.y + 7);
-                        ctx.lineTo(c.x + 2, c.y + 7);
-                        ctx.stroke();
-                    } else {
-                        ctx.fillStyle = isDraggingThis ? '#22C55E' : '#1B4332';
-                        ctx.strokeStyle = '#FFFFFF';
-                        ctx.arc(c.x, c.y, 12, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.stroke();
-                    }
-                });
+                        if (c.isResize) {
+                            ctx.fillStyle = isDraggingThis && dragMode === 'resize' ? '#3B82F6' : '#F59E0B';
+                            ctx.strokeStyle = '#FFFFFF';
+                            ctx.arc(c.x, c.y, 22, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.stroke();
 
-                // Pill label badge with Dimensions (Lebar x Panjang) & Offsets (X, Y)
-                const tagText = `${b.name} (${b.width}x${b.height}px | X: ${b.xOff}, Y: ${b.yOff})`;
-                ctx.font = 'bold 26px sans-serif';
-                const tagWidth = ctx.measureText(tagText).width + 36;
-                const tagHeight = 46;
+                            // Diagonal resize arrow
+                            ctx.strokeStyle = '#FFFFFF';
+                            ctx.lineWidth = 3;
+                            ctx.beginPath();
+                            ctx.moveTo(c.x - 8, c.y - 8);
+                            ctx.lineTo(c.x + 8, c.y + 8);
+                            ctx.moveTo(c.x + 8, c.y + 2);
+                            ctx.lineTo(c.x + 8, c.y + 8);
+                            ctx.lineTo(c.x + 2, c.y + 8);
+                            ctx.stroke();
+                        } else {
+                            ctx.fillStyle = isSlot ? '#D97706' : '#059669';
+                            ctx.strokeStyle = '#FFFFFF';
+                            ctx.arc(c.x, c.y, 14, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.stroke();
+                        }
+                    });
+                }
+
+                // Tag Pill Badge
+                const tagText = `${isSlot ? '📸' : '✨'} ${b.name} (${b.width}x${b.height}px | X:${b.x}, Y:${b.y})`;
+                ctx.font = 'bold 28px sans-serif';
+                const tagWidth = ctx.measureText(tagText).width + 40;
+                const tagHeight = 52;
                 const tagX = Math.max(10, Math.min(canvas.width - tagWidth - 10, b.x));
-                const tagY = Math.max(tagHeight + 10, b.y - 12);
+                const tagY = Math.max(tagHeight + 10, b.y - 14);
 
-                ctx.fillStyle = 'rgba(27, 67, 50, 0.95)';
+                ctx.fillStyle = isSlot ? 'rgba(120, 53, 15, 0.95)' : 'rgba(27, 67, 50, 0.95)';
                 ctx.beginPath();
-                if (ctx.roundRect) ctx.roundRect(tagX, tagY - tagHeight, tagWidth, tagHeight, 14);
+                if (ctx.roundRect) ctx.roundRect(tagX, tagY - tagHeight, tagWidth, tagHeight, 16);
                 else ctx.rect(tagX, tagY - tagHeight, tagWidth, tagHeight);
                 ctx.fill();
 
-                ctx.strokeStyle = isDraggingThis ? (dragMode === 'resize' ? '#3B82F6' : '#22C55E') : '#D4AF37';
+                ctx.strokeStyle = isDraggingThis ? '#3B82F6' : '#D4AF37';
                 ctx.lineWidth = 3;
                 ctx.stroke();
 
                 ctx.fillStyle = '#FFFDF5';
-                ctx.fillText(tagText, tagX + 18, tagY - 14);
+                ctx.textAlign = 'left';
+                ctx.fillText(tagText, tagX + 20, tagY - 16);
+                ctx.restore();
+            });
+
+            // 6. Draw Group Selection Box if Multiple Items are Selected
+            if (selectedTargets.length > 1 && groupMinX !== Infinity) {
+                const pad = 15;
+                const gx = groupMinX - pad;
+                const gy = groupMinY - pad;
+                const gw = (groupMaxX - groupMinX) + (2 * pad);
+                const gh = (groupMaxY - groupMinY) + (2 * pad);
+
+                ctx.save();
+                ctx.strokeStyle = '#3B82F6';
+                ctx.lineWidth = 5;
+                ctx.setLineDash([20, 10]);
+                ctx.strokeRect(gx, gy, gw, gh);
+
+                // Multi-selection badge header
+                const groupTag = `🎯 ${selectedTargets.length} OBJEK TERPILIH (Tarik untuk geser bersama)`;
+                ctx.font = 'bold 30px sans-serif';
+                const gTagWidth = ctx.measureText(groupTag).width + 40;
+                const gTagHeight = 56;
+                const gTagX = Math.max(10, Math.min(canvas.width - gTagWidth - 10, gx));
+                const gTagY = Math.max(gTagHeight + 10, gy - 16);
+
+                ctx.fillStyle = '#1E40AF';
+                ctx.beginPath();
+                if (ctx.roundRect) ctx.roundRect(gTagX, gTagY - gTagHeight, gTagWidth, gTagHeight, 18);
+                else ctx.rect(gTagX, gTagY - gTagHeight, gTagWidth, gTagHeight);
+                ctx.fill();
+
+                ctx.strokeStyle = '#93C5FD';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.fillStyle = '#FFFFFF';
+                ctx.textAlign = 'left';
+                ctx.fillText(groupTag, gTagX + 20, gTagY - 16);
+                ctx.restore();
+            }
+
+            // 7. Draw Marquee Box Selection (Kotak Kursor Seleksi Area)
+            if (dragMode === 'marquee') {
+                const bx = Math.min(marqueeStart.x, marqueeEnd.x);
+                const by = Math.min(marqueeStart.y, marqueeEnd.y);
+                const bw = Math.abs(marqueeEnd.x - marqueeStart.x);
+                const bh = Math.abs(marqueeEnd.y - marqueeStart.y);
+
+                ctx.save();
+                ctx.fillStyle = 'rgba(59, 130, 246, 0.22)';
+                ctx.fillRect(bx, by, bw, bh);
+                
+                ctx.strokeStyle = '#2563EB';
+                ctx.lineWidth = 4;
+                ctx.setLineDash([14, 8]);
+                ctx.strokeRect(bx, by, bw, bh);
+
+                // Marquee counter tag
+                ctx.fillStyle = '#1E3A8A';
+                ctx.fillRect(bx, Math.max(10, by - 40), 220, 40);
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 22px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(`📦 Seleksi: ${selectedTargets.length} objek`, bx + 12, Math.max(10, by - 40) + 28);
                 ctx.restore();
             }
         }
 
-        // ================= CANVAS DRAG & RESIZE INTERACTION =================
+        // ================= CANVAS DRAG, RESIZE & MARQUEE INTERACTION =================
         function getCanvasMousePos(e) {
             const rect = canvas.getBoundingClientRect();
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -1501,29 +2409,37 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
         }
 
         function hitTestResizeHandle(pos) {
-            // Check if pos is close to the bottom-right resize handle of any item (prioritize selected item)
-            const ids = Object.keys(itemBounds).reverse();
-            for (const id of ids) {
-                const b = itemBounds[id];
+            // Only active if 1 single target is selected
+            if (selectedTargets.length === 1) {
+                const allBounds = { ...slotBounds, ...itemBounds };
+                const b = allBounds[selectedTargets[0].id];
                 if (b) {
                     const handleX = b.x + b.width;
                     const handleY = b.y + b.height;
                     const dist = Math.hypot(pos.x - handleX, pos.y - handleY);
-                    if (dist <= 40) {
-                        return id;
+                    if (dist <= 50) {
+                        return { type: b.type, id: b.id };
                     }
                 }
             }
             return null;
         }
 
-        function hitTestDeco(pos) {
-            // Check in reverse order so topmost item gets hit first
-            const ids = Object.keys(itemBounds).reverse();
-            for (const id of ids) {
+        function hitTestTarget(pos) {
+            // Check items first (topmost), then photo slots
+            const itemIds = Object.keys(itemBounds).reverse();
+            for (const id of itemIds) {
                 const b = itemBounds[id];
                 if (b && pos.x >= b.x && pos.x <= (b.x + b.width) && pos.y >= b.y && pos.y <= (b.y + b.height)) {
-                    return id;
+                    return { type: 'item', id: b.id };
+                }
+            }
+
+            const slotIds = Object.keys(slotBounds).reverse();
+            for (const id of slotIds) {
+                const b = slotBounds[id];
+                if (b && pos.x >= b.x && pos.x <= (b.x + b.width) && pos.y >= b.y && pos.y <= (b.y + b.height)) {
+                    return { type: 'slot', id: b.id };
                 }
             }
             return null;
@@ -1531,118 +2447,273 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
 
         const startCanvasDrag = (e) => {
             const pos = getCanvasMousePos(e);
+            const isMultiKey = e.shiftKey || e.ctrlKey;
             
-            // 1. Check if clicking on bottom-right resize handle first
+            // 1. Check if clicking on bottom-right resize handle (Single item resize)
             const resizeHit = hitTestResizeHandle(pos);
             if (resizeHit) {
-                activeDraggedId = resizeHit;
+                saveHistoryState('Ubah Ukuran');
+                activeDraggedTarget = resizeHit;
                 dragMode = 'resize';
-                selectedItemId = resizeHit;
                 dragStartMouseX = pos.x;
                 dragStartMouseY = pos.y;
-                const itm = templateItems.find(item => item.id === resizeHit);
-                dragInitialW = itm ? (parseInt(itm.width) || parseInt(itm.size) || 300) : 300;
-                dragInitialH = itm ? (parseInt(itm.height) || parseInt(itm.size) || 300) : 300;
+
+                if (resizeHit.type === 'slot') {
+                    const slot = photoSlots.find(s => s.id === resizeHit.id);
+                    dragInitialW = slot ? (parseInt(slot.width) || 760) : 760;
+                    dragInitialH = slot ? (parseInt(slot.height) || 372) : 372;
+                } else {
+                    const itm = templateItems.find(item => item.id === resizeHit.id);
+                    dragInitialW = itm ? (parseInt(itm.width) || parseInt(itm.size) || 300) : 300;
+                    dragInitialH = itm ? (parseInt(itm.height) || parseInt(itm.size) || 300) : 300;
+                }
+
                 canvas.style.cursor = 'nwse-resize';
-                selectItemForDrag(resizeHit);
                 if (e.cancelable) e.preventDefault();
                 return;
             }
 
-            // 2. Check if clicking inside item body for moving (drag)
-            const hit = hitTestDeco(pos);
+            // 2. Check if clicking inside an item or photo slot
+            const hit = hitTestTarget(pos);
             if (hit) {
-                activeDraggedId = hit;
+                saveHistoryState('Geser Objek');
+                if (isMultiKey) {
+                    // Toggle in selection
+                    const idx = selectedTargets.findIndex(t => t.type === hit.type && t.id === hit.id);
+                    if (idx >= 0) selectedTargets.splice(idx, 1);
+                    else selectedTargets.push(hit);
+                } else {
+                    // If clicking an object that is NOT already in the selection, make it the sole selected object
+                    if (!isTargetSelected(hit.type, hit.id)) {
+                        selectedTargets = [hit];
+                    }
+                    // If already in selection, keep the whole group selection!
+                }
+
+                activeDraggedTarget = hit;
                 dragMode = 'move';
-                selectedItemId = hit;
                 dragStartMouseX = pos.x;
                 dragStartMouseY = pos.y;
-                const itm = templateItems.find(item => item.id === hit);
-                dragInitialX = itm ? (parseInt(itm.x) || 0) : 0;
-                dragInitialY = itm ? (parseInt(itm.y) || 0) : 0;
+
+                // Record initial positions for ALL selected targets to move them synchronously
+                dragInitialPositions = {};
+                selectedTargets.forEach(tgt => {
+                    if (tgt.type === 'slot') {
+                        const slot = photoSlots.find(s => s.id === tgt.id);
+                        if (slot) {
+                            dragInitialPositions[tgt.id] = {
+                                x: parseInt(slot.x) || 0,
+                                y: parseInt(slot.y) || 0,
+                                type: 'slot'
+                            };
+                        }
+                    } else {
+                        const itm = templateItems.find(item => item.id === tgt.id);
+                        if (itm) {
+                            dragInitialPositions[tgt.id] = {
+                                itmXOff: parseInt(itm.x) || 0,
+                                itmYOff: parseInt(itm.y) || 0,
+                                type: 'item'
+                            };
+                        }
+                    }
+                });
+
+                renderPhotoSlots();
+                renderTemplateItems();
                 canvas.style.cursor = 'grabbing';
-                selectItemForDrag(hit);
                 if (e.cancelable) e.preventDefault();
+                return;
             }
+
+            // 3. Clicked on EMPTY canvas space -> Start Marquee Box Selection (Kotak Kursor)
+            if (!isMultiKey) {
+                selectedTargets = [];
+            }
+            dragMode = 'marquee';
+            marqueeStart = { x: pos.x, y: pos.y };
+            marqueeEnd = { x: pos.x, y: pos.y };
+            canvas.style.cursor = 'crosshair';
+
+            renderPhotoSlots();
+            renderTemplateItems();
+            updateLivePreview();
+            if (e.cancelable) e.preventDefault();
         };
 
         const onCanvasDragMove = (e) => {
             const pos = getCanvasMousePos(e);
-            if (activeDraggedId) {
-                const itm = templateItems.find(item => item.id === activeDraggedId);
-                if (!itm) return;
 
-                if (dragMode === 'resize') {
-                    // Resizing width & height
-                    const deltaW = Math.round(pos.x - dragStartMouseX);
-                    const deltaH = Math.round(pos.y - dragStartMouseY);
-                    
-                    const newW = Math.max(40, dragInitialW + deltaW);
-                    const newH = Math.max(40, dragInitialH + deltaH);
-                    
-                    itm.width = newW;
-                    itm.height = newH;
-                    itm.size = Math.max(newW, newH);
+            if (dragMode === 'marquee') {
+                marqueeEnd = { x: pos.x, y: pos.y };
+                
+                // Calculate selection rectangle
+                const minX = Math.min(marqueeStart.x, marqueeEnd.x);
+                const maxX = Math.max(marqueeStart.x, marqueeEnd.x);
+                const minY = Math.min(marqueeStart.y, marqueeEnd.y);
+                const maxY = Math.max(marqueeStart.y, marqueeEnd.y);
 
-                    const inputW = document.getElementById('item_w_' + activeDraggedId);
-                    const inputH = document.getElementById('item_h_' + activeDraggedId);
-                    if (inputW) inputW.value = newW;
-                    if (inputH) inputH.value = newH;
-
-                    const statusEl = document.getElementById('drag-coord-status');
-                    if (statusEl) {
-                        statusEl.textContent = `${(itm.name || 'ITEM').toUpperCase()} UKURAN: ${newW}x${newH}px`;
+                // Select all slots & items that intersect with this marquee box
+                const allBounds = { ...slotBounds, ...itemBounds };
+                const intersected = [];
+                for (const k in allBounds) {
+                    const b = allBounds[k];
+                    if (b && b.x < maxX && (b.x + b.width) > minX && b.y < maxY && (b.y + b.height) > minY) {
+                        intersected.push({ type: b.type, id: b.id });
                     }
-                } else if (dragMode === 'move') {
-                    // Moving item position
-                    const deltaX = Math.round(pos.x - dragStartMouseX);
-                    const deltaY = Math.round(pos.y - dragStartMouseY);
-                    
-                    const newX = dragInitialX + deltaX;
-                    const newY = dragInitialY + deltaY;
+                }
 
-                    itm.x = newX;
-                    itm.y = newY;
+                selectedTargets = intersected;
+                selectedTarget = selectedTargets[0] || { type: 'none', id: null };
+                
+                const statusEl = document.getElementById('drag-coord-status');
+                if (statusEl) {
+                    statusEl.textContent = `📦 KOTAK SELEKSI: ${selectedTargets.length} objek di dalam area`;
+                }
 
-                    const inputX = document.getElementById('item_x_' + activeDraggedId);
-                    const inputY = document.getElementById('item_y_' + activeDraggedId);
-                    if (inputX) inputX.value = newX;
-                    if (inputY) inputY.value = newY;
+                renderPhotoSlots();
+                renderTemplateItems();
+                updateLivePreview();
+                if (e.cancelable) e.preventDefault();
+                return;
+            }
 
-                    const statusEl = document.getElementById('drag-coord-status');
-                    if (statusEl) {
-                        statusEl.textContent = `${(itm.name || 'ITEM').toUpperCase()} X:${newX} Y:${newY}`;
+            if (dragMode === 'resize' && activeDraggedTarget) {
+                const isSlot = activeDraggedTarget.type === 'slot';
+                const deltaW = Math.round(pos.x - dragStartMouseX);
+                const deltaH = Math.round(pos.y - dragStartMouseY);
+                
+                let newW = Math.max(50, dragInitialW + deltaW);
+                let newH = Math.max(50, dragInitialH + deltaH);
+
+                // For Photo Slots: Enforce Rectangle & Proportional Lock
+                if (isSlot) {
+                    const slot = photoSlots.find(s => s.id === activeDraggedTarget.id);
+                    const isLocked = slot ? (slot.lockRatio !== false) : true;
+
+                    if (isLocked && dragInitialW > 0 && dragInitialH > 0) {
+                        // Proportional scaling: maintain exact ratio multiple
+                        const ratio = dragInitialW / dragInitialH;
+                        newW = Math.max(60, dragInitialW + deltaW);
+                        newH = Math.max(40, Math.round(newW / ratio));
+                    }
+
+                    // Guarantee rectangle constraint (W != H)
+                    if (Math.abs(newW - newH) < 15) {
+                        if (newW >= newH) newH = Math.max(40, newW - 25);
+                        else newW = Math.max(40, newH + 25);
+                    }
+
+                    if (slot) {
+                        slot.width = newW;
+                        slot.height = newH;
+                        const inputW = document.getElementById('slot_w_' + slot.id);
+                        const inputH = document.getElementById('slot_h_' + slot.id);
+                        if (inputW) inputW.value = newW;
+                        if (inputH) inputH.value = newH;
+                        
+                        const statusEl = document.getElementById('drag-coord-status');
+                        if (statusEl) {
+                            statusEl.textContent = `📸 ${slot.name.toUpperCase()} UKURAN: ${newW}x${newH}px (${getRectangleTypeLabel(newW, newH)})`;
+                        }
+                    }
+                } else {
+                    const itm = templateItems.find(item => item.id === activeDraggedTarget.id);
+                    if (itm) {
+                        itm.width = newW;
+                        itm.height = newH;
+                        itm.size = Math.max(newW, newH);
+                        const inputW = document.getElementById('item_w_' + itm.id);
+                        const inputH = document.getElementById('item_h_' + itm.id);
+                        if (inputW) inputW.value = newW;
+                        if (inputH) inputH.value = newH;
+
+                        const statusEl = document.getElementById('drag-coord-status');
+                        if (statusEl) {
+                            statusEl.textContent = `✨ ${(itm.name || 'ITEM').toUpperCase()} UKURAN: ${newW}x${newH}px`;
+                        }
                     }
                 }
 
                 updateLivePreview();
                 if (e.cancelable) e.preventDefault();
+                return;
+            }
+
+            if (dragMode === 'move' && selectedTargets.length > 0) {
+                const deltaX = Math.round(pos.x - dragStartMouseX);
+                const deltaY = Math.round(pos.y - dragStartMouseY);
+
+                // Move ALL selected targets together
+                selectedTargets.forEach(tgt => {
+                    const init = dragInitialPositions[tgt.id];
+                    if (!init) return;
+
+                    if (tgt.type === 'slot') {
+                        const slot = photoSlots.find(s => s.id === tgt.id);
+                        if (slot) {
+                            slot.x = init.x + deltaX;
+                            slot.y = init.y + deltaY;
+                            const inputX = document.getElementById('slot_x_' + slot.id);
+                            const inputY = document.getElementById('slot_y_' + slot.id);
+                            if (inputX) inputX.value = slot.x;
+                            if (inputY) inputY.value = slot.y;
+                        }
+                    } else {
+                        const itm = templateItems.find(item => item.id === tgt.id);
+                        if (itm) {
+                            itm.x = (init.itmXOff || 0) + deltaX;
+                            itm.y = (init.itmYOff || 0) + deltaY;
+                            const inputX = document.getElementById('item_x_' + itm.id);
+                            const inputY = document.getElementById('item_y_' + itm.id);
+                            if (inputX) inputX.value = itm.x;
+                            if (inputY) inputY.value = itm.y;
+                        }
+                    }
+                });
+
+                const statusEl = document.getElementById('drag-coord-status');
+                if (statusEl) {
+                    if (selectedTargets.length > 1) {
+                        statusEl.textContent = `🎯 ${selectedTargets.length} OBJEK DIGESER BERSAMA (ΔX: ${deltaX}, ΔY: ${deltaY})`;
+                    } else {
+                        const single = selectedTargets[0];
+                        if (single.type === 'slot') {
+                            const slot = photoSlots.find(s => s.id === single.id);
+                            if (slot) statusEl.textContent = `📸 ${slot.name.toUpperCase()} X:${slot.x} Y:${slot.y}`;
+                        } else {
+                            const itm = templateItems.find(i => i.id === single.id);
+                            if (itm) statusEl.textContent = `✨ ${(itm.name || 'ITEM').toUpperCase()} X:${itm.x} Y:${itm.y}`;
+                        }
+                    }
+                }
+
+                updateLivePreview();
+                if (e.cancelable) e.preventDefault();
+                return;
+            }
+
+            // Hover state checks
+            const resizeHit = hitTestResizeHandle(pos);
+            if (resizeHit) {
+                canvas.style.cursor = 'nwse-resize';
             } else {
-                // Hover states
-                const resizeHit = hitTestResizeHandle(pos);
-                if (resizeHit) {
-                    canvas.style.cursor = 'nwse-resize';
-                    if (hoveredItemId !== resizeHit) {
-                        hoveredItemId = resizeHit;
-                        updateLivePreview();
-                    }
+                const hit = hitTestTarget(pos);
+                if (hit) {
+                    canvas.style.cursor = isTargetSelected(hit.type, hit.id) ? 'grab' : 'pointer';
                 } else {
-                    const hit = hitTestDeco(pos);
-                    if (hit !== hoveredItemId) {
-                        hoveredItemId = hit;
-                        canvas.style.cursor = hit ? 'grab' : 'default';
-                        updateLivePreview();
-                    }
+                    canvas.style.cursor = 'crosshair';
                 }
             }
         };
 
         const endCanvasDrag = () => {
-            if (activeDraggedId) {
-                activeDraggedId = null;
+            if (dragMode) {
                 dragMode = null;
-                canvas.style.cursor = hoveredItemId ? 'grab' : 'default';
-                renderTemplateItems(); // Re-render badge labels with updated sizes
+                activeDraggedTarget = null;
+                canvas.style.cursor = 'default';
+                renderPhotoSlots();
+                renderTemplateItems();
                 updateLivePreview();
             }
         };
@@ -1656,12 +2727,236 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
         window.addEventListener('touchend', endCanvasDrag);
         window.addEventListener('touchcancel', endCanvasDrag);
 
-        document.querySelectorAll('#form-overlay, #form-size-type').forEach(el => {
-            el.addEventListener('change', updateLivePreview);
+        // ================= DIRECT DRAG & DROP FILE ONTO CANVAS MONITOR =================
+        const dropContainer = document.getElementById('canvas-dropzone-container');
+        const dropOverlay = document.getElementById('canvas-drop-overlay');
+
+        if (dropContainer && dropOverlay) {
+            let dragCounter = 0;
+
+            const isImageTransfer = (e) => {
+                if (!e.dataTransfer) return false;
+                if (e.dataTransfer.types) {
+                    for (let i = 0; i < e.dataTransfer.types.length; i++) {
+                        if (e.dataTransfer.types[i] === 'Files') return true;
+                    }
+                }
+                return false;
+            };
+
+            dropContainer.addEventListener('dragenter', (e) => {
+                if (!isImageTransfer(e)) return;
+                e.preventDefault();
+                e.stopPropagation();
+                dragCounter++;
+                dropOverlay.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+                dropOverlay.classList.add('opacity-100', 'scale-100');
+            });
+
+            dropContainer.addEventListener('dragover', (e) => {
+                if (!isImageTransfer(e)) return;
+                e.preventDefault();
+                e.stopPropagation();
+                e.dataTransfer.dropEffect = 'copy';
+            });
+
+            dropContainer.addEventListener('dragleave', (e) => {
+                if (!isImageTransfer(e)) return;
+                e.preventDefault();
+                e.stopPropagation();
+                dragCounter--;
+                if (dragCounter <= 0) {
+                    dragCounter = 0;
+                    dropOverlay.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                    dropOverlay.classList.remove('opacity-100', 'scale-100');
+                }
+            });
+
+            dropContainer.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dragCounter = 0;
+                dropOverlay.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                dropOverlay.classList.remove('opacity-100', 'scale-100');
+
+                const files = e.dataTransfer ? Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')) : [];
+                if (files.length === 0) return;
+
+                const pos = getCanvasMousePos(e);
+                saveHistoryState('Drop ' + files.length + ' Item Baru');
+
+                files.forEach((file, fIdx) => {
+                    const reader = new FileReader();
+                    reader.onload = (re) => {
+                        const dataUrl = re.target.result;
+                        const img = new Image();
+                        img.onload = () => {
+                            // Preload into cache
+                            itemImageCache[dataUrl] = img;
+
+                            // Calculate natural aspect ratio & proper default dimensions (anti-penyet)
+                            const naturalW = img.naturalWidth || 300;
+                            const naturalH = img.naturalHeight || 300;
+                            const ratio = naturalW / naturalH;
+
+                            // Standard baseline size: 350px width, scale height according to exact ratio
+                            const targetW = Math.min(600, Math.max(150, Math.round(naturalW > 700 ? 400 : naturalW)));
+                            const targetH = Math.round(targetW / ratio);
+
+                            // Center the dropped item at drop position with slight stagger if multiple files
+                            const stagger = fIdx * 30;
+                            const placedCanvasX = Math.round(pos.x - (targetW / 2)) + stagger;
+                            const placedCanvasY = Math.round(pos.y - (targetH / 2)) + stagger;
+
+                            // Reference slot base position calculation (Slot #1 default)
+                            const refSlot = photoSlots[0];
+                            let offX = placedCanvasX;
+                            let offY = placedCanvasY;
+                            if (refSlot) {
+                                offX = placedCanvasX - (refSlot.x + refSlot.width - targetW);
+                                offY = placedCanvasY - (refSlot.y + refSlot.height - targetH);
+                            }
+
+                            const cleanName = file.name.replace(/\.[^/.]+$/, "").substring(0, 30);
+                            const newItem = {
+                                id: 'item_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+                                name: cleanName || ('Item ' + (templateItems.length + 1)),
+                                src: dataUrl,
+                                file: file,
+                                width: targetW,
+                                height: targetH,
+                                size: Math.max(targetW, targetH),
+                                x: offX,
+                                y: offY,
+                                slot: 0
+                            };
+
+                            templateItems.push(newItem);
+                            selectedTargets = [{ type: 'item', id: newItem.id }];
+                            selectedTarget = selectedTargets[0];
+
+                            renderTemplateItems();
+                            updateLivePreview();
+
+                            const statusEl = document.getElementById('drag-coord-status');
+                            if (statusEl) {
+                                statusEl.textContent = `✨ Item "${newItem.name}" (${targetW}x${targetH}px) berhasil ditambahkan dari drop!`;
+                            }
+                        };
+                        img.src = dataUrl;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            // Prevent window from opening dropped file in browser tab
+            window.addEventListener('dragover', (e) => {
+                if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).includes('Files')) {
+                    e.preventDefault();
+                }
+            });
+            window.addEventListener('drop', (e) => {
+                if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).includes('Files')) {
+                    e.preventDefault();
+                }
+            });
+        }
+
+        // Keyboard navigation (Ctrl+Z, Ctrl+Y, Ctrl+C, Ctrl+V, Ctrl+D, Ctrl+X, Delete, Arrow keys, Esc, Ctrl+A)
+        window.addEventListener('keydown', (e) => {
+            const activeEl = document.activeElement;
+            const isTyping = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT');
+            if (isTyping) return;
+
+            const isCtrl = e.ctrlKey || e.metaKey;
+
+            // 1. Undo / Redo (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z)
+            if (isCtrl && e.key.toLowerCase() === 'z') {
+                e.preventDefault();
+                if (e.shiftKey) {
+                    redo();
+                } else {
+                    undo();
+                }
+                return;
+            }
+            if (isCtrl && e.key.toLowerCase() === 'y') {
+                e.preventDefault();
+                redo();
+                return;
+            }
+
+            // 2. Copy / Paste / Duplicate / Cut
+            if (isCtrl && e.key.toLowerCase() === 'c') {
+                e.preventDefault();
+                copySelected();
+                return;
+            }
+            if (isCtrl && e.key.toLowerCase() === 'v') {
+                e.preventDefault();
+                pasteCopied();
+                return;
+            }
+            if (isCtrl && e.key.toLowerCase() === 'd') {
+                e.preventDefault();
+                duplicateSelected();
+                return;
+            }
+            if (isCtrl && e.key.toLowerCase() === 'x') {
+                e.preventDefault();
+                cutSelected();
+                return;
+            }
+
+            // 3. Delete / Backspace
+            if (e.key === 'Delete' || e.key === 'Backspace') {
+                if (selectedTargets.length > 0) {
+                    e.preventDefault();
+                    deleteSelected();
+                    return;
+                }
+            }
+
+            // 4. Select All (Ctrl+A)
+            if (isCtrl && e.key.toLowerCase() === 'a') {
+                e.preventDefault();
+                selectAllTargets();
+                return;
+            }
+
+            // 5. Escape (Clear Selection)
+            if (e.key === 'Escape') {
+                clearSelection();
+                return;
+            }
+
+            // 6. Arrow Keys (Nudge Movement)
+            const step = e.shiftKey ? 50 : 10;
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                nudgeSelectedTargets(0, -step);
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                nudgeSelectedTargets(0, step);
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                nudgeSelectedTargets(-step, 0);
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                nudgeSelectedTargets(step, 0);
+            }
         });
 
-        // Initialize dynamic template items
+        document.querySelectorAll('#form-overlay, #form-size-type').forEach(el => {
+            el.addEventListener('change', () => {
+                updateLivePreview();
+            });
+        });
+
+        // Initialize Photo Slots & Dynamic Items
+        renderPhotoSlots();
         renderTemplateItems();
+        updateLivePreview();
 
         let loadedTemplatesList = [];
 
@@ -1687,6 +2982,7 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 const isA5 = t.sizeType === 'a5' || is6 || t.sizeType === '4r';
                 const isActive = t.active !== false;
                 const thumbSrc = t.outer || t.ketupat || t.lampu || t.rama || '';
+                const slotCount = (t.photoSlots && Array.isArray(t.photoSlots)) ? t.photoSlots.length : (is6 ? 6 : 3);
                 const itemCount = (t.items && Array.isArray(t.items)) ? t.items.length : 3;
 
                 return `
@@ -1699,6 +2995,9 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                                 <div class="mt-1.5 flex flex-wrap items-center justify-center gap-1">
                                     <span class="px-2 py-0.5 ${is6 ? 'bg-amber-400 text-slate-900' : (isA5 ? 'bg-emerald-400 text-slate-900' : 'bg-blue-400 text-slate-900')} rounded-full text-[9px] font-black shadow-sm">
                                         ${is6 ? '📸 A5 (6-Grid)' : (isA5 ? '📄 A5 (3-Strip)' : '📱 Strip (9:16)')}
+                                    </span>
+                                    <span class="px-2 py-0.5 bg-amber-400/90 text-slate-950 rounded-full text-[9px] font-bold">
+                                        📸 ${slotCount} Slot Foto
                                     </span>
                                     <span class="px-2 py-0.5 ${t.overlayMode ? 'bg-emerald-500/80 text-white' : 'bg-slate-700/80 text-slate-200'} rounded-full text-[9px] font-bold">
                                         ${t.overlayMode ? '✓ OVERLAY' : 'BACKGROUND'}
@@ -1740,6 +3039,22 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             if (form.sizeType) form.sizeType.value = t.sizeType || 'a5_6grid';
             if (form.overlayMode) form.overlayMode.checked = !!t.overlayMode;
 
+            // Populate photo slots
+            if (t.photoSlots && Array.isArray(t.photoSlots) && t.photoSlots.length > 0) {
+                photoSlots = t.photoSlots.map((s, idx) => ({
+                    id: s.id || ('slot_' + (idx + 1)),
+                    name: s.name || ('Foto #' + (idx + 1)),
+                    x: parseInt(s.x) || 0,
+                    y: parseInt(s.y) || 0,
+                    width: parseInt(s.width) || 760,
+                    height: parseInt(s.height) || 372,
+                    radius: parseInt(s.radius !== undefined ? s.radius : 20)
+                }));
+            } else {
+                // Generate default slots according to sizeType
+                applySlotPreset(t.sizeType === 'a5_6grid' ? 'a5_6grid' : (t.sizeType === 'a5' ? 'a5_3strip' : 'a5_6grid'));
+            }
+
             // Populate items array
             if (t.items && Array.isArray(t.items) && t.items.length > 0) {
                 templateItems = t.items.map((itm, idx) => ({
@@ -1767,7 +3082,8 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 outerPreviewImage = null;
             }
 
-            selectedItemId = templateItems[0] ? templateItems[0].id : null;
+            selectedTarget = { type: 'slot', id: photoSlots[0] ? photoSlots[0].id : null };
+            renderPhotoSlots();
             renderTemplateItems();
             updateLivePreview();
 
@@ -1797,9 +3113,29 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
 
         form.onsubmit = (e) => {
             e.preventDefault();
+
+            // Validation 1: At least 1 photo slot
+            if (photoSlots.length === 0) {
+                alert('Template harus memiliki minimal 1 tempat / slot foto!');
+                return;
+            }
+
+            // Validation 2: Ensure all photo slots are rectangular (W != H)
+            for (let i = 0; i < photoSlots.length; i++) {
+                const s = photoSlots[i];
+                if (!isRectangle(s.width, s.height)) {
+                    alert(`Slot "${s.name}" tidak boleh bujursangkar (${s.width}x${s.height}px)! Harap pastikan berbentuk persegi panjang.`);
+                    selectSlotForDrag(s.id);
+                    return;
+                }
+            }
+
             const formData = new FormData(form);
             if (form.overlayMode.checked) formData.set('overlayMode', 'true');
             
+            // Serialize Photo Slots (Tempat Foto Persegi Panjang)
+            formData.set('photo_slots_json', JSON.stringify(photoSlots));
+
             // Serialize items metadata with width, height, size, x, y, slot
             const serializedItems = templateItems.map((itm, idx) => ({
                 id: itm.id,
@@ -1844,12 +3180,12 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             btn.innerText = 'Mengunggah & Menyimpan...';
 
             uploadWithProgress('manage_templates.php?action=upload', formData, {
-                title: 'Mengunggah Template & Semua Item...',
+                title: 'Mengunggah Template, Slot Foto & Semua Item...',
                 onSuccess: (result) => {
                     btn.disabled = false;
                     btn.innerText = originalText;
                     if (result.success) {
-                        alert('Template & semua item berhasil disimpan!');
+                        alert('Template, slot tempat foto & semua item berhasil disimpan!');
                         fetchTemplates();
                     } else {
                         alert('Gagal: ' + (result.error || 'Terjadi kesalahan'));
