@@ -174,6 +174,7 @@ if ($hostName === 'localhost' || $hostName === '127.0.0.1' || $hostName === '::1
 }
 
 $basePath = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), "", $_SERVER['PHP_SELF']), '/');
+$viewUrl = "$protocol://$host$basePath/view.php?session=$sessionId";
 
 $stripFilename = '';
 foreach ($savedFiles as $sf) {

@@ -199,30 +199,58 @@ function renderStudioThemeGallery() {
     });
 }
 
+// Helper to draw rounded rectangle safely across all browser versions
+function safeRoundRect(ctx, x, y, w, h, r = 0) {
+    if (typeof ctx.roundRect === 'function') {
+        try {
+            ctx.roundRect(x, y, w, h, r);
+            return;
+        } catch (e) {}
+    }
+    if (w < 2 * r) r = w / 2;
+    if (h < 2 * r) r = h / 2;
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+}
+
 // Image asset cache to make studio live preview and final generation instantaneous
 const imageAssetCache = new Map();
-function loadCachedImage(src, retries = 3) {
+function loadCachedImage(src, retries = 1) {
     if (!src) return Promise.resolve(null);
     if (imageAssetCache.has(src)) {
         const cached = imageAssetCache.get(src);
-        if (cached && (cached.complete || cached.naturalWidth > 0)) return Promise.resolve(cached);
+        if (cached === null) return Promise.resolve(null);
+        if (cached instanceof HTMLImageElement && (cached.complete || cached.naturalWidth > 0)) {
+            return Promise.resolve(cached);
+        }
     }
     return new Promise((resolve) => {
         const attemptLoad = (attemptsLeft) => {
             const img = new Image();
-            img.crossOrigin = 'anonymous';
+            if (typeof src === 'string' && (src.startsWith('http://') || src.startsWith('https://'))) {
+                img.crossOrigin = 'anonymous';
+            }
             img.onload = () => {
                 imageAssetCache.set(src, img);
                 resolve(img);
             };
             img.onerror = () => {
                 if (attemptsLeft > 1) {
-                    setTimeout(() => attemptLoad(attemptsLeft - 1), 150);
+                    setTimeout(() => attemptLoad(attemptsLeft - 1), 100);
                 } else {
+                    imageAssetCache.set(src, null);
                     resolve(null);
                 }
             };
             img.src = src;
+            if (img.complete && img.naturalWidth > 0) {
+                imageAssetCache.set(src, img);
+                resolve(img);
+            }
         };
         attemptLoad(retries);
     });
@@ -937,8 +965,7 @@ async function renderStripCanvas(stripCanvas) {
 
                     ctx.save();
                     ctx.beginPath();
-                    if (ctx.roundRect) ctx.roundRect(sx, sy, sw, sh, sRadius);
-                    else ctx.rect(sx, sy, sw, sh);
+                    safeRoundRect(ctx, sx, sy, sw, sh, sRadius);
                     ctx.clip();
                     
                     // Cover-fit the captured photo into the rectangular slot
@@ -964,8 +991,7 @@ async function renderStripCanvas(stripCanvas) {
                     ctx.strokeStyle = '#D4AF37';
                     ctx.lineWidth = 6;
                     ctx.beginPath();
-                    if (ctx.roundRect) ctx.roundRect(sx, sy, sw, sh, sRadius);
-                    else ctx.rect(sx, sy, sw, sh);
+                    safeRoundRect(ctx, sx, sy, sw, sh, sRadius);
                     ctx.stroke();
                 }
             }
@@ -1038,7 +1064,8 @@ async function renderStripCanvas(stripCanvas) {
         const topY = Math.round((stripCanvas.height - totalGridH) / 2); // ~637 px (centered on A5)
         const cornerRadius = 24;
 
-        const final6Photos = selected6Photos.map((idx, s) => capturedPhotos[idx] || capturedPhotos[s] || capturedPhotos[0]);
+        const validCaptured = capturedPhotos.filter(Boolean);
+        const final6Photos = selected6Photos.map((idx, s) => capturedPhotos[idx] || (validCaptured.length > 0 ? validCaptured[s % validCaptured.length] : null));
         const innerImg = (template && template.inner) ? await loadCachedImage(template.inner) : null;
 
         for (let index = 0; index < final6Photos.length; index++) {
@@ -1053,7 +1080,7 @@ async function renderStripCanvas(stripCanvas) {
             if (img) {
                 ctx.save();
                 ctx.beginPath();
-                ctx.roundRect(posX, posY, imgWidth, imgHeight, cornerRadius);
+                safeRoundRect(ctx, posX, posY, imgWidth, imgHeight, cornerRadius);
                 ctx.clip();
                 ctx.drawImage(img, posX, posY, imgWidth, imgHeight);
                 ctx.restore();
@@ -1062,7 +1089,7 @@ async function renderStripCanvas(stripCanvas) {
                 ctx.strokeStyle = '#D4AF37';
                 ctx.lineWidth = 6;
                 ctx.beginPath();
-                ctx.roundRect(posX, posY, imgWidth, imgHeight, cornerRadius);
+                safeRoundRect(ctx, posX, posY, imgWidth, imgHeight, cornerRadius);
                 ctx.stroke();
 
                 if (innerImg) {
@@ -1185,11 +1212,10 @@ async function renderStripCanvas(stripCanvas) {
     }
 
     // 2. Draw 3 Selected Photos from selectedStripPhotos
-    const final3Photos = [
-        capturedPhotos[selectedStripPhotos[0]] || capturedPhotos[0],
-        capturedPhotos[selectedStripPhotos[1]] || capturedPhotos[1] || capturedPhotos[0],
-        capturedPhotos[selectedStripPhotos[2]] || capturedPhotos[2] || capturedPhotos[0]
-    ];
+    const validCaptured3 = capturedPhotos.filter(Boolean);
+    const final3Photos = selectedStripPhotos.map((idx, s) => {
+        return capturedPhotos[idx] || (validCaptured3.length > 0 ? validCaptured3[s % validCaptured3.length] : null);
+    });
 
     let frameSource = './gambar/atassebagaibingkai.png';
     if (template && template.inner) frameSource = template.inner;
@@ -1206,7 +1232,7 @@ async function renderStripCanvas(stripCanvas) {
             // Draw the photo with rounded corners
             ctx.save();
             ctx.beginPath();
-            ctx.roundRect(padding, yPos, imgWidth, imgHeight, cornerRadius - 5);
+            safeRoundRect(ctx, padding, yPos, imgWidth, imgHeight, cornerRadius - 5);
             ctx.clip();
             ctx.drawImage(img, padding, yPos, imgWidth, imgHeight);
             ctx.restore();
@@ -1283,6 +1309,8 @@ async function renderStripCanvas(stripCanvas) {
 
 // Lightweight Offscreen Canvas for Ultra-Fast Studio Live Preview
 const previewOffscreenCanvas = document.createElement('canvas');
+let isLivePreviewRendering = false;
+let pendingLivePreview = false;
 
 async function updateStudioLivePreview() {
     if (isLivePreviewRendering) {
@@ -1299,11 +1327,12 @@ async function updateStudioLivePreview() {
     }, 60);
 
     try {
-        // Fast render using lightweight offscreen canvas
         await renderStripCanvas(previewOffscreenCanvas);
-        const dataUrl = previewOffscreenCanvas.toDataURL('image/jpeg', 0.85);
+        const dataUrl = previewOffscreenCanvas.toDataURL('image/jpeg', 0.88);
         if (liveImg) {
             liveImg.src = dataUrl;
+            liveImg.style.display = 'block';
+            liveImg.classList.remove('hidden', 'opacity-0');
         }
         if (photoPreview) {
             photoPreview.src = dataUrl;
@@ -1316,7 +1345,7 @@ async function updateStudioLivePreview() {
         isLivePreviewRendering = false;
         if (pendingLivePreview) {
             pendingLivePreview = false;
-            updateStudioLivePreview();
+            setTimeout(updateStudioLivePreview, 10);
         }
     }
 }
