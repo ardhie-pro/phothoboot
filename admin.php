@@ -1157,11 +1157,49 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             return selectedTargets.some(t => t.type === type && t.id === id);
         }
 
+        // ================= TOAST NOTIFICATION & FEEDBACK =================
+        function showDesignToast(icon, message, type = 'info') {
+            let toastEl = document.getElementById('design-action-toast');
+            if (!toastEl) {
+                toastEl = document.createElement('div');
+                toastEl.id = 'design-action-toast';
+                toastEl.className = 'fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl text-xs font-bold transition-all duration-300 transform translate-y-8 opacity-0 pointer-events-none border';
+                document.body.appendChild(toastEl);
+            }
+
+            const colorClasses = {
+                success: 'bg-emerald-900/95 text-emerald-100 border-emerald-400/40',
+                warning: 'bg-amber-900/95 text-amber-100 border-amber-400/40',
+                info: 'bg-slate-900/95 text-slate-100 border-amber-400/30',
+                danger: 'bg-rose-900/95 text-rose-100 border-rose-400/40'
+            };
+
+            toastEl.className = `fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-2.5 rounded-2xl shadow-2xl text-xs font-bold transition-all duration-200 transform translate-y-0 opacity-100 border backdrop-blur-md ${colorClasses[type] || colorClasses.info}`;
+            toastEl.innerHTML = `
+                <span class="text-base">${icon}</span>
+                <span>${message}</span>
+            `;
+
+            if (window._toastTimer) clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => {
+                toastEl.classList.add('translate-y-8', 'opacity-0');
+            }, 2500);
+
+            const statusEl = document.getElementById('drag-coord-status');
+            if (statusEl) statusEl.textContent = `${icon} ${message}`;
+        }
+
         // ================= HISTORY (UNDO / REDO) & CLIPBOARD (COPY / PASTE / DUPLICATE / CUT) =================
         const undoStack = [];
         const redoStack = [];
         const MAX_HISTORY = 40;
         let clipboard = [];
+
+        // Try restoring clipboard from session
+        try {
+            const savedClip = localStorage.getItem('photobooth_clipboard');
+            if (savedClip) clipboard = JSON.parse(savedClip);
+        } catch(e) {}
 
         function saveHistoryState(actionLabel = 'Perubahan') {
             try {
@@ -1196,7 +1234,10 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
         }
 
         function undo() {
-            if (undoStack.length === 0) return;
+            if (undoStack.length === 0) {
+                showDesignToast('↩️', 'Tidak ada riwayat untuk di-undo', 'warning');
+                return;
+            }
             try {
                 const current = {
                     photoSlots: JSON.parse(JSON.stringify(photoSlots)),
@@ -1217,15 +1258,17 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 updateLivePreview();
                 updateUndoRedoUI();
 
-                const statusEl = document.getElementById('drag-coord-status');
-                if (statusEl) statusEl.textContent = `↩️ Undo: ${prev.actionLabel || 'Kembali'}`;
+                showDesignToast('↩️', `Undo: ${prev.actionLabel || 'Kembali'} (Ctrl+Z)`, 'info');
             } catch (err) {
                 console.error("Undo error:", err);
             }
         }
 
         function redo() {
-            if (redoStack.length === 0) return;
+            if (redoStack.length === 0) {
+                showDesignToast('↪️', 'Tidak ada riwayat untuk di-redo', 'warning');
+                return;
+            }
             try {
                 const current = {
                     photoSlots: JSON.parse(JSON.stringify(photoSlots)),
@@ -1246,15 +1289,28 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 updateLivePreview();
                 updateUndoRedoUI();
 
-                const statusEl = document.getElementById('drag-coord-status');
-                if (statusEl) statusEl.textContent = `↪️ Redo: Mengulangi perubahan`;
+                showDesignToast('↪️', 'Redo: Mengulangi perubahan (Ctrl+Y)', 'info');
             } catch (err) {
                 console.error("Redo error:", err);
             }
         }
 
         function copySelected() {
-            if (selectedTargets.length === 0) return;
+            // Auto-fallback: if nothing selected, select first available item or slot
+            if (selectedTargets.length === 0) {
+                if (photoSlots.length > 0) {
+                    selectedTargets = [{ type: 'slot', id: photoSlots[0].id }];
+                } else if (templateItems.length > 0) {
+                    selectedTargets = [{ type: 'item', id: templateItems[0].id }];
+                } else {
+                    showDesignToast('⚠️', 'Belum ada objek untuk disalin. Buat slot foto terlebih dahulu!', 'warning');
+                    return;
+                }
+                renderPhotoSlots();
+                renderTemplateItems();
+                updateLivePreview();
+            }
+
             clipboard = [];
             selectedTargets.forEach(tgt => {
                 if (tgt.type === 'slot') {
@@ -1266,20 +1322,33 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 }
             });
 
-            const statusEl = document.getElementById('drag-coord-status');
-            if (statusEl) statusEl.textContent = `📋 ${clipboard.length} objek disalin (Ctrl+C)`;
+            try {
+                localStorage.setItem('photobooth_clipboard', JSON.stringify(clipboard));
+            } catch(e) {}
+
+            showDesignToast('📋', `${clipboard.length} objek disalin (Ctrl+C)`, 'success');
         }
 
         function pasteCopied() {
-            if (clipboard.length === 0) return;
-            saveHistoryState('Paste Objek');
+            if (clipboard.length === 0) {
+                try {
+                    const savedClip = localStorage.getItem('photobooth_clipboard');
+                    if (savedClip) clipboard = JSON.parse(savedClip);
+                } catch(e) {}
+            }
+
+            if (!clipboard || clipboard.length === 0) {
+                showDesignToast('⚠️', 'Clipboard kosong! Tekan Ctrl+C untuk salin objek terlebih dahulu.', 'warning');
+                return;
+            }
+
+            saveHistoryState('Paste ' + clipboard.length + ' Objek');
 
             const newSelected = [];
             const offset = 40;
 
             clipboard.forEach(entry => {
                 if (entry.type === 'slot') {
-                    const nextNum = photoSlots.length + 1;
                     const newSlot = {
                         ...JSON.parse(JSON.stringify(entry.data)),
                         id: 'slot_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
@@ -1290,7 +1359,6 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                     photoSlots.push(newSlot);
                     newSelected.push({ type: 'slot', id: newSlot.id });
                 } else {
-                    const nextNum = templateItems.length + 1;
                     const newItem = {
                         ...JSON.parse(JSON.stringify(entry.data)),
                         id: 'item_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
@@ -1310,19 +1378,32 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             renderTemplateItems();
             updateLivePreview();
 
-            const statusEl = document.getElementById('drag-coord-status');
-            if (statusEl) statusEl.textContent = `📋 ${newSelected.length} objek berhasil ditempel (Ctrl+V)`;
+            showDesignToast('📥', `${newSelected.length} objek ditempel (Ctrl+V)`, 'success');
         }
 
         function duplicateSelected() {
-            if (selectedTargets.length === 0) return;
+            if (selectedTargets.length === 0) {
+                if (photoSlots.length > 0) {
+                    selectedTargets = [{ type: 'slot', id: photoSlots[0].id }];
+                } else if (templateItems.length > 0) {
+                    selectedTargets = [{ type: 'item', id: templateItems[0].id }];
+                } else {
+                    showDesignToast('⚠️', 'Pilih objek terlebih dahulu untuk diduplikat.', 'warning');
+                    return;
+                }
+            }
             copySelected();
             pasteCopied();
+            showDesignToast('📑', 'Objek berhasil diduplikat (Ctrl+D)', 'success');
         }
 
         function deleteSelected() {
-            if (selectedTargets.length === 0) return;
-            saveHistoryState('Hapus Objek');
+            if (selectedTargets.length === 0) {
+                showDesignToast('⚠️', 'Pilih objek yang ingin dihapus terlebih dahulu.', 'warning');
+                return;
+            }
+            const count = selectedTargets.length;
+            saveHistoryState('Hapus ' + count + ' Objek');
 
             const slotIdsToDelete = new Set(selectedTargets.filter(t => t.type === 'slot').map(t => t.id));
             const itemIdsToDelete = new Set(selectedTargets.filter(t => t.type === 'item').map(t => t.id));
@@ -1337,16 +1418,17 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             renderTemplateItems();
             updateLivePreview();
 
-            const statusEl = document.getElementById('drag-coord-status');
-            if (statusEl) statusEl.textContent = `🗑️ Objek terpilih dihapus (Delete)`;
+            showDesignToast('🗑️', `${count} objek dihapus (Delete)`, 'danger');
         }
 
         function cutSelected() {
-            if (selectedTargets.length === 0) return;
+            if (selectedTargets.length === 0) {
+                showDesignToast('⚠️', 'Pilih objek yang ingin dipotong terlebih dahulu.', 'warning');
+                return;
+            }
             copySelected();
             deleteSelected();
-            const statusEl = document.getElementById('drag-coord-status');
-            if (statusEl) statusEl.textContent = `✂️ Objek dipotong (Ctrl+X)`;
+            showDesignToast('✂️', 'Objek dipotong (Ctrl+X)', 'info');
         }
 
         // ================= RENDER PHOTO SLOTS =================
@@ -2862,16 +2944,35 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             });
         }
 
+        // Auto-blur input fields when clicking anywhere outside form fields so canvas shortcuts work immediately
+        document.addEventListener('pointerdown', (e) => {
+            const isInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT';
+            if (!isInput && document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+                document.activeElement.blur();
+            }
+        });
+
         // Keyboard navigation (Ctrl+Z, Ctrl+Y, Ctrl+C, Ctrl+V, Ctrl+D, Ctrl+X, Delete, Arrow keys, Esc, Ctrl+A)
         window.addEventListener('keydown', (e) => {
+            const templateTab = document.getElementById('tab-content-templates');
+            if (templateTab && templateTab.classList.contains('hidden')) return;
+
             const activeEl = document.activeElement;
             const isTyping = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT');
-            if (isTyping) return;
-
+            
+            const key = (e.key || '').toLowerCase();
+            const code = e.code || '';
             const isCtrl = e.ctrlKey || e.metaKey;
 
+            if (isTyping) {
+                if (key === 'escape' || code === 'Escape') {
+                    activeEl.blur();
+                }
+                return;
+            }
+
             // 1. Undo / Redo (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z)
-            if (isCtrl && e.key.toLowerCase() === 'z') {
+            if (isCtrl && (key === 'z' || code === 'KeyZ')) {
                 e.preventDefault();
                 if (e.shiftKey) {
                     redo();
@@ -2880,36 +2981,36 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
                 }
                 return;
             }
-            if (isCtrl && e.key.toLowerCase() === 'y') {
+            if (isCtrl && (key === 'y' || code === 'KeyY')) {
                 e.preventDefault();
                 redo();
                 return;
             }
 
             // 2. Copy / Paste / Duplicate / Cut
-            if (isCtrl && e.key.toLowerCase() === 'c') {
+            if (isCtrl && (key === 'c' || code === 'KeyC')) {
                 e.preventDefault();
                 copySelected();
                 return;
             }
-            if (isCtrl && e.key.toLowerCase() === 'v') {
+            if (isCtrl && (key === 'v' || code === 'KeyV')) {
                 e.preventDefault();
                 pasteCopied();
                 return;
             }
-            if (isCtrl && e.key.toLowerCase() === 'd') {
+            if (isCtrl && (key === 'd' || code === 'KeyD')) {
                 e.preventDefault();
                 duplicateSelected();
                 return;
             }
-            if (isCtrl && e.key.toLowerCase() === 'x') {
+            if (isCtrl && (key === 'x' || code === 'KeyX')) {
                 e.preventDefault();
                 cutSelected();
                 return;
             }
 
             // 3. Delete / Backspace
-            if (e.key === 'Delete' || e.key === 'Backspace') {
+            if (key === 'delete' || key === 'backspace' || code === 'Delete' || code === 'Backspace') {
                 if (selectedTargets.length > 0) {
                     e.preventDefault();
                     deleteSelected();
@@ -2918,30 +3019,30 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
             }
 
             // 4. Select All (Ctrl+A)
-            if (isCtrl && e.key.toLowerCase() === 'a') {
+            if (isCtrl && (key === 'a' || code === 'KeyA')) {
                 e.preventDefault();
                 selectAllTargets();
                 return;
             }
 
             // 5. Escape (Clear Selection)
-            if (e.key === 'Escape') {
+            if (key === 'escape' || code === 'Escape') {
                 clearSelection();
                 return;
             }
 
             // 6. Arrow Keys (Nudge Movement)
             const step = e.shiftKey ? 50 : 10;
-            if (e.key === 'ArrowUp') {
+            if (key === 'arrowup' || code === 'ArrowUp') {
                 e.preventDefault();
                 nudgeSelectedTargets(0, -step);
-            } else if (e.key === 'ArrowDown') {
+            } else if (key === 'arrowdown' || code === 'ArrowDown') {
                 e.preventDefault();
                 nudgeSelectedTargets(0, step);
-            } else if (e.key === 'ArrowLeft') {
+            } else if (key === 'arrowleft' || code === 'ArrowLeft') {
                 e.preventDefault();
                 nudgeSelectedTargets(-step, 0);
-            } else if (e.key === 'ArrowRight') {
+            } else if (key === 'arrowright' || code === 'ArrowRight') {
                 e.preventDefault();
                 nudgeSelectedTargets(step, 0);
             }
@@ -2954,9 +3055,14 @@ $boothSubtitle = !empty($settings['subtitle']) ? $settings['subtitle'] : '';
         });
 
         // Initialize Photo Slots & Dynamic Items
+        if (photoSlots.length > 0) {
+            selectedTargets = [{ type: 'slot', id: photoSlots[0].id }];
+            selectedTarget = selectedTargets[0];
+        }
         renderPhotoSlots();
         renderTemplateItems();
         updateLivePreview();
+        saveHistoryState('Inisialisasi Awal');
 
         let loadedTemplatesList = [];
 
