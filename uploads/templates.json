@@ -2,8 +2,8 @@
     {
         "id": "6a97cf800a032",
         "name": "test",
-        "sizeType": "a5_6grid",
-        "outer": "uploads\/templates\/6a97cf800a032\/outer.png",
+        "sizeType": "4r_6grid",
+        "outer": "uploads\/templates\/6a97cf800a032\/outer.jpeg",
         "ketupat": "uploads\/templates\/6a97cf800a032\/ketupat.png",
         "lampu": "uploads\/templates\/6a97cf800a032\/lampu.png",
         "rama": "uploads\/templates\/6a97cf800a032\/rama.png",
@@ -23,33 +23,6 @@
                 "x": 150,
                 "y": 300,
                 "size": 550
-            }
-        }
-    },
-    {
-        "id": "6a97ff7e1bef1",
-        "name": "test 3 ",
-        "sizeType": "a5_6grid",
-        "outer": "uploads\/templates\/6a97ff7e1bef1\/outer.png",
-        "ketupat": "uploads\/templates\/6a97ff7e1bef1\/ketupat.png",
-        "lampu": "uploads\/templates\/6a97ff7e1bef1\/lampu.png",
-        "rama": "uploads\/templates\/6a97ff7e1bef1\/rama.png",
-        "overlayMode": false,
-        "layout": {
-            "ketupat": {
-                "x": 350,
-                "y": 1400,
-                "size": 2300
-            },
-            "lampu": {
-                "x": -2000,
-                "y": 900,
-                "size": 2225
-            },
-            "rama": {
-                "x": 200,
-                "y": 525,
-                "size": 2225
             }
         }
     },
@@ -105,7 +78,8 @@
                 "y": 550,
                 "size": 2175
             }
-        }
+        },
+        "active": false
     },
     {
         "id": "6a982afbca9ec",
@@ -132,7 +106,8 @@
                 "y": 575,
                 "size": 2200
             }
-        }
+        },
+        "active": false
     },
     {
         "id": "6a98ff3f88617",
@@ -159,7 +134,8 @@
                 "y": 300,
                 "size": 550
             }
-        }
+        },
+        "active": false
     },
     {
         "id": "6a9919b49daf0",
@@ -186,7 +162,8 @@
                 "y": 300,
                 "size": 550
             }
-        }
+        },
+        "active": false
     },
     {
         "id": "6a99424bc0770",
@@ -239,6 +216,176 @@
                 "x": 150,
                 "y": 290,
                 "size": 0
+            }
+        },
+        "active": false
+    },
+    {
+        "id": "6a9977f21d8b0",
+        "name": "test",
+        "sizeType": "a5_6grid",
+        "outer": "uploads\/templates\/6a9977f21d8b0\/outer.png",
+        "ketupat": "",
+        "lampu": "",
+        "rama": "uploads\/templates\/6a9977f21d8b0\/rama.png",
+        "overlayMode": false,
+        "layout": {
+            "ketupat": {
+                "x": 120,
+                "y": 150,
+                "size": 0
+            },
+            "lampu": {
+                "x": -100,
+                "y": 140,
+                "size": 0
+            },
+            "rama": {
+                "x": 310,
+                "y": 450,
+                "size": 1600
+            }
+        },
+        "active": false
+    },
+    {
+        "id": "6a99794f2aac0",
+        "name": "oyy",
+        "sizeType": "4r_6grid",
+        "outer": "uploads\/templates\/6a99794f2aac0\/outer.png",
+        "ketupat": "uploads\/templates\/6a99794f2aac0\/ketupat.png",
+        "lampu": "uploads\/templates\/6a99794f2aac0\/lampu.png",
+        "rama": "uploads\/templates\/6a99794f2aac0\/rama.png",
+        "overlayMode": false,
+        "layout": {
+            "ketupat": {
+                "x": 120,
+                "y": 150,
+                "size": 350
+            },
+            "lampu": {
+                "x": -100,
+                "y": 140,
+                "size": 300
+            },
+            "rama": {
+                "x": 150,
+                "y": 300,
+                "size": 550
+            }
+        },
+        "active": false
+    },
+    {
+        "id": "6a997ad47fa48",
+        "name": "its",
+        "sizeType": "a5_6grid",
+        "outer": "uploads\/templates\/6a997ad47fa48\/outer.png",
+        "ketupat": "uploads\/templates\/6a997ad47fa48\/ketupat.png",
+        "lampu": "uploads\/templates\/6a997ad47fa48\/lampu.png",
+        "rama": "uploads\/templates\/6a997ad47fa48\/rama.png",
+        "overlayMode": false,
+        "layout": {
+            "ketupat": {
+                "x": 120,
+                "y": 150,
+                "size": 350
+            },
+            "lampu": {
+                "x": -100,
+                "y": 140,
+                "size": 300
+            },
+            "rama": {
+                "x": 150,
+                "y": 300,
+                "size": 550
+            }
+        },
+        "active": false
+    },
+    {
+        "id": "6a9ad6ced9ce7",
+        "name": "percobaan template",
+        "sizeType": "a5_6grid",
+        "outer": "uploads\/templates\/6a9ad6ced9ce7\/outer.png",
+        "ketupat": "uploads\/templates\/6a9ad6ced9ce7\/ketupat.png",
+        "lampu": "uploads\/templates\/6a9ad6ced9ce7\/lampu.png",
+        "rama": "uploads\/templates\/6a9ad6ced9ce7\/rama.png",
+        "overlayMode": false,
+        "active": true,
+        "layout": {
+            "ketupat": {
+                "x": 120,
+                "y": 150,
+                "size": 350
+            },
+            "lampu": {
+                "x": -100,
+                "y": 140,
+                "size": 300
+            },
+            "rama": {
+                "x": 150,
+                "y": 300,
+                "size": 550
+            }
+        }
+    },
+    {
+        "id": "6a9ae51890992",
+        "name": "bambang",
+        "sizeType": "a5_6grid",
+        "outer": "uploads\/templates\/6a9ae51890992\/outer.png",
+        "items": [
+            {
+                "id": "item_1",
+                "name": "Item 1 (Ketupat)",
+                "src": "uploads\/templates\/6a9ae51890992\/item_1.png",
+                "slot": 1,
+                "size": 350,
+                "x": 120,
+                "y": 150
+            },
+            {
+                "id": "item_2",
+                "name": "Item 2 (Lampu)",
+                "src": "./gambar/lampu.webp",
+                "slot": 2,
+                "size": 300,
+                "x": -100,
+                "y": 140
+            },
+            {
+                "id": "item_3",
+                "name": "Item 3 (Stiker)",
+                "src": "./gambar/rama.png",
+                "slot": 5,
+                "size": 550,
+                "x": 127,
+                "y": 235
+            }
+        ],
+        "ketupat": "uploads/templates/6a9ae51890992/item_1.png",
+        "lampu": "./gambar/lampu.webp",
+        "rama": "./gambar/rama.png",
+        "overlayMode": false,
+        "active": true,
+        "layout": {
+            "ketupat": {
+                "x": 120,
+                "y": 150,
+                "size": 350
+            },
+            "lampu": {
+                "x": -100,
+                "y": 140,
+                "size": 300
+            },
+            "rama": {
+                "x": 127,
+                "y": 235,
+                "size": 550
             }
         }
     }

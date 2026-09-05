@@ -1,5 +1,55 @@
 [
     {
+        "id": "pr_6a9c1321c0345",
+        "session_id": "20260905_130319_55ad0f3b",
+        "photo_url": "uploads\/20260905_130319_55ad0f3b\/round_2_strip.jpeg",
+        "label": "percobaan template (A5 6-Grid)",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-05 13:03:29",
+        "updated_at": "2026-09-05 13:03:29"
+    },
+    {
+        "id": "pr_6a9c1318f028c",
+        "session_id": "20260905_130319_55ad0f3b",
+        "photo_url": "uploads\/20260905_130319_55ad0f3b\/round_1_strip.jpeg",
+        "label": "percobaan template (A5 6-Grid)",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-05 13:03:20",
+        "updated_at": "2026-09-05 13:03:20"
+    },
+    {
+        "id": "pr_6a9ad458ac40c",
+        "session_id": "20260904_142319_e4b43522",
+        "photo_url": "uploads\/20260904_142319_e4b43522\/round_1_strip.jpeg",
+        "label": "ITS boys (A5 6-Grid)",
+        "copies": 1,
+        "status": "printing",
+        "created_at": "2026-09-04 14:23:20",
+        "updated_at": "2026-09-04 14:36:26"
+    },
+    {
+        "id": "pr_6a99719e65956",
+        "session_id": "20260903_130949_ce935c34",
+        "photo_url": "uploads\/20260903_130949_ce935c34\/round_1_strip.jpeg",
+        "label": "Template Basket 1 (4R 6-Grid)",
+        "copies": 1,
+        "status": "completed",
+        "created_at": "2026-09-03 13:09:50",
+        "updated_at": "2026-09-04 14:41:41"
+    },
+    {
+        "id": "pr_6a9961581dca6",
+        "session_id": "20260903_115910_079c5236",
+        "photo_url": "uploads\/20260903_115910_079c5236\/round_1_strip.jpeg",
+        "label": "Sesi 1 - Photo Strip",
+        "copies": 1,
+        "status": "pending",
+        "created_at": "2026-09-03 12:00:24",
+        "updated_at": "2026-09-03 12:00:24"
+    },
+    {
         "id": "pr_6a98b1370c26f",
         "session_id": "20260902_232437_08044ca6",
         "photo_url": "uploads\/20260902_232437_08044ca6\/round_2_strip.jpeg",
